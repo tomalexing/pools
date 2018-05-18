@@ -30,7 +30,7 @@
     "start-js": "react-app-rewired start",
     "start": "npm-run-all -p watch-css start-js",
     "build-js": "react-app-rewired build",
-    "build": "npm-run-all build-css build-js",
+    "build": "set REACT_APP_BUILD=true&&npm-run-all build-css build-js",
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-scripts eject"
   }

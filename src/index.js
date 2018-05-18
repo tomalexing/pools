@@ -189,6 +189,9 @@ const styles = theme => ({
         },
         '&.fullscreen > div':{
             height: '100%'
+        },
+        '&.fullscreen':{
+            margin: '0px 0px !important'
         }
     }
 })
@@ -255,7 +258,7 @@ render(<Router>
                 
                     <Route path={'/'} exact location={location} key={getUniqueKey()} component={() => <App><Card store={storeQuiz} /></App>}/>
 
-                    <Route path={'/pools'} location={location} key={getUniqueKey()} component={() => <App >
+                    <Route path={'/polls'} location={location} key={getUniqueKey()} component={() => <App >
                             <div>
                                 <Card  key="quizzes" store={storeQuiz} />
                             </div>
@@ -277,7 +280,7 @@ render(<Router>
 );
 
 
-registerServiceWorker();
+//registerServiceWorker();
 window.storeQuiz = storeQuiz;
 window.storePool = storePool;
 

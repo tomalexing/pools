@@ -8,12 +8,18 @@ import {requestAnimationFramePromise, transitionEndPromise, parallel, wait , tra
 import * as cn  from 'classnames'; 
 import Divider from 'material-ui/Divider';
 
-import { LazyImage, lerp, listener } from './../utils';
+import { LazyImage, lerp, listener, getIMP } from './../utils';
 
 import Quiz from './Quiz'
 import Pool from './Pool'
 
 import Share from './Share'
+import Login from './Login'
+
+import { Link } from 'react-router-dom';
+import Auth from './../models/Auth';
+
+
 
 const styles = theme => ({
     card:{
@@ -76,6 +82,7 @@ const styles = theme => ({
         overflow: 'auto',
         '@media (max-width: 600px)':{
             height: '350px',
+            display: 'block'
       
         }
     },
@@ -100,10 +107,16 @@ const styles = theme => ({
         alignItems: 'center',
         flexDirection: 'column',
         width: 250,
-      
+        '@media (max-width: 600px)':{
+            marginBottom: 20
+        }
     },
     btnResult: {
         marginTop: 30,
+        borderRadius: 74
+    },
+    btnResultSmaller:{
+        marginTop: 6,
         borderRadius: 74
     },
     divider: {
@@ -118,7 +131,25 @@ const styles = theme => ({
     },
     noWrap:{
         whiteSpace: 'nowrap'
-    }
+    },
+    Imp:{
+        flexWrap: 'nowrap',
+        display: 'flex',
+        alignItems: 'baseline'
+    },
+    ImpVal:{
+        textTransform: 'uppercase',
+        fontSize: 60,
+        fontWeight: 200,
+        letterSpacing: -1,
+        color: '#506980'
+    },
+    ImpAddon:{
+        textTransform: 'uppercase',
+        fontWeight: 600,
+        color: '#506980',
+        paddingLeft: 15
+    },
 })
 
 @withStyles(styles)
@@ -408,10 +439,10 @@ class Card extends React.Component {
 
         let that = this;
 
+        that.props.store.save();
         return this._animate('translateX(200%)', {action: 'next'});
-
     }
-
+    
     @action.bound
     prev = e => {
         let that = this;
@@ -420,27 +451,28 @@ class Card extends React.Component {
         if(that.props.store.next < 0 ){
             that.props.store.next = that.props.store.current + 1;
             requestAnimationFramePromise()
-                .then(_ => {
-
-                    // finish animate next card
-                    that.props.store.nextCard.ref.style.transition = 'transform 0.2s cubic-bezier(0.49, .7, .1, 1.4)';
-                }) 
-                .then(_ => requestAnimationFramePromise())
-                .then(_ => {
-
-                    // finish animate next card
-                    that.props.store.nextCard.ref.style.transform = 'translate3d(0,-35px,0) scale(.9)';
-                    return transitionEndPromise(that.props.store.nextCard.ref);
-                })  
-                .then(_ =>  {
-                    that.props.store.nextCard.ref.style.transition = ''
-                });
+            .then(_ => {
+                
+                // finish animate next card
+                that.props.store.nextCard.ref.style.transition = 'transform 0.2s cubic-bezier(0.49, .7, .1, 1.4)';
+            }) 
+            .then(_ => requestAnimationFramePromise())
+            .then(_ => {
+                
+                // finish animate next card
+                that.props.store.nextCard.ref.style.transform = 'translate3d(0,-35px,0) scale(.9)';
+                return transitionEndPromise(that.props.store.nextCard.ref);
+            })  
+            .then(_ =>  {
+                that.props.store.nextCard.ref.style.transition = ''
+            });
         }else{
-
+            
             that.props.store.next = that.props.store.next - 1 || this.props.store.allCardsNumber;
         }
+        that.props.store.save();
     }
-
+    
     @action.bound
     finish = e => {
         this.props.store.IsEnd = true;
@@ -509,9 +541,22 @@ class Card extends React.Component {
     }
 
     loadProgress = () => {
-        if(!this.progress)
+        if(this.progress) return
+        this.progress = {};
         this.props.store.allProgress.then(progress => this.progress = progress)
     }
+
+    // Login stuff
+    logout = () => {}
+    getLogOut = f => this.logout = f; 
+  
+    @observable open = false
+    @action.bound
+    openLoginModal = () => {
+        this.open = false;
+        this.open = true;
+    };
+    // Login stuff end
 
     render() {
 
@@ -532,8 +577,7 @@ class Card extends React.Component {
             return(
                 <div ref='quiz'
                 className={[classes.card, cardPlace].join(' ')} style={{ ...this.props.store.getPositionStyles, ...scale}}>
-                    
-                    { card.cardType == 'Quiz' && 
+                    <Login open={this.open} close={this.getLogOut}/>
                     <div>
                         <div  ref='header' className={classes.header}>
                             <Typography variant="display1">
@@ -541,6 +585,8 @@ class Card extends React.Component {
                             </Typography>
                         </div>
                         <div className={classes.quizBodyResult}>
+
+                            { this.props.store.dashOutput == 'number' &&  // Quiz
                             <div className={classes.row + ' ' + classes.responseRow}>
                                 <div className={classes.col}>
                                     <Typography variant="body1" >
@@ -552,57 +598,75 @@ class Card extends React.Component {
                                 </div>
                                 <div className={classes.col}>
                                     <Typography variant="body1" >
-                                        Want to try again?
+                                        Your reward  {this.progress && getIMP(this.progress.number)} IMP
                                     </Typography>
-                                    <Button className={classes.btnResult} variant="raised" color="secondary"  side="small" onClick={this.again} >Take again
-                                    </Button>
+                                    <div className={classes.Imp}>
+                                        <Typography variant="display2" > { this.progress && getIMP(this.progress.number) }  </Typography>
+                                        <Typography variant="display1" className={classes.ImpAddon} >{this.progress && 'IMP'}</Typography>
+                                    </div>
                                 </div>
-                            </div>
-                            <Divider className={classes.divider} />
-                            <div className={classes.row + ' ' + classes.column}>
-                                <Typography variant="body1" className={classes.headerResult} gutterBottom>
-                                    Recommend the Test to Your Friends:
-                                </Typography>
-                                <Share/>
-                            </div>
-                        </div>
-                    </div>}
+                                { !Auth.isAuthenticated && <div className={classes.col}>
+                                    <Typography variant="body1" >
+                                        Login for withdrawal
+                                    </Typography>
+                                    <Button className={classes.btnResult} variant="raised" color="secondary"  side="small" onClick={this.openLoginModal} >Withdrawal
+                                    </Button>
+                                </div> }
+                                { Auth.isAuthenticated && <div className={classes.col}>
+                                    <Typography variant="body1" >
+                                        Go to dashboard
+                                    </Typography>
+                                    <Link style={{textDecoration: 'none'}} to="/dashboard"><Button className={classes.btnResult} variant="raised" color="secondary"  side="small" >dashboard</Button></Link>
+                                </div> }
+                            </div>}
 
-                { card.cardType == 'Pool' && 
-                    <div>
-                        <div ref='header' className={classes.header}>
-                            <Typography variant="display1">
-                                Congratulations!
-                            </Typography>
-                        </div>
-                        <div className={classes.quizBodyResult}>
+                            { this.props.store.dashOutput == 'iqValue' &&  // Pools
+                                <div className={classes.row + ' ' + classes.responseRow}>
+                                    <div className={classes.col}>
+                                        <Typography variant="body1" >
+                                            You have an IQ of  {this.progress && this.progress.iqValue} 🎉
+                                        </Typography>
+                                        <Typography variant="display2" className={classes.noWrap}>
+                                            { this.progress && this.progress.iqValue }
+                                        </Typography>
+                                    </div>
+                                    <div className={classes.col}>
+                                        <Typography variant="body1" >
+                                            Your reward  {this.progress && getIMP(this.progress.number)} IMP
+                                        </Typography>
+                                        <div className={classes.Imp}>
+                                            <Typography variant="display2" > { this.progress && getIMP(this.progress.number) }  </Typography>
+                                            <Typography variant="display1" className={classes.ImpAddon} >{this.progress && 'IMP'}</Typography>
+                                        </div>
+                                    </div>
+                                    <div className={classes.col}>
+                                        <Typography variant="body1" >
+                                            Login for withdrawal
+                                        </Typography>
+                                        <Button className={classes.btnResult} variant="raised" color="secondary"  side="small" onClick={this.again} >Withdrawal
+                                        </Button>
+                                    </div>
+                                </div>
+                            }
+
+                            <Divider className={classes.divider} />
                             <div className={classes.row + ' ' + classes.responseRow}>
                                 <div className={classes.col}>
-                                    <Typography variant="body1" >
-                                         You have an IQ of  {this.progress && this.progress.iqValue} 🎉
-                                    </Typography>
-                                    <Typography variant="display2" >
-                                        { this.progress && this.progress.iqValue }
-                                    </Typography>
-                                </div>
-                                <div className={classes.col}>
-                                    <Typography variant="body1" >
+                                    <Typography variant="body1" className={classes.headerResult}>
                                         Want to try again?
                                     </Typography>
-                                    <Button className={classes.btnResult} variant="raised" color="secondary"  side="small" onClick={this.again} >Take again
+                                    <Button className={classes.btnResultSmaller} variant="raised" color="secondary"  side="small" onClick={this.again} >Take again
                                     </Button>
                                 </div>
-                            </div>
-                            <Divider className={classes.divider} />
-                            <div className={classes.row + ' ' + classes.column}>
-                                <Typography variant="body1" className={classes.headerResult} gutterBottom>
-                                    Recommend the Test to Your Friends:
-                                </Typography>
-                                <Share/>
+                                <div className={classes.column}>
+                                    <Typography variant="body1" className={classes.headerResult} gutterBottom>
+                                        Recommend the Test to Your Friends:
+                                    </Typography>
+                                    <Share/>
+                                </div>
                             </div>
                         </div>
-                    </div>}
-
+                    </div>
                 </div>
             )
         }

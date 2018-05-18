@@ -60,7 +60,7 @@ const styles = theme => ({
     socialNetworks:{
        display: 'flex',
        flexDirection: 'row',
-       justifyContent: 'flex-start',
+       justifyContent: 'center',
        alignItems: 'flex-start',
        flexWrap: 'wrap'
     },

@@ -6,7 +6,7 @@ import { observer }  from 'mobx-react';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
-import { listener } from './../utils';
+import { listener, getMonthName } from './../utils';
 
 import {Switch, Route, Redirect, Link, withRouter} from 'react-router-dom';
 import {NavLink} from './NavLink';
@@ -26,6 +26,8 @@ import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
 import {loadFromStore , saveToStore} from "./../services/localDb";
 
+import Grow from '@material-ui/core/Grow';
+
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
   (!redirect
@@ -40,9 +42,8 @@ const PrivateRoute =  ({ component: Component, ...rest }) => (
           ) : (
                <div>Private Route. You should be logged in!!!</div>
             )
-        )} />
-    )
-console.log(Auth)
+        )} />)
+
 const drawerWidth = 170;
 
 const styles = theme => ({
@@ -90,7 +91,11 @@ const styles = theme => ({
         padding: 40,
         overflowY: 'auto',
         overflowX: 'hidden',
-        flexGrow: 1
+        flexGrow: 1,
+        '@media (max-width: 600px)':{
+            overflowX: 'auto',
+            padding: 20,
+        }
     },
     drawerPaper: {
         position: 'relative',
@@ -123,8 +128,8 @@ const styles = theme => ({
 class Dashboard extends React.Component {
 
 
-    state={
-        open: true
+    state= {
+        open: window.innerWidth > 600 
     }
 
     componentWillMount(){
@@ -139,7 +144,6 @@ class Dashboard extends React.Component {
     toogle = () => {
         this.setState({ open: !this.state.open }, _ => saveToStore('userOpenMenu', this.state.open))
     };
-    
 
     render() {
         
@@ -236,7 +240,10 @@ const stylesCommon = theme => ({
         overflow: 'hidden',
         maxWidth: '690px',
         height: '100%',
-        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)'
+        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
+        '@media (max-width: 600px)':{
+            marginRight: 0
+        }
     },
     header:{
         color: 'white',
@@ -332,7 +339,6 @@ class Common extends React.Component{
 
     componentWillMount(){
         this.getProgress();
-        
     }
     
     @action
@@ -355,6 +361,7 @@ class Common extends React.Component{
         return( 
             <div className={classes.cardWrapper} >
             { Auth.stores.map((store, idx) => {
+                console.log(this.progress)
                 return  this.progress[idx] && this.progress[idx][store.dashOutput] > 0 ? (<div key={store.cardSlug} className={classes.card}>
                         <div ref='header' className={classes.header}>
                             <Typography variant="display1" className={classes.title}>
@@ -402,7 +409,11 @@ const stylesAccount = theme => ({
         overflow: 'hidden',
         maxWidth: '690px',
         height: '100%',
-        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)'
+        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
+        '@media (max-width: 600px)':{
+            marginRight: 0,
+            minWidth: 690
+        }
     },
     header:{
         color: 'white',
@@ -449,7 +460,8 @@ const stylesAccount = theme => ({
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
-        width: 250,
+        width: 200,
+        height: 50
     },
     btnResult: {
         marginTop: 30,
@@ -600,6 +612,7 @@ class Account extends React.Component{
         super(props);
 
         this.getProgress();
+        this.getHistory();
         let that = this;
         Api.getWallet(Auth.uid).then(wallet => {
             if(!wallet) return
@@ -610,6 +623,7 @@ class Account extends React.Component{
     }
 
     @observable progress = [];
+    @observable histories = [];
     @observable totalIMP  = 0;
     @observable enteder = false; 
     @observable wallet = '';
@@ -618,6 +632,7 @@ class Account extends React.Component{
     getProgress = () => {
         let that = this;
         Promise.all(Auth.stores.map((store, idx) => {
+            that.progress = [];
             return store.allProgress.then((progress, idx) => {
                 that.progress.push(progress);
                 that.forceUpdate();
@@ -625,7 +640,7 @@ class Account extends React.Component{
         })).then( _ => {
             return Api.getWithdrawn(Auth.uid)
         }).then( amountWithdrawn => {
-            that.totalIMP = that.progress.reduce((acc, prog) => acc+=prog.number, -amountWithdrawn)
+            that.totalIMP = Math.max(0, that.progress.reduce((acc, prog) => acc+=prog.number, -amountWithdrawn))
         })
 
     }
@@ -633,6 +648,11 @@ class Account extends React.Component{
     @action.bound
     setEntered = _ => {
         this.enteder = true;
+    }
+
+    @action.bound
+    getHistory = _ => {
+        Api.getHistory(Auth.uid).then(histories => this.histories = histories)
     }
 
     setWallet = e => {
@@ -647,8 +667,10 @@ class Account extends React.Component{
 
     @action.bound
     payoff = _ => {
-        Api.withdraw(Auth.uid, this.totalIMP).then( amount => {
-            console.log(amount)
+        let that = this;
+        Api.withdraw(Auth.uid, this.totalIMP, this.wallet).then( amount => {
+            that.getProgress();
+            that.getHistory();
         })
     }
 
@@ -732,6 +754,63 @@ class Account extends React.Component{
                     
                 </div>
             </div>
+
+            <div className={classes.card}>
+                <div ref='header' className={classes.header}>
+                    <Typography variant="display1" className={classes.title}>
+                        History
+                    </Typography>
+                    <span className={classes.delimeter}></span>
+
+                </div>
+                <div className={classes.quizBodyResult}>
+                    <div className={classes.history}>
+                        <div className={classes.row}>
+                            <div className={classes.col}>
+                                <Typography  variant="body1" gutterBottom>
+                                        Wallet
+                                </Typography>
+                            </div>
+                            <div className={classes.col}>
+                                <Typography variant="body1" gutterBottom>
+                                        Amount, IMP
+                                </Typography>
+                            </div>
+                            <div className={classes.col}>
+                                <Typography variant="body1" gutterBottom>
+                                        Date
+                                </Typography>
+                            </div>
+                            </div>
+                            
+                            <Divider className={classes.divider} />
+
+                            {this.histories.map((history, idx) => (
+                                <div key={`history-${idx}`} className={classes.row}>
+
+                                    <div className={classes.col}>
+                                        <Typography  variant="body1" gutterBottom>
+                                                {history.wallet}
+                                        </Typography>
+                                    </div>
+
+                                    <div className={classes.col}>
+                                        <Typography variant="body1" gutterBottom>
+                                                {history.amount}
+                                        </Typography>
+                                    </div>
+
+                                    <div className={classes.col}>
+                                        <Typography variant="body1" gutterBottom>
+                                                {(new Date(history.date)).getDate()} {getMonthName((new Date(history.date)).getMonth())}, {(new Date(history.date)).getFullYear()}, {(new Date(history.date)).getHours()}: {(new Date(history.date)).getMinutes()}
+                                        </Typography>
+                                    </div>
+                                </div>
+                            ))}
+                    </div>
+
+                </div>
+            </div>
         </div>)
     }
 }
@@ -754,7 +833,10 @@ const stylesContact = theme => ({
         overflow: 'hidden',
         maxWidth: '690px',
         height: '100%',
-        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)'
+        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
+        '@media (max-width: 600px)':{
+            marginRight: 0,
+        }
     },
     header:{
         color: 'white',
@@ -868,10 +950,18 @@ class Contacts extends React.Component{
     @action.bound
     send = e => {
         e.preventDefault();
-        if(Auth.uid){
-          Api.addReview(Auth.uid, this.name, this.question, Auth.email)
-        }
+        let that = this;
+        Api.addReview(Auth.uid, this.name, this.question, Auth.email).then(_ => {
+            that.name = '';
+            that.question = '';
+            that.sended = true;
+            setTimeout(() => {
+                that.sended = false;
+            }, 1500);
+        })
     }
+
+    @observable sended = false;
 
     @observable name = '';
     @action
@@ -935,6 +1025,9 @@ class Contacts extends React.Component{
                         </Button>
                     </form>
                     
+                    <Grow in={this.sended} timeout={1000}>
+                        <Typography color="secondary" variant="body1">Sended</Typography>
+                    </Grow>
                 </div>
             </div>
         </div>)

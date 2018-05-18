@@ -121,7 +121,6 @@ export default class Cards {
       card.isInfoVisible = false;
       card.selectedValue = null;
       card.showCorrectAnswer = false;
-      console.log(card)
     }
   }
   
@@ -186,6 +185,7 @@ export default class Cards {
       loadFromStore(cards.cardSlug).then(val => {
           val.Progress.final = true;
           cards.Progress.final = true;
+          cards.Progress.number = cards.current;
           saveToStore(cards.cardSlug, {
             current: val.current,
             Progress: val.Progress
@@ -303,6 +303,7 @@ export default class Cards {
           default:
             break;
         }
+        if(number>20) iqValue = '>140';
 
         return { number , iqValue }
     

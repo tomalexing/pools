@@ -145,13 +145,13 @@ function addReview(id, name, question, email){
         var setWithMerge = userRef.set({
             review: {[(new Date).toISOString()]:{name, question, email}}
         }, { merge: true });
-        return setWithMerge
+        return resolve(setWithMerge)
     })
 }
 
 
-function withdraw(id, amount){
-    if(!id || !amount) return
+function withdraw(id, amount, wallet){
+    if(!id || !amount || !wallet) return
     var batch = db.batch();
 
     return new Promise(resolve => {
@@ -159,7 +159,7 @@ function withdraw(id, amount){
         Api.getWithdrawn(id).then( amountWithdrawn  => {
             let userRef = db.collection('users').doc(id);
             batch.set(userRef, {
-                withdraw: {[(new Date).toISOString()]:{amount}}
+                withdraw: {[(new Date).toISOString()]:{amount, wallet}}
             }, { merge: true });
             batch.set(userRef, {
                 withdrawTotal: amountWithdrawn + amount
@@ -220,6 +220,7 @@ function getWallet(id){
 function saveUserData(id){
 
     if(!id && !Auth.uid) return
+
     id = id || Auth.uid;
     return loadAllFromStore().then( UserData => {
         console.log(UserData)
@@ -249,6 +250,27 @@ function loadUserData(id){
     })
 }
 
+function getHistory(id){
+    if(!id) return
+    return new Promise(resolve => {
+        let userRef = db.collection('users').doc(id);
+        userRef.get().then(doc => {
+            if(doc.exists){
+                let docDate = doc.data()
+                if('withdraw' in docDate){
+                    let withdrawArr = [];
+                    for( let [key, value] of Object.entries(docDate.withdraw)){
+                        withdrawArr.push({date:key,...value})
+                    }
+                    resolve(withdrawArr);
+                }else{
+                    resolve([])
+                }
+            }
+        });
+    })
+}
+
 const Api = {
     getCard,
     getQuizzesIds,
@@ -265,6 +287,7 @@ const Api = {
     getWallet,
     saveWallet,
     saveUserData,
-    loadUserData
+    loadUserData,
+    getHistory
 }
 export default Api;

@@ -241,7 +241,8 @@ export function humanReadableTime(date) {
     }
 }
 export const getMonthName = (month) => {
-  let months = ['Янв','Фев','Мрт','Апр','Май','Июн','Июл','Авг','Сен','Окт','Нбр','Дек'];
+  let months = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"];
   return months[ month || 0 ];
 }
 
@@ -451,6 +452,8 @@ export const lerp = (minIn, maxIn, minOut, maxOut, opts = {}) => {
 }
 
 export const parallel = f => setTimeout( f, 0);
+
+export const getIMP = c => c;
 
 export const wait = time => new Promise(resolve => {
   setTimeout( resolve , time)});
