@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import {observable, action} from 'mobx';
+import {observable, action, computed, when} from 'mobx';
 import { observer }  from 'mobx-react';
 import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
@@ -7,7 +7,6 @@ import Icon from 'material-ui/Icon';
 import Typography from 'material-ui/Typography';
 import {requestAnimationFramePromise, transitionEndPromise, parallel, wait} from './../utils';
 import * as cn  from 'classnames'; 
-
 import { LazyImage } from './../utils';
 
 const styles = theme => ({
@@ -213,9 +212,19 @@ const styles = theme => ({
             padding: '0px 30px 15px',
         }
     },
-    footerBtn: {
+    footerBtn:{
         borderRadius: 74,
+        '&:hover $rightIcon': {
+            transition: 'transform 1s',
+            transform: 'translateX(3px)'
+        },
+        '&:hover $leftIcon': {
+            transition: 'transform 1s',
+            transform: 'translateX(-3px)'
+        }
     },
+    leftIcon:{},
+    rightIcon:{},
     space:{}
     
 })
@@ -235,6 +244,13 @@ class Quiz extends React.Component {
     }
 
     componentDidMount(){
+
+        this.registerEvents();
+        this.setCurrentVote();
+    }
+
+    registerEvents = () => {
+        if(!this.refs.left && !this.refs.left ) return
         if(window.innerWidth < 600 ){
             
             // this.refs.left.addEventListener('touchstart', this.rememberPoints);
@@ -254,50 +270,44 @@ class Quiz extends React.Component {
             this.refs.right.addEventListener('click', this.pickCart('2').bind(this)); 
         }
 
-        let that = this;
-        this.props.quiz.getUserVote().then(choosen => { 
-
-            if(choosen === 'right'){
-                that.props.quiz.isInfoVisible = true;
-                that.refs.check1.style.display = 'none';
-                that.refs.check2.style.display = 'none';
-                that.refs.check2.style.display = 'block';
-                that.props.store.currentCard.voteSetted = 2;
-
-            }
-            if(choosen === 'left'){
-                that.props.quiz.isInfoVisible = true;
-                that.refs.check1.style.display = 'none';
-                that.refs.check2.style.display = 'none';
-                that.refs.check1.style.display = 'block';
-                that.props.store.currentCard.voteSetted = 1;
-            }
-            
-        });
     }
 
     componentDidUpdate(){
-        let that = this;
-        this.props.quiz.getUserVote().then(choosen => { 
 
+        this.setCurrentVote();
+    }
+
+    @computed
+    get getRefs(){
+        return !!this.refs.check1;
+    }
+
+    setCurrentVote = () => {
+        let that = this;
+        this.props.quiz.getUserVote().then(choosen => {
             if(choosen === 'right'){
                 that.props.quiz.isInfoVisible = true;
-                if(that.refs.check1 && that.refs.check2) {
+                when(() => that.getRefs, () => { // may cause flick when switch between quizzes/pools 
                     that.refs.check1.style.display = 'none';
                     that.refs.check2.style.display = 'none';
                     that.refs.check2.style.display = 'block';
-                }
-                that.props.store.currentCard.voteSetted = 2;
+                    
+                });
+                that.props.quiz.voteSetted = 'right';
+
             }
             if(choosen === 'left'){
                 that.props.quiz.isInfoVisible = true;
-                if(that.refs.check1 && that.refs.check2) {
+                when(() => that.getRefs, () => {
                     that.refs.check1.style.display = 'none';
                     that.refs.check2.style.display = 'none';
                     that.refs.check1.style.display = 'block';
-                }
-                that.props.store.currentCard.voteSetted = 1;
+                })
+                that.props.quiz.voteSetted = 'left';
             }
+            if(choosen == null)
+                that.props.quiz.isInfoVisible = false;
+
             
         });
     }
@@ -443,7 +453,7 @@ class Quiz extends React.Component {
                 r: 0
             })
 
-            this.props.store.currentCard.voteSetted = 1;
+            this.props.store.currentCard.voteSetted = 'left';
             
         }
 
@@ -454,28 +464,28 @@ class Quiz extends React.Component {
                 r: 1               
            })
 
-            this.props.store.currentCard.voteSetted = 2;
+            this.props.store.currentCard.voteSetted = 'right';
         }
 
-        if(thisCardNumber == 1 && this.props.store.currentCard.voteSetted == 2){
+        if(thisCardNumber == 1 && this.props.store.currentCard.voteSetted == 'right'){
 
             this.props.store.currentCard.setUserVote({
                 l: 1,
                 r: -1 
             });
             
-            this.props.store.currentCard.voteSetted = 1;
+            this.props.store.currentCard.voteSetted = 'left';
 
         }
         
-        if(thisCardNumber == 2 &&  this.props.store.currentCard.voteSetted == 1){
+        if(thisCardNumber == 2 &&  this.props.store.currentCard.voteSetted == 'left'){
 
             this.props.store.currentCard.setUserVote({
                 l: -1,
                 r: 1,
             });
             
-            this.props.store.currentCard.voteSetted = 2;
+            this.props.store.currentCard.voteSetted = 'right';
 
         }
     }
@@ -491,14 +501,11 @@ class Quiz extends React.Component {
     render() {
 
         let {classes, quiz} = this.props;
-
         if(!quiz || typeof quiz.then == 'function'){
-            return(<div ref='quiz'/>);
+            return(<div key="body" className={classes.quizBody}>
+                    
+            </div>)
         }
-        // setTimeout(() => {
-        //     loadedR();
-        //     loadedL();
-        // }, 2000);
 
         return (
             [<div key="body" className={classes.quizBody}>
@@ -569,11 +576,11 @@ class Quiz extends React.Component {
 
                     <div className={classes.space}> </div>
                     
-                    {quiz.number < this.props.store.allQuizNumber && <Button className={classes.footerBtn} variant="raised" color="secondary"  side="small" onClick={this.next} >Next
+                    {quiz.number < this.props.store.allCardsNumber && <Button className={classes.footerBtn + ' ' + classes.footerLeft} variant="raised" color="secondary"  side="small" onClick={this.next} >Next
                         <Icon className={classes.rightIcon}>navigate_next</Icon>
                     </Button>}
 
-                    {quiz.number === this.props.store.allQuizNumber && <Button className={classes.footerBtn} variant="raised" color="secondary"  side="small" onClick={this.finish} >
+                    {quiz.number === this.props.store.allCardsNumber && <Button className={classes.footerBtn + ' ' + classes.footerRight} variant="raised" color="secondary"  side="small" onClick={this.finish} >
                         Finish 
                         <Icon className={classes.rightIcon}>done</Icon>
                     </Button>}

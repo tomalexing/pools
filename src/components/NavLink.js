@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, withRouter} from 'react-router-dom';
 export const NavLink  = withRouter(({history, match, location, staticContext, comp, ...props}) => (
-  <li className={
+  <span className={'navmenu ' + 
     (comp ?
     (comp(match, location, props.to)?
       'active'
@@ -13,5 +13,5 @@ export const NavLink  = withRouter(({history, match, location, staticContext, co
       :
       ''))}>
     <Link {...props} /> 
-  </li>
+  </span>
 ))

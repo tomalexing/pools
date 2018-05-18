@@ -17,9 +17,9 @@ import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import Input, { InputLabel } from 'material-ui/Input';
 import TextField from 'material-ui/TextField';
 import { FormControl } from 'material-ui/Form';
-
-import { Lazy, getUniqueKey, dump, addClass } from './utils';
-
+import * as cn  from 'classnames'; 
+import { Lazy, getUniqueKey, dump, addClass, LightenDarkenColor} from './utils';
+import ReactCSSTransitionGroup  from 'react-addons-css-transition-group';
 import {
     Route, 
     withRouter,
@@ -32,16 +32,23 @@ import './services/seed';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import noPullToRefresh from './no-pull-to-refresh.js';
 import Api from './services/Api';
-import Term from './term-of-use'
+import Term from './term-of-use';
+import Auth from './models/Auth';
 
 injectTapEventPlugin();
 noPullToRefresh();
 
 
 const Card = (props) => <Lazy {...props} load={() => import('./components/CardWrapper')}/>
+const OneCard = (props) => <Lazy {...props} load={() => import('./components/OneCard')}/>
+const Dashboard = (props) => <Lazy {...props} load={() => import('./components/Dashboard')}/>
 
-const storeQuiz = new Cards({getIds: Api.getQuizzesIds(), cardSlug: 'quizzes'});
-const storePool = new Cards({getIds: Api.getPoolsIds(), cardSlug: 'pools'});
+const storeQuiz = new Cards({getIds: Api.getQuizzesIds(), cardSlug: 'quizzes', dashTitle: 'Quiz: IQ test', dashOutput: 'number', tryAgainIsCleanPrevious: false});
+const storePool = new Cards({getIds: Api.getPoolsIds(), cardSlug: 'pools',
+dashTitle: 'Pool: Best', dashOutput: 'iqValue', tryAgainIsCleanPrevious: true});
+
+Auth.stores.push(storeQuiz, storePool)
+
 
 const theme = createMuiTheme(
     {
@@ -52,15 +59,15 @@ const theme = createMuiTheme(
     divider: "#6C7184",
     palette:{
         primary: {
-            light: "#474E65",
+            light: LightenDarkenColor("#474E65", 20),
             main: "#474E65",
-            dark: "#474E65",
+            dark: LightenDarkenColor("#474E65", -20),
             contrastText: "#fff"
         },
         secondary: {
-            light: "#FC3868",
+            light: LightenDarkenColor("#FC3868", 20),
             main: "#FC3868",
-            dark: "#FC3868",
+            dark: LightenDarkenColor("#FC3868", -20),
             contrastText: "#fff"
         }
     },
@@ -103,7 +110,6 @@ const theme = createMuiTheme(
             fontFamily: '"Montserrat", "Open Sans", "Helvetica", "Arial", sans-serif',
             fontSize: '1rem',
             fontWeight: 400,
-            textTransform: 'uppercase'
         },
         display2: {
             color: '#506980',
@@ -167,18 +173,28 @@ const styles = theme => ({
         height: '100%'
     },
     container: {
-        margin: 'auto',
         maxWidth: '100%',
         flex: 1,
+        
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         '@media (max-width: 767px)':{
             margin: '25px 10px'
+        },
+        overflowY: 'hidden',
+        overflowX: 'hidden',
+        '&> div':{
+            width: '100%'
+        },
+        '&.fullscreen > div':{
+            height: '100%'
         }
-       
     }
 })
+
+Auth.init();
+
 
 @withStyles(styles)
 class App extends React.Component{
@@ -186,42 +202,81 @@ class App extends React.Component{
     static propTypes = {
         classes: PropTypes.object.isRequired
     }
+
+    componentDidMount(){
+     
+    }
+
+    firstChild(children) {
+        const childrenArray = React.Children.toArray(children);
+        return childrenArray[0] || null;
+    }
       
-  render() {
+    render() {
 
-    const { classes } = this.props;
+        const { classes } = this.props;
 
-    return (
-        <div className={"App".concat(' ' + classes.mainScreen)} >
-            <Header />
-            <div className={classes.container}>
-            {React.Children.only(this.props.children)}
+        return (
+            <div className={"App".concat(' ' + classes.mainScreen)} >
+                <Header />
+                <div className={cn(classes.container, {'fullscreen': this.props.fullscreen})}>
+                    {this.firstChild(this.props.children)}
+
+                </div>
+                {/*<DevTools />*/}
+                { !this.props.nofooter && <Footer /> }
             </div>
-            {/*<DevTools />*/}
-            <Footer />
-        </div>
-    );
-  }
+        );
+    }
 }
 
 
+
+const PrivateRoute =  ({ component: Component, ...rest }) => (
+    <Route {...rest} render={props => (
+      Auth.isAuthenticated && rest.role.includes(Auth.role) ? (
+         <Component currentRole={Auth.role} {...rest}/>
+      ) : (
+           <div>Private Route. You should be logged in!!!</div>
+        )
+    )} />
+)
+
 render(<Router>
-        <MuiThemeProvider theme={theme}>
-            <CssBaseline />
-            <Switch>
-                <Route path={'/'} exact  component={() => <App><Card store={storeQuiz} /></App>}/>
-                <Route path={'/pools'} component={() => <App ><Card key="quizzes" store={storeQuiz} /></App>}/>
-                <Route path={'/quizzes'} component={() => <App><Card key="pools" store={storePool} /></App>}/>
-                <Route path={'/term-of-use'} component={() => <App><Term /></App>}/>
-                <Route path='*' exact component={() => (<App>404<p>NOT FOUND</p></App>)} />
-            </Switch>
-        </MuiThemeProvider>
+    <Route render={({ location }) => (
+            <MuiThemeProvider theme={theme}>
+                <CssBaseline />
+                <ReactCSSTransitionGroup
+                    transitionName={"fade"}
+                    transitionAppear={false}
+                    transitionEnterTimeout={300}
+                    transitionLeaveTimeout={300}
+                >
+                
+                    <Route path={'/'} exact location={location} key={getUniqueKey()} component={() => <App><Card store={storeQuiz} /></App>}/>
+
+                    <Route path={'/pools'} location={location} key={getUniqueKey()} component={() => <App >
+                            <div>
+                                <Card  key="quizzes" store={storeQuiz} />
+                            </div>
+                        </App>}/>
+                    
+                    <Route path={'/quizzes'} location={location} key={getUniqueKey()}  component={() => <App><Card key="pools" store={storePool} /></App>}/>
+                    
+                    <Route path={'/card/:id'} location={location} key={getUniqueKey()} exact component={() => <App><OneCard key="OneCard"/></App>}/>
+                    
+                    <Route path={'/term-of-use'} location={location} key={getUniqueKey()} component={() => <App><Term /></App>}/>
+                    
+                    <PrivateRoute role={['user']} path={'/dashboard'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} nofooter={true}><Dashboard /></App>} />
+                    
+                    </ReactCSSTransitionGroup>
+            </MuiThemeProvider>
+        )}/>
     </Router>,
     document.getElementById("root")
 );
 
 
-// playing around in the console
 registerServiceWorker();
 window.storeQuiz = storeQuiz;
 window.storePool = storePool;

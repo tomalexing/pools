@@ -1,7 +1,8 @@
 import fire from './../config'
 import firebase from 'firebase';
 import 'firebase/firestore';
-
+import { loadAllFromStore, saveAllToStore } from './localDb';
+import Auth from '../models/Auth';
 
 const settings = { timestampsInSnapshots: true};
 let db = fire.firestore();
@@ -53,7 +54,8 @@ function getCard(collection, id){
 
 function changeScoresQuizzes(id, {l,r}){
     // Create a reference to the SF doc.
-    var cardRef = db.collection("quizzes").doc(id);
+    if(!id) return
+    var cardRef = db.collection("quizzes").doc(`${id}`);
 
     // Uncomment to initialize the doc.
     // sfDocRef.set({ population: 0 });
@@ -101,12 +103,10 @@ var getPoolsIds = (query) => (models) => {
     
 }
 
-function getChild(path) {
-  return db.child(path)
-}
 
-function getRef(path) {
-    return db.ref(path)
+function getUserById(id){
+    if(!id) return db.collection('users').doc
+    return db.collection('users').doc(id);
 }
 
 function auth(){
@@ -121,15 +121,150 @@ function FacebookAuthProvider(){
   return new firebase.auth.FacebookAuthProvider();
 }
 
+function subscription(email){
+    if(!email) return
+
+    return new Promise(resolve => {
+        let exist = false;
+        db.collection("subscriptions").onSnapshot(snap => {
+
+            exist = snap.docs.some( subc => subc.data().email === email )
+            if(!exist)
+                db.collection("subscriptions").add({
+                    email: email
+                })
+            resolve(exist)
+        })
+    })
+}
+
+function addReview(id, name, question, email){
+    if(!id || !name || !question || !email) return
+    return new Promise(resolve => {
+        let userRef = db.collection('users').doc(id);
+        var setWithMerge = userRef.set({
+            review: {[(new Date).toISOString()]:{name, question, email}}
+        }, { merge: true });
+        return setWithMerge
+    })
+}
+
+
+function withdraw(id, amount){
+    if(!id || !amount) return
+    var batch = db.batch();
+
+    return new Promise(resolve => {
+
+        Api.getWithdrawn(id).then( amountWithdrawn  => {
+            let userRef = db.collection('users').doc(id);
+            batch.set(userRef, {
+                withdraw: {[(new Date).toISOString()]:{amount}}
+            }, { merge: true });
+            batch.set(userRef, {
+                withdrawTotal: amountWithdrawn + amount
+            }, { merge: true });
+
+            batch.commit().then(resolve);
+        })
+        
+    })
+}
+
+function getWithdrawn(id){
+    if(!id) return
+    return new Promise(resolve => {
+        let userRef = db.collection('users').doc(id);
+        var setWithMerge = userRef.get().then(doc => {
+            if(doc.exists){
+                let docDate = doc.data()
+                if('withdrawTotal' in docDate){
+                    resolve(docDate.withdrawTotal)
+                }else{
+                    resolve(0)
+                }
+            }
+        });
+    })
+}
+
+
+function saveWallet(id, wallet){
+    if(!id || !wallet) return
+    return new Promise(resolve => {
+        let userRef = db.collection('users').doc(id);
+        var setWithMerge = userRef.set({
+            wallet: wallet
+        }, { merge: true });
+        return setWithMerge
+    })
+}
+
+function getWallet(id){
+    if(!id) return
+    return new Promise(resolve => {
+        let userRef = db.collection('users').doc(id);
+        userRef.get().then(doc => {
+            if(doc.exists){
+                let docDate = doc.data()
+                if('wallet' in docDate){
+                    resolve(docDate.wallet)
+                }else{
+                    resolve(null)
+                }
+            }
+        });
+    })
+}
+
+function saveUserData(id){
+
+    if(!id && !Auth.uid) return
+    id = id || Auth.uid;
+    return loadAllFromStore().then( UserData => {
+        console.log(UserData)
+        let userRef = db.collection('users').doc(id);
+        var setWithMerge = userRef.set({
+            UserData: UserData
+        }, { merge: true });
+        return setWithMerge
+    })
+}
+
+function loadUserData(id){
+    if(!id && !Auth.uid) return
+    id = id || Auth.uid;
+    return new Promise(resolve => {
+        let userRef = db.collection('users').doc(id);
+        userRef.get().then(doc => {
+            if(doc.exists){
+                let docDate = doc.data()
+                if('UserData' in docDate){
+                    resolve(saveAllToStore(docDate.UserData))
+                }else{
+                    resolve(saveUserData(id))
+                }
+            }
+        });
+    })
+}
+
 const Api = {
     getCard,
     getQuizzesIds,
     getPoolsIds,
     changeScoresQuizzes,
-    getChild,
-    getRef,
+    getUserById,
     auth,
     GoogleAuthProvider,
-    FacebookAuthProvider
+    FacebookAuthProvider,
+    subscription,
+    addReview,
+    withdraw,
+    getWithdrawn,
+    getWallet,
+    saveWallet,
+    saveUserData,
+    loadUserData
 }
 export default Api;

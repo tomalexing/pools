@@ -96,8 +96,6 @@ const styles = theme => ({
     }
 });
 
-
-
 @withStyles(styles)
 class Share extends React.Component {
 

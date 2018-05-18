@@ -51,6 +51,62 @@ export function loadFromStore(key) {
 }
 
 /**
+ * Returns a promise for loading  all values from our key-value store on
+ * IndexedDB.
+ * Falls back to local storage if IndexedDB is unavailable.
+ *
+ * @return {Promise.<Object>} Promise to the key-value pair value.
+ */
+export function loadAllFromStore() {
+  return new Promise(function(resolve, reject) {
+    if (window.indexedDB) {
+      let dbPromise = prepareDb_();
+      dbPromise.then((db) => {
+        db.onerror = (event) => reject(event);
+        let keys = db.transaction('kv', 'readonly').objectStore('kv').getAllKeys();
+        keys.onsuccess = (event) => {
+          if (event.target.result !== undefined) {
+            keys = event.target.result;
+          
+            let data = db.transaction('kv', 'readonly').objectStore('kv').getAll();
+            data.onsuccess = (event) => {
+              if (event.target.result !== undefined) {
+                let result = {};
+                for ( let i = 0; i < keys.length; i++){
+                  result[keys[i]] = event.target.result[i];
+                }
+                resolve(result);
+              } else {
+                reject(new Error(`Datas not found`));
+              }
+          };
+
+          } else {
+            reject(new Error(`Keys not found`));
+          }
+        };
+      });
+    } else {
+
+      resolve(allFromLocalStorage());
+    }
+  });
+}
+
+function allFromLocalStorage() {
+  var archive = {}, // Notice change here
+      keys = Object.keys(localStorage),
+      i = keys.length;
+
+  while ( i-- ) {
+      archive[ keys[i] ] = localStorage.getItem( keys[i] );
+  }
+
+  return archive;
+}
+
+
+/**
  * Returns a promise for saving a value onto our key-value store on IndexedDB.
  * Falls back to local storage if IndexedDB is unavailable.
  *
@@ -73,4 +129,49 @@ export function saveToStore(key, value) {
       resolve();
     }
   });
+}
+
+/**
+ * Returns a promise for saving a value onto our key-value store on IndexedDB.
+ * Falls back to local storage if IndexedDB is unavailable.
+ *
+ * @param {string} key The key-value pair key.
+ * @param {Object} value The key-value pair value.
+ * @return {Promise} Promise to storage success.
+ */
+export function saveAllToStore(data) {
+  return new Promise(function(resolve, reject) {
+    if (window.indexedDB) {
+        let savePromise = []; 
+        clearAll().then(_ => {
+
+          for( let [key, val] of Object.entries(data)){
+            savePromise.push(saveToStore(key, val))
+          }
+          Promise.all(savePromise).then(resolve)
+        
+        })
+    } else {
+      for(let [key, val] in Object.entries(data)){
+        localStorage.setItem(key, JSON.stringify(val));
+      }
+      resolve();
+    }
+  });
+}
+
+function clearAll(){
+  return new Promise(function(resolve, reject) {
+    if (window.indexedDB) {
+      let dbPromise = prepareDb_();
+      dbPromise.then((db) => {
+        db.onerror = (event) => reject(event);
+        let clear = db.transaction('kv', 'readwrite').objectStore('kv').clear();
+        clear.onsuccess = () => resolve();
+      });
+    } else {
+      localStorage.clear();
+      resolve();
+    }
+  })
 }

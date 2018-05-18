@@ -1,20 +1,26 @@
-import { observable, computed, action } from "mobx";
+import { observable, computed, action, autorun } from "mobx";
 import {LazyImagem, lerp} from '../utils'
 import Quiz from "./Quiz";
 import Pool from "./Pool";
 import Card from "./Card";
 import {loadFromStore , saveToStore} from "./../services/localDb";
 
-
 export default class Cards {
 
-  constructor({getIds, cardSlug}){
+  constructor({getIds, cardSlug, dashTitle, dashOutput, tryAgainIsCleanPrevious}){
     this.cardSlug = cardSlug;
+    this.dashTitle = dashTitle || '';
+    this.dashOutput = dashOutput || 'number';
+    this.tryAgainIsCleanPrevious = tryAgainIsCleanPrevious || false;
+    this.bindModel(getIds);
+  }
+
+  bindModel = (getIds) => {
     let that = this;
+
     getIds(this.quizesModel).then( ids =>{ 
       that.quizes = ids;
     })
-    //populateTo({acc:this.quizes, models:this.quizesModel});
   }
 
   @observable current = 0;
@@ -28,6 +34,7 @@ export default class Cards {
   @observable IsEnd = false;
 
   initialNumber = this.quizes.length;
+  isStack = false;
 
   @computed
   get getPositionStyles() {
@@ -35,7 +42,7 @@ export default class Cards {
       if(Object.keys(this.positionStyles).length > 0 ){
         addAbsolute = true;
       }
-      return Object.entries(this.positionStyles).reduce((acc,[key, val]) => Object.assign(acc,{[key]:`${val}px`}), addAbsolute ? {'position':'absolute'}:{});
+      return Object.entries(this.positionStyles).reduce((acc,[key, val]) => Object.assign(acc,{[key]:`${val}px`}), addAbsolute ? {'position':'absolute', display: 'block'}:{});
   }
 
   @computed
@@ -94,7 +101,7 @@ export default class Cards {
   }
 
   @computed
-  get allQuizNumber() {
+  get allCardsNumber() {
     return this.quizes.length
   }
 
@@ -109,14 +116,47 @@ export default class Cards {
     return number;
   }
 
-  clearPool(){
-    var number = 0;
+  ditch(){
     for (let [key, card] of this.quizesModel) {
-      if(card.cardType == "Pool"){
+      card.isInfoVisible = false;
+      card.selectedValue = null;
+      card.showCorrectAnswer = false;
+      console.log(card)
+    }
+  }
+  
+  clear(){
+    this.quizesModel.clear()
+
+  }
+
+  clearProgress(){
+    let cards = this;
+    for (let [key, card] of this.quizesModel) {
+      if(this.tryAgainIsCleanPrevious){
         card.selectedValue = null;
         card.showCorrectAnswer = false;
       }
+      
     }
+
+    loadFromStore(cards.cardSlug).then(val => {
+        val.Progress.final = false;
+        cards.IsEnd = false;
+
+        if(this.tryAgainIsCleanPrevious)
+          val.Progress.number = 0;
+        
+        saveToStore(cards.cardSlug, {
+            current: 0,
+            Progress: val.Progress
+          });
+        }, _ => {
+          saveToStore(cards.cardSlug, {
+            current: 0,
+            Progress: cards.Progress
+          });
+        })
   }
 
   @computed
@@ -138,102 +178,137 @@ export default class Cards {
       }
   }
 
+  Progress = {number: this.current, final: false};
   
-  save(){
- 
-    saveToStore(this.cardSlug, {
-      current: this.current
-    });
+  saveFinalCard(){
+      let cards = this;
+      let isEnd = cards.IsEnd;
+      loadFromStore(cards.cardSlug).then(val => {
+          val.Progress.final = true;
+          cards.Progress.final = true;
+          saveToStore(cards.cardSlug, {
+            current: val.current,
+            Progress: val.Progress
+          });
+        }, _ => {
+            saveToStore(cards.cardSlug, {
+              current: cards.current,
+              Progress: cards.Progress
+            });
+        })
   }
 
-  load(){
-    let that = this;
+  save(){
+    let cards = this;
+    loadFromStore(cards.cardSlug).then(val => {
+        cards.Progress.number = val.Progress.number;
+        saveToStore(cards.cardSlug, {
+          current: cards.current,
+          Progress: val.Progress
+        });
+      }, _ => {
+          saveToStore(cards.cardSlug, {
+            current: cards.current,
+            Progress: cards.Progress
+          });
+      })
+    
 
+  }
+
+  @action.bound
+  load = _ => {
+    let that = this;
     return loadFromStore(this.cardSlug).then(
       (val) => {
         let current = val.current;
-
         that.current = current || 0;
         that.next = current + 1 || 1;
+        that.Progress = val.Progress;
+        that.IsEnd = val.Progress.final;
         return current
       }, console.log)
   }
-  
+    
   @computed
-  get IQ(){
-    let iqValue = 100;   
-    var number = 0;
-    for (let [key, card] of this.quizesModel) {
-      if(card.cardType == "Pool" && !!card.isCorrect){
-        number++;
-      }
-    }
+  get allProgress(){
+      return loadFromStore(this.cardSlug).then(val => val, console.log)
+        .then(val => {
+        
+          if(!val) return {number:0}
+        
+        var {number} = val.Progress;
+        let iqValue = 0;
+        switch (number) {
+          case 1:
+            iqValue = 40;
+            break;
+          case 2:
+            iqValue = 45;
+            break;
+          case 3:
+            iqValue = 50;
+            break;
+          case 4:
+            iqValue = 60;
+            break;
+          case 5:
+            iqValue = 65;
+            break;
+          case 6:
+            iqValue = 70;
+            break;
+          case 7:
+            iqValue = 75;
+            break;
+          case 8:
+            iqValue = 80;
+            break;
+          case 9:
+            iqValue = 80;
+            break;
+          case 10:
+            iqValue = 80;
+            break;
+          case 11:
+            iqValue = 85;
+            break;
+          case 12:
+            iqValue = 90;
+            break;
+          case 13:
+            iqValue = 95;
+            break;
+          case 14:
+            iqValue = 100;
+            break;
+          case 15:
+            iqValue = 105;
+            break;
+          case 16:
+            iqValue = 110;
+            break;
+          case 17:
+            iqValue = 115;
+            break;
+          case 18:
+            iqValue = 120;
+            break;
+          case 19:
+            iqValue = 130;
+            break;
+          case 20:
+            iqValue = 140;
+            break;
+          default:
+            break;
+        }
 
-    switch (number) {
-      case 1:
-        iqValue = 40;
-        break;
-      case 2:
-        iqValue = 45;
-        break;
-      case 3:
-        iqValue = 50;
-        break;
-      case 4:
-        iqValue = 60;
-        break;
-      case 5:
-        iqValue = 65;
-        break;
-      case 6:
-        iqValue = 70;
-        break;
-      case 7:
-        iqValue = 75;
-        break;
-      case 8:
-        iqValue = 80;
-        break;
-      case 9:
-        iqValue = 80;
-        break;
-      case 10:
-        iqValue = 80;
-        break;
-      case 11:
-        iqValue = 85;
-        break;
-      case 12:
-        iqValue = 90;
-        break;
-      case 13:
-        iqValue = 95;
-        break;
-      case 14:
-        iqValue = 100;
-        break;
-      case 15:
-        iqValue = 105;
-        break;
-      case 16:
-        iqValue = 110;
-        break;
-      case 17:
-        iqValue = 115;
-        break;
-      case 18:
-        iqValue = 120;
-        break;
-      case 19:
-        iqValue = 130;
-        break;
-      case 20:
-        iqValue = 140;
-        break;
-      default:
-        break;
-    }
-    return iqValue
+        return { number , iqValue }
+    
+    })
+    
+  
   }
 
 }

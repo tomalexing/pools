@@ -1,13 +1,3 @@
-/**
- * React Static Boilerplate
- * https://github.com/kriasoft/react-static-boilerplate
- *
- * Copyright © 2015-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import Button from 'material-ui/Button';
@@ -29,7 +19,7 @@ import { observer } from "mobx-react";
 import { listener } from './../utils';
 
 import { Link } from 'react-router-dom';
-
+import Api from './../services/Api'
 
 const styles = theme => ({
 
@@ -111,7 +101,6 @@ const styles = theme => ({
     },
     subscribeBtn: {
         float: 'right',
-        backgroundColor: theme.palette.common.white,
         margin: theme.spacing.unit,
         borderRadius: 74,
         '@media (max-width: 997px)': {
@@ -143,7 +132,8 @@ const styles = theme => ({
     closeModal:{
         float: 'right',
         marginBottom: `${-1 * theme.spacing.unit }px`,
-        borderRadius: 15
+        borderRadius: 15,
+        lineHeight: '19px'
     }
 });
 
@@ -213,20 +203,30 @@ class Footer extends React.Component {
     }
 
     @action.bound
-    onSubmit = e => {
+    onSubmit = async e => {
         e.preventDefault();
         if(EMAIL_RE.test(this.subscribeValue)){
+            let exist = await Api.subscription(this.subscribeValue);
+            
             this.open = true;
-            this.title = "Success!!!";
-            this.description = "Your subscription was accepted.";
-            setTimeout(() => {
-                this.subscribeValue = '';
-            }, 100);
+            if(!exist){ 
+                this.title = "Success!!!";
+                this.description = "Your subscription was accepted.";
+                
+                setTimeout(() => {
+                    this.subscribeValue = '';
+                }, 100);
+            }else{
+                this.title = "Denied";
+                this.description = "You have already subscribed.";
+            }
         }else{
             this.open = true;
             this.title = "Denied";
             this.description = "Check email and try again.";
         }
+
+
     }
 
     getModalStyle() {
@@ -279,7 +279,7 @@ class Footer extends React.Component {
                             }
                         }}
                     />
-                    <Button type="submit" variant="raised" className={classes.subscribeBtn}>
+                    <Button type="submit"  color="secondary" variant="raised" className={classes.subscribeBtn}>
                         Subscribe
                     </Button>
                     </form>
@@ -295,10 +295,10 @@ class Footer extends React.Component {
                     <Typography variant="display1" id="footer-modal-title">
                         {this.title}
                     </Typography>
-                    <Typography variant="subheading" id="footer-modal-description">
+                    <Typography variant="body1" id="footer-modal-description">
                         {this.description}
                     </Typography>
-                    <Button size="small" variant="raised" color="secondary" className={classes.closeModal} onClick={this.handleClose}>Close</Button>
+                    <Button size="small" variant="raised" color="secondary" className={classes.closeModal} onClick={this.handleClose}>close</Button>
                     </div>
                 </Modal>
              </footer>

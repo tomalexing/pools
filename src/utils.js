@@ -13,7 +13,9 @@ export class LazyImage extends React.Component {
 
   state = {
     // short for "module" but that's a keyword in js, so "mod"
-    mod: null
+    mod: null,
+    loaded: false,
+    src: ''
   }
 
   componentWillMount() {
@@ -35,41 +37,35 @@ export class LazyImage extends React.Component {
   }
 
   load(props) {
-
+    try {
+      
     if(typeof props.load  === 'string'){
       (() => import(`${props.load}`))().then((src) => {
-      let image = new Image;
-      image.src = src;
-      image.onload = () => {
-          if(this.node){
-              this.node.innerHTML = '';
-              this.node.appendChild(image);
-          }
-          if(typeof props.loaded == 'function')
-            props.loaded()
-        }
+        if(this._isMounted)
+        this.setState({src, loaded:true})
+        if(typeof props.loaded == 'function')
+        props.loaded()
       })
 
       return
     } 
 
     props.load().then((src) => {
-      let image = new Image;
-      image.src = src;
-      image.onload = () => {
-          if(this.node){
-              this.node.innerHTML = '';
-              this.node.appendChild(image);
-          }
-          if(typeof props.loaded == 'function')
-            props.loaded()
-      }
+      if(this._isMounted)
+      this.setState({src, loaded:true})
+      if(typeof props.loaded == 'function')
+      props.loaded()
     })
+
+    } catch (error) {
+      this.load(props)
+    }
   }
 
   render() {
     let {mod , load, loaded,  ...rest} = this.props;
-    return  <div {...rest} ref={node => this.node = node} ><CircularProgress color="secondary" /></div>
+    let {src, loaded: imgloaded} = this.state;
+    return  !imgloaded ? <div {...rest}  ><CircularProgress color="secondary" /></div> : <div {...rest}  ><img src={src}/></div>
   }
 }
 
@@ -434,6 +430,13 @@ export const transitionEndPromise = elem => new Promise(resolve => {
   elem.addEventListener('transitionend', resolve, {capture: false, once: true});
 });
 
+export const transitionEndWithStrictPromise = (elem, propertyName) => new Promise(resolve => {
+  elem.addEventListener('transitionend', e => {
+      if( e.target === elem && e.propertyName == propertyName)
+          resolve();
+  }, {capture: false})
+  });
+
 export const lerp = (minIn, maxIn, minOut, maxOut, opts = {}) => {
   const rangeIn = maxIn - minIn;
   const rangeOut = maxOut - minOut;
@@ -453,7 +456,35 @@ export const wait = time => new Promise(resolve => {
   setTimeout( resolve , time)});
 
 
-
+export const LightenDarkenColor = (col, amt) => {
+  
+    var usePound = false;
+  
+    if (col[0] == "#") {
+        col = col.slice(1);
+        usePound = true;
+    }
+ 
+    var num = parseInt(col,16);
+ 
+    var r = (num >> 16) + amt;
+ 
+    if (r > 255) r = 255;
+    else if  (r < 0) r = 0;
+ 
+    var b = ((num >> 8) & 0x00FF) + amt;
+ 
+    if (b > 255) b = 255;
+    else if  (b < 0) b = 0;
+ 
+    var g = (num & 0x0000FF) + amt;
+ 
+    if (g > 255) g = 255;
+    else if (g < 0) g = 0;
+ 
+    return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
+  
+}
 
 
 util.listener = listener

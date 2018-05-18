@@ -6,7 +6,6 @@ import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import {requestAnimationFramePromise, transitionEndPromise, parallel, 
         wait, listener, LazyImage} from './../utils';
-
 import * as cn  from 'classnames'; 
 
 import Radio, { RadioGroup } from 'material-ui/Radio';
@@ -107,6 +106,15 @@ class Pool extends React.Component {
     picking = false;
 
     componentDidMount(){
+        this.registerEvents();
+    }
+
+    componentDidUpdate(){
+        this.listeners.forEach(func => func());
+        this.registerEvents();
+    }
+
+    registerEvents = () => {
         this.input = document.querySelectorAll('.inputIQ-current');
 
         if(this.input){
@@ -126,6 +134,8 @@ class Pool extends React.Component {
             this.listeners = Array.prototype.concat.apply([], this.listeners);
         }
     }
+
+
 
     componentWillUnmount(){
         this.listeners.forEach(func => func());
@@ -147,6 +157,8 @@ class Pool extends React.Component {
 
         this.picking = true;
         this.props.pool.selectedValue = e.target.value;
+        
+        this.props.pool.setProgress();
 
         await wait(300);
         this.props.pool.showCorrectAnswer = true;
@@ -157,6 +169,7 @@ class Pool extends React.Component {
         }else{
             this.props.next(e);
         }
+
         await wait(1000);
         this.picking = false;
     }
