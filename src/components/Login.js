@@ -1,28 +1,28 @@
 import React from 'react';
-import Dialog from 'material-ui/Dialog';
-import Button from 'material-ui/Button';
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button';
 import cx from 'classnames';
-import Menu, { MenuList, MenuItem } from 'material-ui/Menu';
+import Menu, { MenuList, MenuItem } from '@material-ui/core/Menu';
 import PropTypes from 'prop-types'; // ES6
-import { withStyles } from 'material-ui/styles';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 
 import logo from './../assets/quiz-logo.png';
 import {NavLink} from './NavLink';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 
-import IconButton from 'material-ui/IconButton';
-import Icon from 'material-ui/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
 
-import Modal from 'material-ui/Modal';
+import Modal from '@material-ui/core/Modal';
 
 import {action, observable} from 'mobx';
 import { observer } from 'mobx-react';
 
-import Grow from 'material-ui/transitions/Grow';
-import ClickAwayListener from "material-ui/utils/ClickAwayListener";
+import Grow from '@material-ui/core/Grow';
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import { LightenDarkenColor } from "./../utils"; 
 import Api from "./../services/Api";
 import Auth from "./../models/Auth";
@@ -122,23 +122,14 @@ class Login extends React.Component {
 
   constructor(props) {
     super(props)
-    props.close(this.logout.bind(this));
+    this.closeLoginModal = props.close
+    props.logout(this.logout.bind(this));
   }
 
   @action.bound
   componentWillReceiveProps(nextProps){
     this.open = nextProps.open
   }
-
-  @observable anchorEl: null;
-
-  handleClick = event => {
-    this.anchorEl = event.currentTarget
-  };
-
-  handleClose = () => {
-    this.anchorEl = null
-  };
 
   logout = () => {
     let that = this;
@@ -152,15 +143,7 @@ class Login extends React.Component {
   }
 
   @observable open = false
-  @action.bound
-  openLoginModal = () => {
-      this.open = true;
-  };
 
-  @action.bound
-  closeLoginModal = () => {
-      this.open = false;
-  };
 
   @observable ctx = { redirect: false, state: {} }
 
@@ -230,13 +213,16 @@ class Login extends React.Component {
             let ctx = {};
             if(user){
                 Api.loadUserData(user.uid).then( _ => {
-                    Auth.stores.map(store => store.load()); 
-                    Auth.stores.map(store => store.ditch()); 
+                    
                     _self.ctx = {
                         redirect: true,
                         pathname: '/dashboard'
-                      }
-                  });
+                    }
+                }).then( _ => {
+                    Auth.stores.map(store => store.load()); 
+                    Auth.stores.map(store => store.ditch()); 
+                    
+                });
 
             }
         });

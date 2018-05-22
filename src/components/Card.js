@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react';
 import {observable, action, computed, when} from 'mobx';
 import { observer }  from 'mobx-react';
-import { withStyles } from 'material-ui/styles';
-import Button from 'material-ui/Button';
-import Typography from 'material-ui/Typography';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 import {requestAnimationFramePromise, transitionEndPromise, parallel, wait , transitionEndWithStrictPromise} from './../utils';
 import * as cn  from 'classnames'; 
-import Divider from 'material-ui/Divider';
+import Divider from '@material-ui/core/Divider';
 
 import { LazyImage, lerp, listener, getIMP } from './../utils';
 
@@ -425,6 +425,8 @@ class Card extends React.Component {
                 if( opt.action == 'none') return
                 if( ! that.props.store.nextCard ) return
                 that.props.store.nextCard.ref.style.transition = ''
+
+                that.props.store.save();
             });
     }
 
@@ -438,8 +440,7 @@ class Card extends React.Component {
         if(!this.props.store.canMakeAction) return
 
         let that = this;
-
-        that.props.store.save();
+        // save later
         return this._animate('translateX(200%)', {action: 'next'});
     }
     
@@ -553,8 +554,12 @@ class Card extends React.Component {
     @observable open = false
     @action.bound
     openLoginModal = () => {
-        this.open = false;
         this.open = true;
+    };
+  
+    @action.bound
+    closeLoginModal = () => {
+        this.open = false;
     };
     // Login stuff end
 
@@ -577,7 +582,8 @@ class Card extends React.Component {
             return(
                 <div ref='quiz'
                 className={[classes.card, cardPlace].join(' ')} style={{ ...this.props.store.getPositionStyles, ...scale}}>
-                    <Login open={this.open} close={this.getLogOut}/>
+                    <Login open={this.open} logout={this.getLogOut} close={this.closeLoginModal}/>
+
                     <div>
                         <div  ref='header' className={classes.header}>
                             <Typography variant="display1">
@@ -639,17 +645,24 @@ class Card extends React.Component {
                                             <Typography variant="display1" className={classes.ImpAddon} >{this.progress && 'IMP'}</Typography>
                                         </div>
                                     </div>
-                                    <div className={classes.col}>
+                                    { !Auth.isAuthenticated && <div className={classes.col}>
                                         <Typography variant="body1" >
                                             Login for withdrawal
                                         </Typography>
-                                        <Button className={classes.btnResult} variant="raised" color="secondary"  side="small" onClick={this.again} >Withdrawal
+                                        <Button className={classes.btnResult} variant="raised" color="secondary"  side="small" onClick={this.openLoginModal} >Withdrawal
                                         </Button>
-                                    </div>
+                                    </div> }
+                                    { Auth.isAuthenticated && <div className={classes.col}>
+                                        <Typography variant="body1" >
+                                            Go to dashboard
+                                        </Typography>
+                                        <Link style={{textDecoration: 'none'}} to="/dashboard"><Button className={classes.btnResult} variant="raised" color="secondary"  side="small" >dashboard</Button></Link>
+                                    </div> }
                                 </div>
                             }
 
                             <Divider className={classes.divider} />
+
                             <div className={classes.row + ' ' + classes.responseRow}>
                                 <div className={classes.col}>
                                     <Typography variant="body1" className={classes.headerResult}>

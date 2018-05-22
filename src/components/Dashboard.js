@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import {observable, action} from 'mobx';
 import { observer }  from 'mobx-react';
 
@@ -10,15 +10,15 @@ import { listener, getMonthName } from './../utils';
 
 import {Switch, Route, Redirect, Link, withRouter} from 'react-router-dom';
 import {NavLink} from './NavLink';
-import Icon from 'material-ui/Icon';
-import Typography from 'material-ui/Typography';
+import Icon from '@material-ui/core/Icon';
+import Typography from '@material-ui/core/Typography';
 import Auth from './../models/Auth';
 import Api from './../services/Api';
-import { Hidden } from 'material-ui';
+import { Hidden } from '@material-ui/core';
 
-import Button from 'material-ui/Button';
-import TextField from 'material-ui/TextField';
-import Divider from 'material-ui/Divider';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Divider from '@material-ui/core/Divider';
 
 import classNames from 'classnames';
 
@@ -27,6 +27,7 @@ import IconButton from '@material-ui/core/IconButton';
 import {loadFromStore , saveToStore} from "./../services/localDb";
 
 import Grow from '@material-ui/core/Grow';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
@@ -398,7 +399,6 @@ const stylesAccount = theme => ({
         display: 'flex',
         flexWrap: 'wrap'
     },
-
     card:{
         maxHeight: '100%',
         zIndex: '100',
@@ -446,6 +446,9 @@ const stylesAccount = theme => ({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'flex-start',
+        '&:nth-of-type(2)': {
+            marginTop: 20
+        }
     },
 
     responseRow:{
@@ -461,7 +464,7 @@ const stylesAccount = theme => ({
         alignItems: 'center',
         flexDirection: 'column',
         width: 200,
-        height: 50
+        height: 33,
     },
     btnResult: {
         marginTop: 30,
@@ -530,13 +533,6 @@ const stylesAccount = theme => ({
         color: '#506980',
         paddingLeft: 15
     },
-    walletWrapper:{
-        border: '1px solid #bbc2d8',
-        borderRadius: 100,
-        padding: '0 0px 0 23px',
-        marginTop: 20,
-        width: 480
-    },
     walletSetWrapper:{
         display: 'flex',
         flexDirection: 'row',
@@ -545,12 +541,9 @@ const stylesAccount = theme => ({
         height: '100%',
         overflow: 'hidden',
         width: 480,
-        marginBottom: 11
-    },
-    wallet:{
-        marginTop: -12,
-        marginBottom: 3,
-        width: '100%'
+        marginBottom: 7,
+        marginTop: 29
+
     },
     walletSet:{
         width: 'calc(100% - 65px)',
@@ -560,45 +553,49 @@ const stylesAccount = theme => ({
         backgroundColor: "#bbc2d8"
     },
     headerField:{
-        fontSize: 16,
-        fontWeight: 600,
         margin: '20px 0 12px',
+        fontSize: 16,
     },
-    walletInput:{
+    bold:{
+        fontWeight: 600
+    },
+    formInput:{
+        width: '100%',
+        '&:after, &:hover:before': {
+            borderBottomColor: '#FC3868 !important'
+        },
+    },
 
-        color: '#506980',
-        '& input::placeholder':{
-            fontSize: 14,
-            color: 'rgb(74, 76, 85)'
+    formField:{
+        display: 'block',
+        width: 480,
+        '&:after': {
+            borderBottomColor: '#FC3868',
         },
-	    '& input:focus::placeholder':{
-            color: 'rgba(74, 76, 85, .8)'
-        },
-        '& input:-webkit-autofill': {
-            boxShadow: '0 0 0px 1000px rgb(240, 240, 240) inset',
-            '-webkitTextFillColor': '#bcc2d9'
-        },
-        '& input:focus:-webkit-autofill':{
-            '-webkitTextFillColor': 'rgba(black, .7)',
-            boxShadow: '0 0 0px 1000px #fff inset' 
-        }
     },
-    InputLabel:{
-        display: 'none'
-    },
+
     submitBtn:{
         float: 'right',
         marginTop: 20,
         marginBottom: 5,
         borderRadius: 74,
     },
+    
     editBtn:{
         float: 'right',
         borderRadius: 74,
     },
+
     editBtnTypo:{
         fontSize: 14,
         fontWeight: 700
+    },
+
+    short:{
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        display: 'inlineBlock',
+        width: '100%'
     }
 
 })
@@ -710,28 +707,21 @@ class Account extends React.Component{
                     </div>
                     <Divider className={classes.divider} />
 
-                    <Typography variant="body1" className={classes.headerField} >Your Impleum wallet adress:
+                    <Typography variant="body1" className={classes.headerField + ' ' + classes.bold} >Your Impleum wallet adress:
                     </Typography>
-                    { !this.enteder && <form className={classes.walletWrapper} onSubmit={this.setEntered} noValidate autoComplete="off"> 
+                    { !this.enteder && <form onSubmit={this.setEntered} noValidate autoComplete="off"> 
                         <TextField
                             id="wallet"
                             required
                             label="wallet"
                             placeholder="Your impleum wallet adress"
-                            className={classes.wallet}
+                            className={classes.formField}
                             type="text"
                             margin="normal"
                             value={this.wallet}
                             onChange={this.setWallet}
                             InputProps={{
-                                className: classes.walletInput,
-                                disableUnderline: true
-                            }}
-                            InputLabelProps={{
-                                shrink: true,
-                                classes:{
-                                    root: classes.InputLabel
-                                }
+                                className: classes.formInput
                             }}
                         />
                     </form> }
@@ -741,15 +731,15 @@ class Account extends React.Component{
                         </Button>}
 
                     { this.enteder &&  <div className={classes.walletSetWrapper} >
-                            <div className={classes.walletSet} >{this.wallet}</div>
+                            <Typography variant="body1" className={classes.walletSet} >{this.wallet}</Typography>
                             <Button color="primary" size="small" className={classes.editBtn} onClick={this.edit}>
                                 <Icon>create</Icon>    
                                 <Typography  className={classes.editBtnTypo}  variant="body1">Edit</Typography>
                             </Button>
                         </div>}
 
-                    { this.enteder && <Button variant="raised" color="secondary" className={classes.submitBtn} onClick={this.payoff}>
-                        <Typography variant="button">Payoff</Typography>
+                    { this.enteder && <Button variant="raised" disabled color="secondary" className={classes.submitBtn} onClick={this.payoff}>
+                        <Typography variant="button" >Payoff</Typography>
                     </Button>}
                     
                 </div>
@@ -767,17 +757,17 @@ class Account extends React.Component{
                     <div className={classes.history}>
                         <div className={classes.row}>
                             <div className={classes.col}>
-                                <Typography  variant="body1" gutterBottom>
+                                <Typography  variant="body1" className={classes.bold} gutterBottom>
                                         Wallet
                                 </Typography>
                             </div>
                             <div className={classes.col}>
-                                <Typography variant="body1" gutterBottom>
+                                <Typography variant="body1" className={classes.bold} gutterBottom>
                                         Amount, IMP
                                 </Typography>
                             </div>
                             <div className={classes.col}>
-                                <Typography variant="body1" gutterBottom>
+                                <Typography variant="body1" className={classes.bold} gutterBottom>
                                         Date
                                 </Typography>
                             </div>
@@ -789,9 +779,11 @@ class Account extends React.Component{
                                 <div key={`history-${idx}`} className={classes.row}>
 
                                     <div className={classes.col}>
-                                        <Typography  variant="body1" gutterBottom>
-                                                {history.wallet}
-                                        </Typography>
+                                        <Tooltip  title={history.wallet} placement="top">
+                                            <Typography className={classes.short} variant="body1" gutterBottom>
+                                                    {history.wallet}
+                                            </Typography>
+                                        </Tooltip>
                                     </div>
 
                                     <div className={classes.col}>
@@ -869,6 +861,9 @@ const stylesContact = theme => ({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'flex-start',
+        '&:first-child':{
+            marginTop: 22
+        }
     },
 
     responseRow:{
@@ -907,7 +902,7 @@ const stylesContact = theme => ({
     },
 
     divider: {
-        backgroundColor: "#bbc2d8"
+        backgroundColor: "#bbc2d8",
     },
 
     formField:{
@@ -920,9 +915,9 @@ const stylesContact = theme => ({
 
     formInput:{
         width: '100%',
-        '&:hover:after, &:hover:before': {
-            backgroundColor: '#FC3868 !important',
-        },
+        '&:after, &:hover:before': {
+            borderBottomColor: '#FC3868 !important'
+        },  
     },
 
     headerField:{
@@ -993,7 +988,6 @@ class Contacts extends React.Component{
                             id="name"
                             required
                             label="Your name"
-                            placeholder="Your impleum wallet adress"
                             className={classes.formField}
                             type="text"
                             margin="normal"

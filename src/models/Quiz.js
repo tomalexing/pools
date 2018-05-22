@@ -29,12 +29,13 @@ export default class Quiz{
 
   setProgress = _ => {
     let card = this;
+
     loadFromStore(card.id).then(_ => {}, _ => {
       loadFromStore(card.slug).then((val) => {
           val.Progress.number = val.Progress.number + 1;
           saveToStore(card.slug, val ).then(_ => Api.saveUserData() ) 
         }, _ => {
-          saveToStore(card.slug, {Progress:{number:1}}).then(_ => Api.saveUserData() )
+          saveToStore(card.slug, {current: card.number -1 , Progress:{number:1}}).then(_ => Api.saveUserData() )
         } )
     })
 
@@ -48,7 +49,8 @@ export default class Quiz{
     this.setProgress();
 
     if(l > 0){
-      saveToStore(this.id, 'left' )
+      saveToStore(this.id, 'left' );
+      
     }
 
     if(r > 0){

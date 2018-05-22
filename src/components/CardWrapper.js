@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import {observable, action} from 'mobx';
 import { observer }  from 'mobx-react';
 import Card from './Card';
@@ -43,9 +43,9 @@ class QuizWrapper extends React.Component {
             that.next = current + 2;
         })
 
-        window.addEventListener("beforeunload", function (event) {
-            that.props.store.save();
-        })
+        // window.addEventListener("beforeunload", function (event) {
+        //     that.props.store.save();
+        // })
 
     }
 
@@ -54,7 +54,7 @@ class QuizWrapper extends React.Component {
             this.listeners.forEach(func => func());
         }
 
-        this.props.store.save();
+        // this.props.store.save();
     }
 
     render() {

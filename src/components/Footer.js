@@ -1,17 +1,17 @@
 import React from 'react';
-import Dialog from 'material-ui/Dialog';
-import Button from 'material-ui/Button';
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button';
 import cx from 'classnames';
-import Menu, { MenuList, MenuItem } from 'material-ui/Menu';
+import Menu, { MenuList, MenuItem } from '@material-ui/core/Menu';
 import PropTypes from 'prop-types'; // ES6
-import { withStyles } from 'material-ui/styles';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 
-import Divider from 'material-ui/Divider';
-import TextField from 'material-ui/TextField';
-import Modal from 'material-ui/Modal';
+import Divider from '@material-ui/core/Divider';
+import TextField from '@material-ui/core/TextField';
+import Modal from '@material-ui/core/Modal';
 
 import { observable, action } from "mobx";
 import { observer } from "mobx-react";
@@ -131,7 +131,6 @@ const styles = theme => ({
     },
     closeModal:{
         float: 'right',
-        marginBottom: `${-1 * theme.spacing.unit }px`,
         borderRadius: 15,
         lineHeight: '19px'
     }
@@ -238,7 +237,7 @@ class Footer extends React.Component {
           left: `${left}%`,
           transform: `translate(-${top}%, -${left}%)`,
         };
-      }
+    }
 
     render() {
         const { classes } = this.props;

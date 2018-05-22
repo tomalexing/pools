@@ -1,28 +1,30 @@
 import React from 'react';
-import Dialog from 'material-ui/Dialog';
-import Button from 'material-ui/Button';
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button';
 import cx from 'classnames';
-import Menu, { MenuList, MenuItem } from 'material-ui/Menu';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuList from '@material-ui/core/MenuList';
 import PropTypes from 'prop-types'; // ES6
-import { withStyles } from 'material-ui/styles';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 
 import logo from './../assets/quiz-logo.png';
 import {NavLink} from './NavLink';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 
-import IconButton from 'material-ui/IconButton';
-import Icon from 'material-ui/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
 
-import Modal from 'material-ui/Modal';
+import Modal from '@material-ui/core/Modal';
 
 import {action, observable} from 'mobx';
 import { observer } from 'mobx-react';
 
-import Grow from 'material-ui/transitions/Grow';
-import ClickAwayListener from "material-ui/utils/ClickAwayListener";
+import Grow from '@material-ui/core/Grow';
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import { LightenDarkenColor } from "./../utils"; 
 import Api from "./../services/Api";
 import Auth from "./../models/Auth";
@@ -49,8 +51,7 @@ const styles = theme => ({
         color: 'white',
     },
     mobileMenu:{
-        color: 'white',
-        marginLeft: 'auto'
+        color: 'white'
     },
     startMenu: {
         display: 'flex',
@@ -108,31 +109,6 @@ const styles = theme => ({
             minHeight: 48,
         }
     },
-    paper: {
-        position: 'absolute',
-        width: '270px',
-        backgroundColor: theme.palette.background.paper,
-        boxShadow: theme.shadows[4],
-        padding: theme.spacing.unit * 4,
-        outline: 'none',
-        borderRadius: 5,
-        overflow: 'hidden',
-        '& #login-modal-title': {
-            margin: `${-1 * theme.spacing.unit * 4}px ${-1 * theme.spacing.unit * 4}px 0 ${-1 * theme.spacing.unit * 4}px`,
-            padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 4}px`,
-            backgroundColor: theme.palette.secondary.main 
-        },
-        '& #login-modal-description': {
-            minHeight: 50,
-            margin: `${theme.spacing.unit}px 0`,
-        }
-    },
-    closeModal:{
-        float: 'right',
-        marginBottom: `${-1 * theme.spacing.unit }px`,
-        borderRadius: 15
-    },
-
     mainMenu:{
         maxHeight: ITEM_HEIGHT * 4.5,
         width: 200,
@@ -170,8 +146,12 @@ class Header extends React.Component {
   @observable open = false
   @action.bound
   openLoginModal = () => {
-      this.open = false;
       this.open = true;
+  };
+
+  @action.bound
+  closeLoginModal = () => {
+      this.open = false;
   };
     
   render() {
@@ -179,7 +159,7 @@ class Header extends React.Component {
 
     return (
      <AppBar position="static" style={{zIndex: 1201}} color="primary">
-        <Login open={this.open} close={this.getLogOut}/>
+        <Login open={this.open} logout={this.getLogOut} close={this.closeLoginModal}/>
         <Toolbar className={classes.header}>
             <a href="/">
                 <img className={classes.logo} src={logo} />
@@ -187,20 +167,13 @@ class Header extends React.Component {
             {  /* Deskttop menu */
                 window.innerWidth > 600 && 
                 <ul className={[classes.ul, classes.startMenu].join(" ")}>
-                    <NavLink tabIndex='1' to={'/quizzes'} className={classes.menuBtnSpacings} >
+                    <NavLink tabIndex='1' to={'/'} className={classes.menuBtnSpacings} >
                         <MenuItem selected={false}>
                             <Typography variant="button" >
-                                Quizzes
+                                Explore
                             </Typography>
                         </MenuItem>
                     </NavLink>  
-                    <NavLink tabIndex='1' to={'/polls'} className={classes.menuBtnSpacings}>
-                        <MenuItem selected={false} >
-                            <Typography variant="button" >
-                                Polls
-                            </Typography>
-                        </MenuItem>
-                    </NavLink>
             </ul> }
             
             { window.innerWidth > 600 && 
@@ -281,20 +254,14 @@ class Header extends React.Component {
                     },
                 }}
                 >
-                <NavLink tabIndex='1' to={'/quizzes'} className={classes.menuBtnSpacings} >
+                <NavLink tabIndex='1' to={'/'} className={classes.menuBtnSpacings} >
                     <MenuItem selected={false} onClick={this.handleClose}>
                         <Typography variant="body1" >
-                            Quizzes
+                            Explore
                         </Typography>
                     </MenuItem>
                 </NavLink>  
-                <NavLink tabIndex='1' to={'/polls'} className={classes.menuBtnSpacings} >
-                    <MenuItem selected={false}  onClick={this.handleClose}>
-                        <Typography variant="body1" >
-                            Polls
-                        </Typography>
-                    </MenuItem>
-                </NavLink>  
+                 
                 {!Auth.isAuthenticated && <MenuItem selected={false} onClick={this.openLoginModal}>
                         Sign Up
                 </MenuItem>}

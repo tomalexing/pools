@@ -11,12 +11,11 @@ import Footer from "./components/Footer";
 import Cards from "./models/Cards";
 import registerServiceWorker from './registerServiceWorker';
 
-import { withStyles } from 'material-ui/styles';
-import CssBaseline from 'material-ui/CssBaseline';
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import Input, { InputLabel } from 'material-ui/Input';
-import TextField from 'material-ui/TextField';
-import { FormControl } from 'material-ui/Form';
+import { withStyles } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import Input, { InputLabel } from '@material-ui/core/Input';
+import TextField from '@material-ui/core/TextField';
 import * as cn  from 'classnames'; 
 import { Lazy, getUniqueKey, dump, addClass, LightenDarkenColor} from './utils';
 import ReactCSSTransitionGroup  from 'react-addons-css-transition-group';
@@ -42,6 +41,7 @@ noPullToRefresh();
 const Card = (props) => <Lazy {...props} load={() => import('./components/CardWrapper')}/>
 const OneCard = (props) => <Lazy {...props} load={() => import('./components/OneCard')}/>
 const Dashboard = (props) => <Lazy {...props} load={() => import('./components/Dashboard')}/>
+const Explore = (props) => <Lazy {...props} load={() => import('./components/Explore')}/>
 
 const storeQuiz = new Cards({getIds: Api.getQuizzesIds(), cardSlug: 'quizzes', dashTitle: 'Quiz: IQ test', dashOutput: 'number', tryAgainIsCleanPrevious: false});
 const storePool = new Cards({getIds: Api.getPoolsIds(), cardSlug: 'pools',
@@ -69,9 +69,16 @@ const theme = createMuiTheme(
             main: "#FC3868",
             dark: LightenDarkenColor("#FC3868", -20),
             contrastText: "#fff"
+        },
+        action: {
+            active: "rgba(0, 0, 0, 0.54)",
+            hover: "rgba(0, 0, 0, 0.08)",
+            hoverOpacity: 0.08,
+            selected: "rgba(0, 0, 0, 0.14)",
+            disabled: "rgba(0, 0, 0, 0.26)",
+            disabledBackground: LightenDarkenColor("#FC3868", 80),
         }
     },
-
     typography: {
         button: {
             fontSize: "0.875rem",
@@ -193,7 +200,8 @@ const styles = theme => ({
         '&.fullscreen':{
             margin: '0px 0px !important'
         }
-    }
+    },
+    
 })
 
 Auth.init();
@@ -256,9 +264,9 @@ render(<Router>
                     transitionLeaveTimeout={300}
                 >
                 
-                    <Route path={'/'} exact location={location} key={getUniqueKey()} component={() => <App><Card store={storeQuiz} /></App>}/>
+                    <Route path={'/'} exact location={location} key={getUniqueKey()} component={() => <App><Explore/></App>}/>
 
-                    <Route path={'/polls'} location={location} key={getUniqueKey()} component={() => <App >
+                    <Route path={'/polls'} location={location} key={getUniqueKey()} component={() =>        <App >
                             <div>
                                 <Card  key="quizzes" store={storeQuiz} />
                             </div>

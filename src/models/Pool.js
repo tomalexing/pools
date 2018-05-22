@@ -29,12 +29,17 @@ export default class Pool {
 
   setProgress(){
     let pool = this;
-    if(this.isCorrect)
-      loadFromStore(pool.slug).then((val) => {
-          val.Progress.number = val.Progress.number + 1;
+    loadFromStore(pool.slug).then((val) => {
+          if(pool.isCorrect)
+            val.Progress.number = val.Progress.number + 1;
+          // we need next card here current = (pool.number - 1) + 1
           saveToStore(pool.slug, val ).then(_ => Api.saveUserData() )
-        }, _ => {
-          saveToStore(pool.slug, {Progress:{number:1}}).then(_ => Api.saveUserData() )
+        }, _ => { 
+          if(pool.isCorrect){
+            saveToStore(pool.slug, {current:pool.number, Progress:{number:1}}).then(_ => Api.saveUserData() )
+          }else{
+            saveToStore(pool.slug, {current:pool.number, Progress:{number:0}}).then(_ => Api.saveUserData() )
+          }
         } )
 
   }

@@ -37,6 +37,11 @@ export default class Cards {
   isStack = false;
 
   @computed
+  get previuos(){
+    return Math.max(Math.min(this.current - 1, this.allCardsNumber), 0)
+  }
+
+  @computed
   get getPositionStyles() {
       let addAbsolute = false;
       if(Object.keys(this.positionStyles).length > 0 ){
@@ -89,6 +94,15 @@ export default class Cards {
       
       if(this.current > this.quizes.length -1 || this.current < 0) return null
 
+
+      if( !this.quizesModel.has( this.previuos ) ){
+        let card = new Card(this.cardSlug), cards = this;
+        card.retrieveCard(this.quizes[this.previuos], this.previuos + 1).then( card => {
+          cards.quizesModel.set(this.previuos, card);
+        })
+      }
+
+
       if( this.quizesModel.has(this.current) ){
           return this.quizesModel.get(this.current)
       }else{ 
@@ -140,6 +154,8 @@ export default class Cards {
     }
 
     loadFromStore(cards.cardSlug).then(val => {
+        if(!val.Progress) return
+
         val.Progress.final = false;
         cards.IsEnd = false;
 
@@ -175,6 +191,7 @@ export default class Cards {
           }).then(card => card)
     
       }
+
   }
 
   Progress = {number: this.current, final: false};
@@ -183,11 +200,14 @@ export default class Cards {
       let cards = this;
       let isEnd = cards.IsEnd;
       loadFromStore(cards.cardSlug).then(val => {
+          if(!val.Progress)
+            val.Progress = {};
+
           val.Progress.final = true;
           cards.Progress.final = true;
           cards.Progress.number = cards.current;
           saveToStore(cards.cardSlug, {
-            current: val.current,
+            current: cards.allCardsNumber - 1,
             Progress: val.Progress
           });
         }, _ => {
@@ -201,19 +221,15 @@ export default class Cards {
   save(){
     let cards = this;
     loadFromStore(cards.cardSlug).then(val => {
-        cards.Progress.number = val.Progress.number;
+      val.current = cards.current
+
+      saveToStore(cards.cardSlug, val);
+    }, _ => {
         saveToStore(cards.cardSlug, {
           current: cards.current,
-          Progress: val.Progress
+          Progress: cards.Progress
         });
-      }, _ => {
-          saveToStore(cards.cardSlug, {
-            current: cards.current,
-            Progress: cards.Progress
-          });
-      })
-    
-
+    })
   }
 
   @action.bound
@@ -225,7 +241,7 @@ export default class Cards {
         that.current = current || 0;
         that.next = current + 1 || 1;
         that.Progress = val.Progress;
-        that.IsEnd = val.Progress.final;
+        that.IsEnd = val.Progress ? val.Progress.final : false;
         return current
       }, console.log)
   }

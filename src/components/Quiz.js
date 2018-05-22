@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
 import {observable, action, computed, when} from 'mobx';
 import { observer }  from 'mobx-react';
-import { withStyles } from 'material-ui/styles';
-import Button from 'material-ui/Button';
-import Icon from 'material-ui/Icon';
-import Typography from 'material-ui/Typography';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
+import Typography from '@material-ui/core/Typography';
 import {requestAnimationFramePromise, transitionEndPromise, parallel, wait} from './../utils';
 import * as cn  from 'classnames'; 
 import { LazyImage } from './../utils';
@@ -360,6 +360,7 @@ class Quiz extends React.Component {
         this.refs[thisCard].style.top = `${eClientY - top}px`;
         this.refs[thisCard].style.left = `${eClientX - left}px`;
         
+        
         await requestAnimationFramePromise()
         .then(_ => requestAnimationFramePromise())
         .then(_ => {
@@ -368,6 +369,7 @@ class Quiz extends React.Component {
             return transitionEndPromise(that.refs[thisCard]);
         })
         .then(_ => {
+            this.updateScore(thisCardNumber);
             that.props.quiz.isInfoVisible = true;
             that.refs.check1.style.display = 'none';
             that.refs.check2.style.display = 'none';
@@ -376,7 +378,6 @@ class Quiz extends React.Component {
             that.refs[thisCard].style.transition = '';
             that.refs[thisCard].style.transformOrigin = '';
 
-            this.updateScore(thisCardNumber);
             return requestAnimationFramePromise()
                 .then(async _ => {
                     

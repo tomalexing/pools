@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import {observable, action} from 'mobx';
 import { observer }  from 'mobx-react';
 import Card from './Card';

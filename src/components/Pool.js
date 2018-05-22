@@ -1,15 +1,17 @@
 import React, { PropTypes } from 'react';
 import {observable, action} from 'mobx';
 import { observer }  from 'mobx-react';
-import { withStyles } from 'material-ui/styles';
-import Button from 'material-ui/Button';
-import Typography from 'material-ui/Typography';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 import {requestAnimationFramePromise, transitionEndPromise, parallel, 
         wait, listener, LazyImage} from './../utils';
 import * as cn  from 'classnames'; 
 
-import Radio, { RadioGroup } from 'material-ui/Radio';
-import { FormGroup, FormControlLabel } from 'material-ui/Form';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup  from '@material-ui/core/RadioGroup';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel  from '@material-ui/core/FormControlLabel';
 
 const styles = theme => ({
     quizBody:{
@@ -64,9 +66,6 @@ const styles = theme => ({
             '@media (max-width: 840px)':{
                 height: '100%'
             }
-        },
-        '&:hover':{
-             boxShadow: '0 2px 20px rgba(0,0,0, .5)'
         },
         '@media (max-width: 600px)': {
             marginBottom: '20px'

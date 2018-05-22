@@ -12,7 +12,6 @@ var getQuizzesIds = (query) => (models) => {
     
     return new Promise((resolve, reject) => {
         db.collection('quizzes').onSnapshot(snap => {
-            console.log(snap.docs[0])
            
             // acc.push({id: snap.docs[0].id,...snap.docs[0].data()});
                 let ids = [];
@@ -131,7 +130,8 @@ function subscription(email){
             exist = snap.docs.some( subc => subc.data().email === email )
             if(!exist)
                 db.collection("subscriptions").add({
-                    email: email
+                    email: email,
+                    date: (new Date).toISOString()
                 })
             resolve(exist)
         })
@@ -223,7 +223,6 @@ function saveUserData(id){
 
     id = id || Auth.uid;
     return loadAllFromStore().then( UserData => {
-        console.log(UserData)
         let userRef = db.collection('users').doc(id);
         var setWithMerge = userRef.set({
             UserData: UserData

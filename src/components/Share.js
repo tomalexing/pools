@@ -1,15 +1,15 @@
 import React from 'react';
-import Dialog from 'material-ui/Dialog';
-import Button from 'material-ui/Button';
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button';
 import cx from 'classnames';
-import Menu, { MenuList, MenuItem } from 'material-ui/Menu';
+import Menu, { MenuList, MenuItem } from '@material-ui/core/Menu';
 import PropTypes from 'prop-types'; // ES6
-import { withStyles } from 'material-ui/styles';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 
-import Modal from 'material-ui/Modal';
+import Modal from '@material-ui/core/Modal';
 
 import { listener } from './../utils';
 
@@ -91,8 +91,8 @@ const styles = theme => ({
     },
     modalBtn:{
         float: 'right',
-        marginBottom: `${-1 * theme.spacing.unit }px`,
-        borderRadius: 74
+        borderRadius: 74,
+        margin: '0 10px'
     }
 });
 
