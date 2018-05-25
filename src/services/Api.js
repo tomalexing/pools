@@ -8,12 +8,25 @@ const settings = { timestampsInSnapshots: true};
 let db = fire.firestore();
 db.settings(settings)
 
-var getQuizzesIds = (query) => (models) => {
-    
+var getReward = query => {
     return new Promise((resolve, reject) => {
-        db.collection('quizzes').onSnapshot(snap => {
-           
+        db.collection(`${query}`).doc('reward').get().then(snap => {
+
             // acc.push({id: snap.docs[0].id,...snap.docs[0].data()});
+                if(snap.empty) return resolve(1);
+
+            })
+    })
+}
+
+var getPollsIds = (query) => (models) => {
+
+    return new Promise((resolve, reject) => {
+        db.collection(`${query}`).orderBy("order").onSnapshot(snap => {
+
+            // acc.push({id: snap.docs[0].id,...snap.docs[0].data()});
+                if(snap.empty) return resolve([]);
+
                 let ids = [];
 
                 snap.docChanges.forEach(change => {
@@ -51,10 +64,10 @@ function getCard(collection, id){
     })
 }
 
-function changeScoresQuizzes(id, {l,r}){
+function changeScoresPolls(id, {l,r}){
     // Create a reference to the SF doc.
     if(!id) return
-    var cardRef = db.collection("quizzes").doc(`${id}`);
+    var cardRef = db.collection("polls").doc(`${id}`);
 
     // Uncomment to initialize the doc.
     // sfDocRef.set({ population: 0 });
@@ -82,14 +95,14 @@ function changeScoresQuizzes(id, {l,r}){
 }
 
 
-var getPoolsIds = (query) => (models) => {
+var getQuizzesIds = (query) => (models) => {
     
     return new Promise((resolve, reject) => {
-        db.collection('pools').onSnapshot(snap => {
-           
+        db.collection(`${query}`).orderBy("order").onSnapshot(snap => {
+                
+                if(snap.empty) return resolve([]);
             // acc.push({id: snap.docs[0].id,...snap.docs[0].data()});
                 let ids = [];
-
                 snap.docChanges.forEach(change => {
                     if(change.type == 'added' ){
                         ids.push(change.doc.id);
@@ -270,11 +283,69 @@ function getHistory(id){
     })
 }
 
+
+var menusCache = null ;
+function getCatsMenu(){
+    if( menusCache ) return Promise.resolve(menusCache)
+    return new Promise(resolve => {
+        let userRef = db.collection('catsMenu');
+        userRef.get().then(doc => {
+            if( !doc.empty ){
+                let menus = doc.docs.find(menu => menu.id == 'v1');
+                menus = menus.data() || {};
+                menusCache = menus;
+                resolve(menus);
+            }else{
+                resolve({});
+            }
+        });
+    })
+}
+
+//var catsCache = null;
+function getCatsCards(path){
+    //if( catsCache ) return Promise.resolve(catsCache)
+    return new Promise(resolve => {
+
+        let userRef = path.split('/').reduce((db, p, idx) => {
+            if(idx % 2){
+                return db.doc(p)
+            }else{
+                return db.collection(p)
+            }
+        }, db);
+        
+        userRef.get().then(async doc => {
+            
+            let allDocs = [];
+            if( 'exists' in doc && doc.exists){
+                let docData = doc.data();
+                let docDataColl = []
+                if('collections' in docData){
+                    docDataColl = await docData.collections.reduce(async(docs, coll ,idx) => {
+                        let oldDocs = await docs;
+                        let newDoc =  await getCatsCards(`${path}/${coll}`);
+                        return Promise.resolve(oldDocs.concat(newDoc))
+                        }, Promise.resolve([]))
+                }
+                docDataColl.push(docData)
+                return resolve(docDataColl)
+
+            }
+            if( 'empty' in doc && !doc.empty ){
+                let cats = doc.docs.map(cat => cat.data());
+                //catsCache = cats;
+                return resolve(cats);
+            }
+        });
+    })
+}
+
 const Api = {
     getCard,
     getQuizzesIds,
-    getPoolsIds,
-    changeScoresQuizzes,
+    getPollsIds,
+    changeScoresPolls,
     getUserById,
     auth,
     GoogleAuthProvider,
@@ -287,6 +358,8 @@ const Api = {
     saveWallet,
     saveUserData,
     loadUserData,
-    getHistory
+    getHistory,
+    getCatsMenu,
+    getCatsCards
 }
 export default Api;

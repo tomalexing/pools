@@ -8,7 +8,6 @@ import DevTools from "mobx-react-devtools";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
-import Cards from "./models/Cards";
 import registerServiceWorker from './registerServiceWorker';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -42,12 +41,9 @@ const Card = (props) => <Lazy {...props} load={() => import('./components/CardWr
 const OneCard = (props) => <Lazy {...props} load={() => import('./components/OneCard')}/>
 const Dashboard = (props) => <Lazy {...props} load={() => import('./components/Dashboard')}/>
 const Explore = (props) => <Lazy {...props} load={() => import('./components/Explore')}/>
+const Cats = (props) => <Lazy {...props} load={() => import('./components/Cats')}/>
+const DCard = (props) => <Lazy {...props} load={() => import('./components/DCard')}/>
 
-const storeQuiz = new Cards({getIds: Api.getQuizzesIds(), cardSlug: 'quizzes', dashTitle: 'Quiz: IQ test', dashOutput: 'number', tryAgainIsCleanPrevious: false});
-const storePool = new Cards({getIds: Api.getPoolsIds(), cardSlug: 'pools',
-dashTitle: 'Pool: Best', dashOutput: 'iqValue', tryAgainIsCleanPrevious: true});
-
-Auth.stores.push(storeQuiz, storePool)
 
 
 const theme = createMuiTheme(
@@ -224,9 +220,7 @@ class App extends React.Component{
     }
       
     render() {
-
         const { classes } = this.props;
-
         return (
             <div className={"App".concat(' ' + classes.mainScreen)} >
                 <Header />
@@ -260,23 +254,28 @@ render(<Router>
                 <ReactCSSTransitionGroup
                     transitionName={"fade"}
                     transitionAppear={false}
-                    transitionEnterTimeout={300}
-                    transitionLeaveTimeout={300}
+                    transitionEnterTimeout={200}
+                    transitionLeaveTimeout={200}
                 >
                 
                     <Route path={'/'} exact location={location} key={getUniqueKey()} component={() => <App><Explore/></App>}/>
 
-                    <Route path={'/polls'} location={location} key={getUniqueKey()} component={() =>        <App >
+                    { /* <Route path={'/polls'} location={location} key={getUniqueKey()} component={() =>        <App >
                             <div>
-                                <Card  key="quizzes" store={storeQuiz} />
+                                <Card  key="polls" store={storePoll} />
                             </div>
                         </App>}/>
+                    */}
                     
-                    <Route path={'/quizzes'} location={location} key={getUniqueKey()}  component={() => <App><Card key="pools" store={storePool} /></App>}/>
+                    <Route path={'/quizzes/:id'} location={location} key={getUniqueKey()}  component={() => <App><DCard key="quizzes" /></App>}/>
+
+                    <Route path={'/polls/:id'} location={location} key={getUniqueKey()}  component={() => <App><DCard key="polls" /></App>}/>
                     
                     <Route path={'/card/:id'} location={location} key={getUniqueKey()} exact component={() => <App><OneCard key="OneCard"/></App>}/>
                     
                     <Route path={'/term-of-use'} location={location} key={getUniqueKey()} component={() => <App><Term /></App>}/>
+
+                    <Route path={'/cats'}  key={getUniqueKey()} component={() => <App fullscreen={true} ><Cats match={{ params: { slug: '/' }, url: "" }} /></App>}/>
                     
                     <PrivateRoute role={['user']} path={'/dashboard'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} nofooter={true}><Dashboard /></App>} />
                     
@@ -289,8 +288,6 @@ render(<Router>
 
 
 //registerServiceWorker();
-window.storeQuiz = storeQuiz;
-window.storePool = storePool;
 
 // Chech for safari privat mode
 if (typeof localStorage === 'object') {

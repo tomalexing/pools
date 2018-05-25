@@ -4,10 +4,10 @@ import {observable, action} from 'mobx';
 import { observer }  from 'mobx-react';
 import { Link } from 'react-router-dom';
 import { listener } from './../utils';
-import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import quizzesSVG from './../assets/quizzes.svg';
-import poolsSVG from './../assets/pools.svg';
+import pollsSVG from './../assets/polls.svg';
 
 const styles = theme => ({
 
@@ -105,22 +105,21 @@ const styles = theme => ({
 class Explore extends React.Component {
 
     constructor(props) {
-        super(props)
-
+        super(props);
     }
 
     @observable explore = [{
         title: 'Quizes',
         description: 'On this page, you will find different online tests for you to try.',
-        to:'/quizzes',
+        to:'/cats/quizzes',
         btn: 'Choose test',
         img: quizzesSVG
     },{
         title: 'Polls',
         description: 'Discover answers to the most provocative question.',
-        to:'/polls',
+        to:'/cats/polls',
         btn: 'Discover',
-        img: poolsSVG
+        img: pollsSVG
     }]
 
     componentDidMount(){

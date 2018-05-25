@@ -10,8 +10,8 @@ import Divider from '@material-ui/core/Divider';
 
 import { LazyImage, lerp, listener, getIMP } from './../utils';
 
+import Poll from './Poll'
 import Quiz from './Quiz'
-import Pool from './Pool'
 
 import Share from './Share'
 import Login from './Login'
@@ -72,7 +72,7 @@ const styles = theme => ({
     },
 
 
-    quizBodyResult: {
+    cardBodyResult: {
         display: 'flex',
         flexDirection: 'column',
         padding: '23px 30px',
@@ -160,7 +160,7 @@ class Card extends React.Component {
         super(props);
 
         let cardPlace = this.props.cardPlace;
-        
+
         if(cardPlace == 'currentCard' && props.startCard)
             props.store.current = props.startCard - 1;
 
@@ -195,7 +195,7 @@ class Card extends React.Component {
     componentDidMount(){
         let cardPlace = this.props.cardPlace;
         if(this.props.store[cardPlace]) { 
-            this.props.store[cardPlace].ref = this.refs.quiz;
+            this.props.store[cardPlace].ref = this.refs.card;
             this.props.store[cardPlace].reactClass = this;
         }
 
@@ -246,7 +246,7 @@ class Card extends React.Component {
             this.props.store.nextCard.inmovable = true
         }
 
-        if(cardPlace == 'currentCard' &&  this.props.store.currentCard &&  this.props.store.currentCard.cardType == 'Quiz'){
+        if(cardPlace == 'currentCard' &&  this.props.store.currentCard &&  this.props.store.currentCard.cardType == 'Poll'){
                 this.props.store.currentCard.inmovable = false
         }
     }
@@ -254,7 +254,7 @@ class Card extends React.Component {
     componentDidUpdate(){
         let cardPlace = this.props.cardPlace;
         if(this.props.store[cardPlace]) { 
-            this.props.store[cardPlace].ref = this.refs.quiz;
+            this.props.store[cardPlace].ref = this.refs.card;
             this.props.store[cardPlace].reactClass = this;
         }
 
@@ -319,16 +319,16 @@ class Card extends React.Component {
                 return new Promise(requestAnimationFrame);
             })
             .then( async _ => {
-                if(!that.refs.quiz) return
+                if(!that.refs.card) return
 
-                let {left, top, width, height} = that.refs.quiz.getBoundingClientRect();
+                let {left, top, width, height} = that.refs.card.getBoundingClientRect();
                 
                 if(width == 0 || height == 0){
                     setTimeout(this.adjustStyle, 1000);
                 }
 
-                if(that.refs.quiz.parentElement.style.position == "relative"){
-                    let {top: parentTop} = that.refs.quiz.parentElement.getBoundingClientRect();
+                if(that.refs.card.parentElement.style.position == "relative"){
+                    let {top: parentTop} = that.refs.card.parentElement.getBoundingClientRect();
                 }else{
                     var parentTop = 0;
                 }
@@ -350,13 +350,13 @@ class Card extends React.Component {
             return
         }
 
-        this.refs.quiz.style.transition = 'transform .35s ease-in-out';
+        this.refs.card.style.transition = 'transform .35s ease-in-out';
         this.props.store.canMakeAction = false;
 
         return requestAnimationFramePromise()
             .then( async _ => {
-                that.refs.quiz.style.transform = target;
-                return transitionEndWithStrictPromise(that.refs.quiz, 'transform');
+                that.refs.card.style.transform = target;
+                return transitionEndWithStrictPromise(that.refs.card, 'transform');
             })
             .then(_ => requestAnimationFramePromise())
             .then(_ => {
@@ -376,26 +376,26 @@ class Card extends React.Component {
             }) // pull next card it back
             .then( async _ => {
                 if( opt.action == 'none') {
-                    that.refs.quiz.style.transition = ''; // set current card back
+                    that.refs.card.style.transition = ''; // set current card back
                     return
                 }
                 // change current card
-                that.refs.quiz.style.transition = 'initial';
+                that.refs.card.style.transition = 'initial';
                 that.props.store.current = that.props.store.current + 1;
-                that.refs.quiz.style.opacity = 0;
+                that.refs.card.style.opacity = 0;
             })
             .then( async _ => requestAnimationFramePromise())
             .then( async _ => requestAnimationFramePromise())
             .then(async _ => {
                 
-                that.refs.quiz.style.transform = ''; // set current card back
+                that.refs.card.style.transform = ''; // set current card back
                     // change next cart to eliminate flicker efect on photos
             })
             .then( async _ => requestAnimationFramePromise())
             .then( async _ => requestAnimationFramePromise())
             .then( async _ => {
                 if( opt.action == 'none') return
-                that.refs.quiz.style.opacity = 1;
+                that.refs.card.style.opacity = 1;
                 if(!that.props.store.nextIsEnd){
                     that.props.store.next = that.props.store.next + 1;
                 }else{
@@ -522,7 +522,7 @@ class Card extends React.Component {
         const deltaX = (event.clientX || event.touches[0].clientX) - this.startX;
         const deltaY = (event.clientY || event.touches[0].clientY) - this.startY;
       
-        this.refs.quiz.style.transform = `rotate(${this.props.store._rotationLerp(deltaX)}deg) translate(${deltaX}px, ${deltaY}px)`;
+        this.refs.card.style.transform = `rotate(${this.props.store._rotationLerp(deltaX)}deg) translate(${deltaX}px, ${deltaY}px)`;
         
 
         event.preventDefault();
@@ -574,13 +574,13 @@ class Card extends React.Component {
         }
         
         if(!card || typeof card.then == 'function'){
-            return(<div ref='quiz'/>);
+            return(<div ref='card'/>);
         }
 
         if(this.props.store.IsEnd){
             this.loadProgress();
             return(
-                <div ref='quiz'
+                <div ref='card'
                 className={[classes.card, cardPlace].join(' ')} style={{ ...this.props.store.getPositionStyles, ...scale}}>
                     <Login open={this.open} logout={this.getLogOut} close={this.closeLoginModal}/>
 
@@ -590,7 +590,7 @@ class Card extends React.Component {
                                 Congratulations!
                             </Typography>
                         </div>
-                        <div className={classes.quizBodyResult}>
+                        <div className={classes.cardBodyResult}>
 
                             { this.props.store.dashOutput == 'number' &&  // Quiz
                             <div className={classes.row + ' ' + classes.responseRow}>
@@ -626,7 +626,7 @@ class Card extends React.Component {
                                 </div> }
                             </div>}
 
-                            { this.props.store.dashOutput == 'iqValue' &&  // Pools
+                            { this.props.store.dashOutput == 'iqValue' &&  // Quizs
                                 <div className={classes.row + ' ' + classes.responseRow}>
                                     <div className={classes.col}>
                                         <Typography variant="body1" >
@@ -685,7 +685,7 @@ class Card extends React.Component {
         }
 
         return (
-            <div ref='quiz' className={[classes.card, cardPlace].join(' ')} style={{ ...this.props.store.getPositionStyles, ...scale}}>
+            <div ref='card' className={[classes.card, cardPlace].join(' ')} style={{ ...this.props.store.getPositionStyles, ...scale}}>
                  {/*onMouseDown = {this.startDrag} 
                  onTouchStart = {this.startDrag} */}
                 <div
@@ -697,8 +697,8 @@ class Card extends React.Component {
                     
                 </div>
 
-                { card.cardType == 'Quiz' && <Quiz store={this.props.store} quiz={card} next={this.next} prev={this.prev} finish={this.finish}/> }
-                { card.cardType == 'Pool' && <Pool store={this.props.store} pool={card} next={this.next} prev={this.prev} finish={this.finish} currentIsEnd={this.props.store.currentIsEnd} /> }
+                { card.cardType == 'poll' && <Poll store={this.props.store} poll={card} next={this.next} prev={this.prev} finish={this.finish}/> }
+                { card.cardType == 'quiz' && <Quiz store={this.props.store} Quiz={card} next={this.next} prev={this.prev} finish={this.finish} currentIsEnd={this.props.store.currentIsEnd} /> }
 
             </div>
         )

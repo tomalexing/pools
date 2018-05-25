@@ -32,9 +32,6 @@ import Redirect from 'react-router-dom/Redirect';
 
 import Login from './Login';
 
-// const isActive = (match, location,to) => {
-//   return ['/quizzes','/pools'].some(str => location.pathname.includes(str))
-// }
 
 const styles = theme => ({
     loginBtn: {

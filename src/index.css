@@ -54,7 +54,7 @@ div::-webkit-scrollbar-thumb:hover {
 
 .fade-enter.fade-enter-active{
   opacity: 1;
-  transition: opacity 500ms ease-in;
+  transition: opacity 200ms ease-in;
 }
 
 .fade-leave{
@@ -63,5 +63,5 @@ div::-webkit-scrollbar-thumb:hover {
 
 .fade-leave.fade-leave-active{
   opacity: 0.01;
-  transition: opacity 500ms ease-in;
+  transition: opacity 200ms ease-in;
 }

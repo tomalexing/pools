@@ -1,7 +1,7 @@
 import { observable, computed, action, autorun } from "mobx";
 import {LazyImagem, lerp} from '../utils'
 import Quiz from "./Quiz";
-import Pool from "./Pool";
+import Poll from "./Poll";
 import Card from "./Card";
 import {loadFromStore , saveToStore} from "./../services/localDb";
 
@@ -18,8 +18,8 @@ export default class Cards {
   bindModel = (getIds) => {
     let that = this;
 
-    getIds(this.quizesModel).then( ids =>{ 
-      that.quizes = ids;
+    getIds(this.cardsModel).then( ids =>{ 
+      that.cards = ids;
     })
   }
 
@@ -28,12 +28,12 @@ export default class Cards {
 
   @observable canMakeAction = true;
   
-  @observable quizes = [];
-  @observable quizesModel = new Map();
+  @observable cards = [];
+  @observable cardsModel = new Map();
   @observable positionStyles = {};
   @observable IsEnd = false;
 
-  initialNumber = this.quizes.length;
+  initialNumber = this.cards.length;
   isStack = false;
 
   @computed
@@ -81,34 +81,34 @@ export default class Cards {
 
   @computed
   get nextIsEnd() {
-    return this.next > this.quizes.length - 2;
+    return this.next > this.cards.length - 2;
   }
 
   @computed
   get currentIsEnd() {
-    return this.current > this.quizes.length - 2;
+    return this.current > this.cards.length - 2;
   }
     
   @computed
   get currentCard() {
       
-      if(this.current > this.quizes.length -1 || this.current < 0) return null
+      if(this.current > this.cards.length -1 || this.current < 0) return null
 
 
-      if( !this.quizesModel.has( this.previuos ) ){
+      if( !this.cardsModel.has( this.previuos ) ){
         let card = new Card(this.cardSlug), cards = this;
-        card.retrieveCard(this.quizes[this.previuos], this.previuos + 1).then( card => {
-          cards.quizesModel.set(this.previuos, card);
+        card.retrieveCard(this.cards[this.previuos], this.previuos + 1).then( card => {
+          cards.cardsModel.set(this.previuos, card);
         })
       }
 
 
-      if( this.quizesModel.has(this.current) ){
-          return this.quizesModel.get(this.current)
+      if( this.cardsModel.has(this.current) ){
+          return this.cardsModel.get(this.current)
       }else{ 
           let card = new Card(this.cardSlug), cards = this;
-          return card.retrieveCard(this.quizes[this.current], this.current + 1).then( card => {
-            cards.quizesModel.set(cards.current, card);
+          return card.retrieveCard(this.cards[this.current], this.current + 1).then( card => {
+            cards.cardsModel.set(cards.current, card);
             return card
           }).then(card => card)
       }
@@ -116,14 +116,14 @@ export default class Cards {
 
   @computed
   get allCardsNumber() {
-    return this.quizes.length
+    return this.cards.length
   }
 
   @computed
   get pickedNumber() {
     var number = 0;
-    for (let [key, card] of this.quizesModel) {
-      if(card.cardType == "Quiz" && !!card.voteSetted){
+    for (let [key, card] of this.cardsModel) {
+      if(card.cardType == "poll" && !!card.voteSetted){
         number++;
       }
     }
@@ -131,7 +131,7 @@ export default class Cards {
   }
 
   ditch(){
-    for (let [key, card] of this.quizesModel) {
+    for (let [key, card] of this.cardsModel) {
       card.isInfoVisible = false;
       card.selectedValue = null;
       card.showCorrectAnswer = false;
@@ -139,13 +139,13 @@ export default class Cards {
   }
   
   clear(){
-    this.quizesModel.clear()
+    this.cardsModel.clear()
 
   }
 
   clearProgress(){
     let cards = this;
-    for (let [key, card] of this.quizesModel) {
+    for (let [key, card] of this.cardsModel) {
       if(this.tryAgainIsCleanPrevious){
         card.selectedValue = null;
         card.showCorrectAnswer = false;
@@ -178,15 +178,15 @@ export default class Cards {
   get nextCard() {
 
       let thisCurrent = this.next;
-      if(thisCurrent > this.quizes.length - 1  || thisCurrent < 0) return null
+      if(thisCurrent > this.cards.length - 1  || thisCurrent < 0) return null
 
 
-      if( this.quizesModel.has(thisCurrent) ){
-          return this.quizesModel.get(thisCurrent)
+      if( this.cardsModel.has(thisCurrent) ){
+          return this.cardsModel.get(thisCurrent)
       }else{
           let card = new Card(this.cardSlug), cards = this;
-          return card.retrieveCard(this.quizes[thisCurrent], thisCurrent + 1).then( card => {
-            cards.quizesModel.set(thisCurrent, card);
+          return card.retrieveCard(this.cards[thisCurrent], thisCurrent + 1).then( card => {
+            cards.cardsModel.set(thisCurrent, card);
             return card
           }).then(card => card)
     
@@ -222,7 +222,6 @@ export default class Cards {
     let cards = this;
     loadFromStore(cards.cardSlug).then(val => {
       val.current = cards.current
-
       saveToStore(cards.cardSlug, val);
     }, _ => {
         saveToStore(cards.cardSlug, {

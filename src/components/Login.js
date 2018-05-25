@@ -29,7 +29,7 @@ import Auth from "./../models/Auth";
 import Redirect from 'react-router-dom/Redirect';
 
 // const isActive = (match, location,to) => {
-//   return ['/quizzes','/pools'].some(str => location.pathname.includes(str))
+//   return ['/quizzes','/polls'].some(str => location.pathname.includes(str))
 // }
 
 const styles = theme => ({
@@ -114,6 +114,7 @@ const styles = theme => ({
 });
 
 const ITEM_HEIGHT = 48;
+
 
 
 @withStyles(styles)
@@ -213,21 +214,19 @@ class Login extends React.Component {
             let ctx = {};
             if(user){
                 Api.loadUserData(user.uid).then( _ => {
-                    
                     _self.ctx = {
                         redirect: true,
                         pathname: '/dashboard'
                     }
                 }).then( _ => {
-                    Auth.stores.map(store => store.load()); 
-                    Auth.stores.map(store => store.ditch()); 
-                    
+                    Auth.stores.map(store => store.load());
+                    Auth.stores.map(store => store.ditch());
                 });
 
             }
         });
-        
-    }).catch(function(error) {
+    }).catch(function(error){
+    
       console.log(error);
       // Handle Errors here.
       var errorCode = error.code;

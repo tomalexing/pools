@@ -7,7 +7,7 @@ import { listener } from './../utils';
 
 const styles = theme => ({
 
-    quizWrapper:{
+    cardWrapper:{
         display: 'flex',
         margin: 'auto',
         // height: '100%',
@@ -18,7 +18,7 @@ const styles = theme => ({
 
 @withStyles(styles)
 @observer
-class QuizWrapper extends React.Component {
+class CardWrapper extends React.Component {
 
     constructor(props) {
         super(props)
@@ -66,7 +66,7 @@ class QuizWrapper extends React.Component {
         }
 
         return (
-            <div className={classes.quizWrapper}>
+            <div className={classes.cardWrapper}>
                 <Card startCard={this.current} cardPlace='currentCard' store={this.props.store}/>
                 <Card startCard={this.next} cardPlace='nextCard' store={this.props.store}/>
             </div>
@@ -74,4 +74,4 @@ class QuizWrapper extends React.Component {
     }
 }
 
-export default QuizWrapper;
+export default CardWrapper;

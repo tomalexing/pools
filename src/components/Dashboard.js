@@ -49,7 +49,7 @@ const drawerWidth = 170;
 
 const styles = theme => ({
 
-    quizWrapper:{
+    cardWrapper:{
         display: 'flex',
         margin: 'auto',
         height: '100%',
@@ -151,7 +151,7 @@ class Dashboard extends React.Component {
         let {classes} = this.props;
 
         return (
-            <div className={classes.quizWrapper}>
+            <div className={classes.cardWrapper}>
             <aside className={classes.daside}>
             <Drawer
                 variant="permanent"
@@ -267,7 +267,7 @@ const stylesCommon = theme => ({
     delimeter:{},
     impNum:{},
 
-    quizBodyResult: {
+    cardBodyResult: {
         padding: '23px 30px',
         backgroundColor: 'white',
         overflow: 'hidden'
@@ -373,7 +373,7 @@ class Common extends React.Component{
                                 {this.progress[idx] && this.progress[idx].number} IMP
                             </Typography>
                         </div>
-                        <div className={classes.quizBodyResult}>
+                        <div className={classes.cardBodyResult}>
                             <Typography variant="body1" gutterBottom>
                                 {store.dashTitle}
                             </Typography>
@@ -436,7 +436,7 @@ const stylesAccount = theme => ({
     delimeter:{},
     impNum:{},
 
-    quizBodyResult: {
+    cardBodyResult: {
         padding: '23px 30px',
         backgroundColor: 'white',
         overflow: 'hidden'
@@ -580,7 +580,7 @@ const stylesAccount = theme => ({
         marginBottom: 5,
         borderRadius: 74,
     },
-    
+
     editBtn:{
         float: 'right',
         borderRadius: 74,
@@ -686,7 +686,7 @@ class Account extends React.Component{
                     <span className={classes.delimeter}></span>
 
                 </div>
-                <div className={classes.quizBodyResult}>
+                <div className={classes.cardBodyResult}>
                     <div className={classes.account}>
                         <div className={classes.accountPic}>
                             <img src={Auth.photoURL} />
@@ -753,7 +753,7 @@ class Account extends React.Component{
                     <span className={classes.delimeter}></span>
 
                 </div>
-                <div className={classes.quizBodyResult}>
+                <div className={classes.cardBodyResult}>
                     <div className={classes.history}>
                         <div className={classes.row}>
                             <div className={classes.col}>
@@ -851,7 +851,7 @@ const stylesContact = theme => ({
     delimeter:{},
     impNum:{},
 
-    quizBodyResult: {
+    cardBodyResult: {
         padding: '23px 30px',
         backgroundColor: 'white',
         overflow: 'hidden'
@@ -978,7 +978,7 @@ class Contacts extends React.Component{
                     <span className={classes.delimeter}></span>
 
                 </div>
-                <div className={classes.quizBodyResult}>
+                <div className={classes.cardBodyResult}>
                     
                     <Typography variant="body1" className={classes.headerField} >Don't hesitate to contact us if you have any question
                     </Typography>

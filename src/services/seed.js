@@ -1,12 +1,14 @@
 import fire from './../config'
 import firebase from 'firebase';
 import 'firebase/firestore';
+import { getUniqueKey  } from './../utils';
+
 const settings = { timestampsInSnapshots: true};
 let db = fire.firestore();
 db.settings(settings)
 
-const quizes = [{
-          "answers" : {
+const polls = [{
+        "answers" : {
             l: {
               "quantity" : 61,
               "srcImg" : './assets/simpsons.jpg',
@@ -18,9 +20,10 @@ const quizes = [{
               "value" : "South Park"
             }
           },
-          "category" : "default",
+          "category" : "common",
           "question" : "What cartoon is funnier?",
-          "cardType": "Quiz" 
+          "cardType": "poll",
+          "order" : 1
         },
         {
           "answers" : {
@@ -35,9 +38,10 @@ const quizes = [{
               "value" : "Mountian"
             }
           },
-          "category" : "default",
+          "category" : "common",
           "question" : "Where would you like to spend your vacation?",
-          "cardType": "Quiz" 
+          "cardType": "poll",
+          "order" : 2 
         },
         {
           "answers" : {
@@ -54,7 +58,8 @@ const quizes = [{
           },
           "category" : "new",
           "question" : "What movie do you like more?",
-           "cardType": "Quiz" 
+          "cardType": "poll" ,
+          "order" : 3
         },
         {
           "answers" : {
@@ -71,7 +76,8 @@ const quizes = [{
           },
           "category" : "new",
           "question" : "Which sports brand do you prefer?",
-           "cardType": "Quiz" 
+          "cardType": "poll",
+          "order" : 4
         },
         {
           "answers" : {
@@ -88,7 +94,8 @@ const quizes = [{
           },
           "category" : "new",
           "question" : "Eternal dispute subject: a snowboard or skis?",
-           "cardType": "Quiz" 
+          "cardType": "poll",
+          "order" : 5
         },
         {
           "answers" : {
@@ -105,7 +112,8 @@ const quizes = [{
           },
           "category" : "new",
           "question" : "What do you like much?",
-           "cardType": "Quiz" 
+           "cardType": "poll",
+           "order" : 6
         },
         {
           "answers" : {
@@ -122,7 +130,8 @@ const quizes = [{
           },
           "category" : "new",
           "question" : "What device do you use?",
-           "cardType": "Quiz" 
+           "cardType": "poll",
+           "order" : 7
         },
         {
           "answers" : {
@@ -137,9 +146,10 @@ const quizes = [{
               "value" : "Chevrolet Camaro"
             }
           },
-          "category" : "default",
+          "category" : "common",
           "question" : "What car is cooler?",
-           "cardType": "Quiz" 
+           "cardType": "poll",
+           "order" : 8
         },
         {
           "answers" : {
@@ -154,9 +164,10 @@ const quizes = [{
               "value" : "Mechanical"
             }
           },
-          "category" : "default",
+          "category" : "common",
           "question" : "What kind of gearbox you choose?",
-           "cardType": "Quiz" 
+           "cardType": "poll",
+           "order" : 9
         },
         {
           "answers" : {
@@ -173,12 +184,13 @@ const quizes = [{
           },
           "category" : "new",
           "question" : "What band do you like more?",
-           "cardType": "Quiz"
+           "cardType": "poll",
+           "order" : 10
         }
   ];
 
 
-const pools = [
+const quizzes = [
         {
           "answers" : [
             'Dog',
@@ -187,10 +199,11 @@ const pools = [
             'Snake',
             'Elephant'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "Which one of the five is least like the other four?",
           "answerCorrect": 3,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 7
         },
         {
           "answers" : [
@@ -200,10 +213,11 @@ const pools = [
             '26',
             '31'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "Which number should come next in the series?<br/>1 - 1 - 2 - 3 - 5 - 8 - 13",
           "answerCorrect": 2,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 2
         },
         {
           "answers" : [
@@ -213,10 +227,11 @@ const pools = [
             '51462',
             '15264'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "Which one of the five choices makes the best comparison? <br/> PEACH is to HCAEP as 46251 is to:",
           "answerCorrect": 4,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 3
         },
         {
           "answers" : [
@@ -226,10 +241,11 @@ const pools = [
             '26',
             '28'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "Mary, who is sixteen years old, is four times as old as her brother. How old will Mary be when she is twice as old as her brother?",
           "answerCorrect": 1,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 4
         },
         {
           "answers" : [
@@ -239,10 +255,11 @@ const pools = [
             'FIFTEEN',
             'THIRTY'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "Which one of the numbers does not belong in the following series?<br/>2 - 3 - 6 - 7 - 8 - 14 - 15 - 30",
           "answerCorrect": 2,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 5
         },
         {
           "answers" : [
@@ -252,10 +269,11 @@ const pools = [
             '4',   
           ],
           "questionSrcImg": './assets/q5.png',
-          "category" : "default",
+          "category" : "common",
           "question" : "Which larger shape would be made if the two sections are fitted together?",
           "answerCorrect": 2,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 6
         },
         {
           "answers" : [
@@ -265,10 +283,11 @@ const pools = [
             'Blossom',
             'Bark'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "Which one of the five choices makes the best comparison?<br/>Finger is to Hand as Leaf is to:",
           "answerCorrect": 0 ,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 1
         },
         {
           "answers" : [
@@ -278,10 +297,11 @@ const pools = [
             'River',
             'Country'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "If you rearrange the letters &quot;CIFAIPC&quot; you would have the name of a(n):",
           "answerCorrect": 2,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 8
         },
         {
           "answers" : [
@@ -291,10 +311,11 @@ const pools = [
             '25',
             '50'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "Choose the number that is 1/4 of 1/2 of 1/5 of 200:",
           "answerCorrect": 1,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 9
         },
         {
           "answers" : [
@@ -304,10 +325,11 @@ const pools = [
             '4',   
           ],
           "questionSrcImg": './assets/q19.png',
-          "category" : "default",
+          "category" : "common",
           "question" : "Which of the figures below the line of drawings best completes the series?",
           "answerCorrect": 2,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 10
         },
         {
           "answers" : [
@@ -317,20 +339,22 @@ const pools = [
             '5',
             '6'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "John needs 13 bottles of water from the store. John can only carry 3 at a time. What's the minimum number of trips John needs to make to the store?",
           "answerCorrect": 3,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 11
         },
         {
           "answers" : [
             'True',    
             'False'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "If all Bloops are Razzies and all Razzies are Lazzies, all Bloops are definitely Lazzies?",
           "answerCorrect": 0,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 12
         },
         {
           "answers" : [
@@ -340,10 +364,11 @@ const pools = [
             'Insolent',
             'Reliable'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "Choose the word most similar to &quotTrustworthy&quot;:",
           "answerCorrect": 4,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 13
         },
          {
           "answers" : [
@@ -353,10 +378,11 @@ const pools = [
             'City',
             'Ocean'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "If you rearrange the letters &quot;LNGEDNA&quot; you have the name of a(n):",
           "answerCorrect": 1,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 14
         },
         {
           "answers" : [
@@ -366,10 +392,11 @@ const pools = [
             '29',    
             '48'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "Which one of the numbers does not belong in the following series?<br/>1 - 2 - 5 - 10 - 13 - 26 - 29 - 48",
           "answerCorrect": 4,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 15
         },
         {
           "answers" : [
@@ -379,10 +406,11 @@ const pools = [
             '200',
             '1600'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "Ralph likes 25 but not 24; he likes 400 but not 300; he likes 144 but not 145. Which does he like:",
           "answerCorrect": 4,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 16
         },
         {
           "answers" : [
@@ -393,10 +421,11 @@ const pools = [
             '28'
           ],
           "questionSrcImg": './assets/q16.png',
-          "category" : "default",
+          "category" : "common",
           "question" : "How many four-sided figures appear in the diagram below?",
           "answerCorrect": 3,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 17
         },
         {
         "answers" : [
@@ -406,10 +435,11 @@ const pools = [
             '64',
             '99'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "What is the missing number in the sequence shown below?<br/>1 - 8 - 27 - ? - 125 - 216",
           "answerCorrect": 3,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 18
         },
         {
         "answers" : [
@@ -419,10 +449,11 @@ const pools = [
             'Statue',
             'Flower'
           ],
-          "category" : "default",
+          "category" : "common",
           "question" : "Which one of the following things is the least like the others?",
           "answerCorrect": 4,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 19
         },
         {
           "answers" : [
@@ -433,37 +464,163 @@ const pools = [
             '5'
           ],
           "questionSrcImg": './assets/q20.png',
-          "category" : "default",
+          "category" : "common",
           "question" : "Which of the figures below the line of drawings best completes the series?",
           "answerCorrect": 4,
-          "cardType": "Pool",
+          "cardType": "quiz",
+          "order" : 20
         },
 ];
 
 
 function setQuizzes(){
-    console.log("Add %s quizzes", quizes.length)
-
-    for(let i = 0; i < quizes.length; i++){
-        db.collection('quizzes').add({
-        ...quizes[i],
+    console.log("Add %s quizzes", quizzes.length)
+    db.collection(`quizzes`).doc().onSnapshot(doc => {
+      for(let i = 0; i < quizzes.length; i++){
+        db.collection(`quizzes`).doc(doc.id).collection(`v1`).add({
+        ...quizzes[i],
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
         })
-
-    }
+      }
+    })
+  
 }
 
-function setPools(){
-    console.log("Add %s polles", pools.length)
+function setPolls(){
+    console.log("Add %s polles", polls.length)
 
-    for(let i = 0; i < pools.length; i++){
-        db.collection('pools').add({
-        ...pools[i],
+    db.collection(`polls`).doc().onSnapshot(doc => {
+      for(let i = 0; i < polls.length; i++){
+        db.collection(`polls`).doc(doc.id).collection(`v1`).add({
+        ...polls[i],
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
         })
+      }
+    })
 
-    }
 }
 
-// setPools()
+function setCats(){
+  console.log("Add categories.");
+
+    db.collection('cats').doc('polls').set({
+      type: 'cat',
+      title: 'Poll',
+      slug: 'polls',
+      desc: 'Discover answers to the most provocative question.',
+      img: null,
+      btn: 'Discover',
+      link: 'polls',
+      cardtype: 'Poll',
+      collections: ['common','movies'] 
+    })
+    
+    
+    db.collection('cats').doc('quizzes').set({
+      type: 'cat',
+      title: 'Quizes',
+      slug: 'quizzes',
+      desc: 'On this page, you will find different online tests for you to try.',
+      img: null,
+      btn: 'Choose test',
+      link: 'quizzes',
+      cardtype: 'Quiz',
+      collections: ['iq','blockchain']
+    })
+
+    
+    db.collection('cats/quizzes/iq').doc().set({
+        type: 'term',
+        title: 'IQ test',
+        linksite: 'quizi.io',
+        desc: 'The average IQ is 100. Have you wondered what your IQ score is?',
+        cardtype: 'Quiz',
+        number: 20,
+        btn: 'Pass quiz',
+        slug: 'quizzes/iq',
+        img: null,
+        link: '/polls/p0Z9gdWJZT6gfACjXbOJ',
+        reward: 10,
+      });
+    
+    db.collection('cats/quizzes/blockchain').doc().set({
+      type: 'term',
+      title: 'Impleum Platform',
+      linksite: 'impleum.com',
+      desc: 'Impleum is a powerful and scalable path to develop DApps.',
+      cardtype: 'Quiz',
+      number: 20,
+      btn: 'Pass quiz',
+      slug: 'quizzes/blockchain',
+      img: './assets/impleum.png',
+      link: '/polls/p0Z9gdWJZT6gfACjXbOJ',
+      reward: 10,
+    })
+    db.collection('cats/polls/common').doc().set({
+      type: 'term',
+      title: 'Common Polls',
+      linksite: 'quizi.io',
+      desc: 'Discover answers to the most provocative question.',
+      cardtype: 'Poll',
+      number: 20,
+      btn: 'Pass polls',
+      slug: 'polls/common',
+      img: './assets/polls.png',
+      link: '/quizzes/hikPbZcRerZ5Jw4LajWr',
+      reward: 20,
+    })
+    db.collection('cats/polls/movies').doc().set({
+      type: 'term',
+      title: 'Raters App',
+      linksite: 'ratersapp.com',
+      desc: 'Social platform where you can see what your friends are watching.',
+      cardtype: 'Poll',
+      number: 10,
+      btn: 'Pass polls',
+      slug: 'polls/movies',
+      img: './assets/raters.png',
+      link: '/quizzes/hikPbZcRerZ5Jw4LajWr',
+      reward: 10,
+    })
+  }
+    
+function setCatMenu(){
+
+    console.log("Add categories.")
+    db.collection('catsMenu').doc('v1').set({
+      polls: {
+          name :'Polls',
+          slug: 'polls',
+          sub: [
+            {
+              name :'Common',
+              slug: 'common'
+            },
+            {
+              name :'Movies',
+              slug: 'movies'
+            }
+          ]
+      },
+      quizzes:{
+        name :'Quizzes',
+        slug: 'quizzes',
+        sub: [
+          {
+            name :'IQ tests',
+            slug: 'iq'
+          },
+          {
+            name: 'Blockchain',
+            slug: 'blockchain'
+          }
+        ]
+      }
+    })
+}
+
+
+// setCats()
+// setPolls()
 // setQuizzes()
+// setCatMenu();
