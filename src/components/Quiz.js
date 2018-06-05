@@ -191,7 +191,7 @@ class Quiz extends React.Component {
                     <div dangerouslySetInnerHTML={{__html:Quiz.question}} />
                 </Typography>
                 <div className={classes.answersWrapper}>
-
+                
                     {Quiz.questionSrcImg && <LazyImage className={classes.image} loaded={this.loadedL} load={Quiz.questionSrcImg}/>}
                     <div className={classes.divider}> </div>
                     <RadioGroup className={classes.answers} >

@@ -4,13 +4,16 @@ import {observable, action} from 'mobx';
 import { observer }  from 'mobx-react';
 import Card from './Card';
 import { listener } from './../utils';
+import noPullToRefresh from './../no-pull-to-refresh.js';
+
+noPullToRefresh();
 
 const styles = theme => ({
 
     cardWrapper:{
         display: 'flex',
         margin: 'auto',
-        // height: '100%',
+        height: '100%',
         // position: 'relative',
         width: '100%',
     }

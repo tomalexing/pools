@@ -13,7 +13,7 @@ import Api from './../services/Api';
 import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
 
-import classnames from 'classnames'
+import * as cn from 'classnames'
 import { NavLink } from './NavLink';
 import { LazyImage } from './../utils';
 
@@ -25,20 +25,48 @@ const styles = theme => ({
         margin: 'auto',
         height: '100%',
         // position: 'relative',
-        width: '100%'
+        width: '100%',
+        '@media (max-width: 767px)':{
+            flexDirection: 'column'
+        }
     },
+
+    catsTitle:{
+        display: 'none',
+        '@media (max-width: 767px)':{
+            display: 'block',
+            width: '100%',
+            borderBottom: '1px solid #6b7183',
+            padding: '30px 15px 15px'
+        }
+    },
+    
     catsMenu: {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
         borderRight: '1px solid #6b7183',
-        width: 200
+        width: 200,
+        '@media (max-width: 767px)':{
+            border: 'none',
+            width: '100%',
+            flex: '0 1 auto',
+            height: 65,
+            overflow: 'hidden'
+        },
+        '&$catsMenuOpen':{
+            flex: '1 0 auto',
+            height: '100%',
+            overflow: 'hidden'
+        }
     },
-    
+
+    catsMenuOpen:{},
     catsCard:{
         width: '100%',
-        overflow: 'auto'
+        overflow: 'auto',
+        flex: 1
     },
     
     catsMenuInner: {
@@ -55,7 +83,11 @@ const styles = theme => ({
     },
 
     linkmenu:{
-        textDecoration: 'none'
+        textDecoration: 'none',
+        display: 'block',
+        '.navmenu.active &': {
+            backgroundColor: 'rgba(0, 0, 0, 0.14)'
+        }
     },
 
     header: {
@@ -63,7 +95,12 @@ const styles = theme => ({
         width: '300px',
         overflow: 'hidden',
         display: 'flex',
-        flex: '1 0 300px'
+        flex: '1 0 300px',
+        '@media (max-width: 767px)':{
+            width: '100%',
+            height: 'auto',
+            flex: '1 0 auto',
+        }
     },
 
     card:{
@@ -74,7 +111,11 @@ const styles = theme => ({
         height: 200,
         boxShadow: '0 2px 20px rgba(0, 0, 0, 0.5)',
         borderRadius: 8,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        '@media (max-width: 767px)':{
+            flexDirection: 'column',
+            height: 'auto'
+        }
     },
 
     image: {
@@ -141,11 +182,24 @@ const styles = theme => ({
         fontSize: 16,
         fontWeight: 600,
         marginRight: 25
-    },
+    },  
     
     btn: {
         borderRadius: 74,
         backgroundColor: '#fc3868',
+        minWidth: 125,
+        color: 'white !important',
+    },
+    
+    btnlink: {
+        textDecoration: 'none',
+        marginLeft: 'auto',
+        '@media (max-width: 767px)':{
+            display: 'flex',
+            marginTop: '20px',
+            width: '100%',
+            justifyContent: 'center'
+        }
     },
     
     footer: {
@@ -153,6 +207,11 @@ const styles = theme => ({
         alignItems: 'center',
         display: 'flex',
         width: '100%',
+        '@media (max-width: 767px)':{
+            flexFlow: 'row wrap',
+            height: 'auto',
+            paddingTop: '10px',
+        }
     }
 })
 
@@ -180,6 +239,7 @@ class Explore extends React.Component {
         let that = this;
         Api.getCatsMenu().then(menu =>  this.Menu = menu)
         Api.getCatsCards(this.slug).then(cards =>  {
+
             this.Cards = showCats 
                 ?  cards
                 :  cards.filter(card => card.type === 'term');
@@ -190,9 +250,15 @@ class Explore extends React.Component {
     @observable Menu = {};
     @observable slug = {};
     @observable Cards = [];
+    @observable openMenu = false;
     
 
     componentWillUnmount(){
+    }
+
+    @action
+    toogleMenu = () => {
+        this.openMenu = !this.openMenu;
     }
 
     catHTML = (menuItem, opt = {nested: false, level: 0, pathname:`${this.props.match.url}`}) => {
@@ -212,7 +278,7 @@ class Explore extends React.Component {
             }
             return( [
                     <NavLink tabIndex='1' to={`${opt.pathname}/${menuItem.slug}`} className={classes.linkmenu} >
-                        <MenuItem className={classnames({[classes.nested] : opt.nested, [`nested-${opt.level}`]: opt.nested})}>
+                        <MenuItem className={cn({[classes.nested] : opt.nested, [`nested-${opt.level}`]: opt.nested})}>
                             <Typography variant="display1">
                                 {menuItem.name}
                             </Typography>
@@ -228,7 +294,8 @@ class Explore extends React.Component {
         let {classes} = this.props, that = this;
         return (
             <div className={classes.catsWraper}>
-                <aside className={classes.catsMenu}>
+                <aside className={cn(classes.catsMenu, {[`${classes.catsMenuOpen}`]: this.openMenu})}>
+                    <Typography variant="display1" onClick={this.toogleMenu} className={classes.catsTitle}>Categories</Typography>
                     <MenuList className={classes.catsMenuInner}>
                         { Object.values(this.Menu).map(menuItem => {
                             return that.catHTML([menuItem])
@@ -238,20 +305,33 @@ class Explore extends React.Component {
                 <div className={classes.catsCard}>
                     {this.Cards.map((card, idx) => (<div key={`cats-${idx}`} className={classes.card}>
                         <header className={classes.header}>
-                            {!card.img && card.cardtype == 'Poll' && <LazyImage className={classes.image} load={'./assets/polls.png'}/>}
-                            {!card.img && card.cardtype == 'Quiz' && <LazyImage className={classes.image} load={'./assets/quiz.png'}/>}
-                            {card.img && <LazyImage className={classes.image} load={card.img}/>}
+
+                            { card.link && <Link style={{textDecoration: 'none'}} to={card.link}>                   {!card.img && card.cardtype == 'Poll' && <LazyImage className={classes.image} load={'./assets/polls.png'}/>}
+                                {!card.img && card.cardtype == 'Quiz' && <LazyImage className={classes.image} load={'./assets/quiz.png'}/>}
+                                {card.img && <LazyImage className={classes.image} load={card.img}/>}
+                            </Link> }
+
+                            { !card.link && !card.img && card.cardtype == 'Poll' && <LazyImage className={classes.image} load={'./assets/polls.png'}/>}
+                            {!card.link &&!card.img && card.cardtype == 'Quiz' && <LazyImage className={classes.image} load={'./assets/quiz.png'}/>}
+                            { !card.link && card.img && <LazyImage className={classes.image} load={card.img}/>}
+
                         </header>
                         <article className={classes.article}>
-                            <Typography variant="title" className={classes.title}>{card.title}</Typography>
-                            <Typography variant="display1" className={classes.link}>{card.linksite}</Typography>
+
+                            { card.link && <Link style={{textDecoration: 'none'}} to={card.link}><Typography variant="title" className={classes.title}>{card.title}</Typography></Link> }
+
+                            { !card.link && <Typography variant="title" className={classes.title}>{card.title}</Typography> }
+
+
+                            <a style={{textDecoration: 'none'}} href={`http://${card.linksite}`} target="_blank" ><Typography variant="display1" className={classes.link}>{card.linksite}</Typography></a>
 
                             <Typography variant="body1" className={classes.description}>{card.desc}</Typography>
                             <div className={classes.footer}>
                                 {card.number && <Typography variant="display1" className={classes.number}>{card.number} cards</Typography>}
-                                {card.number && <Typography variant="display1" className={classes.reward}>up to {card.reward}</Typography>}
+                                {card.number && <Typography variant="display1" className={classes.reward}>up to {card.reward * card.number} IMP</Typography>}
                             
-                                <Link style={{textDecoration: 'none', marginLeft: 'auto'}} to={card.link}><Button className={classes.btn} variant="raised" color="secondary" side="small" >{card.btn}</Button></Link>
+                               { card.link && <Link className={classes.btnlink} to={card.link}><Button className={classes.btn} variant="raised" color="secondary" side="small" >{card.btn}</Button></Link>}
+                               { !card.link && <div className={classes.btnlink} ><Button  to={card.link} className={classes.btn} variant="raised" disabled color="secondary" side="small" >Coming Soon</Button></div>}
                             </div>
                         </article>
                         </div>))}

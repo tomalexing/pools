@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import {observable, action} from 'mobx';
+import {observable, action, when} from 'mobx';
 import { observer }  from 'mobx-react';
 
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -29,6 +29,9 @@ import {loadFromStore , saveToStore} from "./../services/localDb";
 import Grow from '@material-ui/core/Grow';
 import Tooltip from '@material-ui/core/Tooltip';
 
+import CardsModel from './../models/Cards'
+
+import Share from './Share';
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
   (!redirect
@@ -135,10 +138,21 @@ class Dashboard extends React.Component {
 
     componentWillMount(){
         let that = this;
+
         let open = loadFromStore('userOpenMenu').then(val => {
-            that.setState({open: val});
+            if(that.mounted)
+                that.setState({open: val});
         }, _ => {})
 
+    }
+
+    componentDidMount(){
+        this.mounted = true
+
+    }
+
+    componentWillUnmount(){
+        this.mounted = false
     }
 
       
@@ -231,6 +245,16 @@ const stylesCommon = theme => ({
         flexWrap: 'wrap'
     },
 
+    catWrapper:{
+        width: '100%'
+    },
+
+    catTitle: {
+        fontWeight: 700,
+        letterSpacing: 1,
+        paddingBottom: '20px'
+    },
+
     card:{
         maxHeight: '100%',
         zIndex: '100',
@@ -288,6 +312,7 @@ const stylesCommon = theme => ({
     },
     progressBar:{
         marginTop: 20,
+        marginBottom: 20,
         width: '210px',
         height: '4px',
         borderRadius: '3px',
@@ -315,6 +340,8 @@ const stylesCommon = theme => ({
     },
     title: {
         padding: '0 30px',
+        display: 'flex',
+        lineHeight: '24px'
     },
     column:{
         flexDirection: 'column',
@@ -335,8 +362,9 @@ const stylesCommon = theme => ({
 @observer
 class Common extends React.Component{
 
-    @observable progress = [];
+    @observable cardsInProcessAndFinished = [];
     @observable totalIMP;
+    catsAvailable = new Set();
 
     componentWillMount(){
         this.getProgress();
@@ -345,50 +373,97 @@ class Common extends React.Component{
     @action
     getProgress = () => {
         let that = this;
-        Promise.all(Auth.stores.map((store, idx) => {
-            return store.allProgress.then((progress, idx) => {
-                that.progress.push(progress);
-                that.forceUpdate();
-            });
-        })).then(_ => {
-            that.totalIMP = that.progress.reduce((acc, prog) => acc+=prog.number,0)
-        })
+        when(() => !Auth.logging , () => {
+            
+            loadFromStore('SlugsCardsInProcess').then(slugs => {
+            
+                Promise.all(slugs.map(slug => {
+                        return CardsModel.allProgress(slug).then((progress , idx) => {
+                            Object.assign(that.cardsInProcessAndFinished, {[slug]:{progress:progress}})
+                        });
+                    })
+                ).then(_ => {
+                    return Promise.all( slugs.map(slug => {
+                        return Api.getAdditionlCardInfo(slug).then(info => {
 
+                            that.catsAvailable.add(info.cat);
+
+                            Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{info:info},{slug: slug})})
+                            
+
+                            return CardsModel.isLiked(slug);
+
+                            }).then(isLiked => {
+
+                                Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{isLiked: isLiked})})
+                            })
+                    }))
+                }).then(_ => {
+                    that.forceUpdate();
+                    that.totalIMP = Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['progress'] ? prog['progress'].number : 0,0)
+                })
+            }, _ => {
+                Api.loadUserData({forceLoad: true}).then(data => {
+                    if(!data || !data['SlugsCardsInProcess']) return
+                    let reload = prompt('Error has happened. Reload page?', 'yes');
+                    if( reload == 'yes' )
+                    window.location.reload();
+                })
+            })
+        });
     }
 
     render(){
         let {classes} = this.props;
-
+        let that = this;
+        console.log(this.cardsInProcessAndFinished);
+        
         return( 
             <div className={classes.cardWrapper} >
-            { Auth.stores.map((store, idx) => {
-                console.log(this.progress)
-                return  this.progress[idx] && this.progress[idx][store.dashOutput] > 0 ? (<div key={store.cardSlug} className={classes.card}>
-                        <div ref='header' className={classes.header}>
-                            <Typography variant="display1" className={classes.title}>
-                                Congratulations!
-                            </Typography>
-                            <span className={classes.delimeter}></span>
-                            <Typography variant="display1" className={classes.impNum}>  
-                                {this.progress[idx] && this.progress[idx].number} IMP
-                            </Typography>
+            { Array.from(this.catsAvailable).map(cat => {
+                return <div key={`${cat}`} className={classes.catWrapper}>
+                    <Typography variant="display4" className={classes.catTitle}>{cat}:</Typography>
+                    <div className={classes.cardWrapper} >
+                        { Object.values(that.cardsInProcessAndFinished).filter(o => o['info'].cat == cat).map(({progress, info, slug, isLiked}, idx) => {
+                                return  info ? (<div key={`card-${idx}`} className={classes.card}>
+                                        <div ref='header' className={classes.header}>
+                                            <Link style={{textDecoration: 'none'}} to={slug.replace('/v1','')} ><Typography variant="display1" className={classes.title}>{info.title}<Icon>navigate_next</Icon></Typography> </Link>
+                                            <span className={classes.delimeter}></span>
+                                            <Typography variant="display1" className={classes.impNum}>  
+                                                {progress && progress.number * info.reward} IMP
+                                            </Typography>
+                                        </div>
+                                        <div className={classes.cardBodyResult}>
+                                            <Typography variant="body1" gutterBottom>
+                                                {info.dashTitle}
+                                            </Typography>
+                                            
+                                            {info && info.allCardsNumber > 0  &&  <Typography variant="display2" className={classes.noWrap}>
+                                                {info.dashOutput === 'number' && `${Math.floor( progress[info.dashOutput] * 100/ info.allCardsNumber)}%`}
+                
+                                                {info.dashOutput === 'iqValue' && `${Math.floor(progress[info.dashOutput] )}`}
+                                            </Typography>}
+                                            { progress && <div className={classes.progressBar}>
+                                            <div style={{width: `${progress.number * 100/ info.allCardsNumber}%`}} className={classes.progress}></div>
+                                            </div>}
+                                            <div className={classes.share}>
+                                                {!isLiked &&
+                                                <Typography variant="body1" gutterBottom className={classes.resHeader}>
+                                                    Share and get +0.5 IMP:
+                                                </Typography>}
+                                                {isLiked &&
+                                                <Typography gutterBottom variant="body1" className={classes.resHeader}>
+                                                    Share with your friends:
+                                                </Typography>}
+                                                <Share update={this.getProgress} cardSlug={slug}/>
+                                            </div>
+                                        </div>
+                                    </div>) : <div key={`common-${idx}`} />
+                            }) }
                         </div>
-                        <div className={classes.cardBodyResult}>
-                            <Typography variant="body1" gutterBottom>
-                                {store.dashTitle}
-                            </Typography>
-                            
-                            {this.progress[idx] && store.allCardsNumber > 0 &&  <Typography variant="display2" className={classes.noWrap}>
-                                {store.dashOutput === 'number' && `${Math.floor(this.progress[idx][store.dashOutput] * 100/ store.allCardsNumber)}%`}
-
-                                {store.dashOutput === 'iqValue' && `${Math.floor(this.progress[idx][store.dashOutput])}`}
-                            </Typography>}
-                            { this.progress[idx] && <div className={classes.progressBar}>
-                            <div style={{width: `${this.progress[idx].number * 100/ store.allCardsNumber}%`}} className={classes.progress}></div>
-                            </div>}
-                        </div>
-                    </div>) : <div key={store.cardSlug}/>
-            })}
+                    </div>
+                })
+            }
             </div>
             )
     }
@@ -617,33 +692,86 @@ class Account extends React.Component{
             that.enteder = true;
             that.wallet = wallet;
         });
+
+        Api.auth().onAuthStateChanged(function(user) {
+            
+            if (user) {
+                user.getIdToken().then(function(idToken) {
+                    fetch(`http://polls/getUser/${Auth.uid}`,{
+                        method: 'post',
+                        headers: {
+                            'content-type': 'application/x-www-form-urlencoded; charset=utf-8',
+                            'Accept': 'application/json'},
+                        mode: 'cors',
+                        body: 'token=' + idToken
+                    }).then(resp => {
+                        return resp.json()}).then(console.log)
+                    // Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken).then( amount => {
+                    //     that.getProgress();
+                    //     that.getHistory();
+                    // })
+                  }).catch(function(error) {
+                    console.trace(error.stack)
+                  });
+        
+            } 
+            
+            else{
+              console.error("user not logged in");
+            }
+        
+        });
     }
 
-    @observable progress = [];
+    @observable cardsInProcessAndFinished = [];
     @observable histories = [];
     @observable totalIMP  = 0;
     @observable enteder = false; 
     @observable wallet = '';
     
-    @action
-    getProgress = () => {
-        let that = this;
-        Promise.all(Auth.stores.map((store, idx) => {
-            that.progress = [];
-            return store.allProgress.then((progress, idx) => {
-                that.progress.push(progress);
-                that.forceUpdate();
-            });
-        })).then( _ => {
-            return Api.getWithdrawn(Auth.uid)
-        }).then( amountWithdrawn => {
-            that.totalIMP = Math.max(0, that.progress.reduce((acc, prog) => acc+=prog.number, -amountWithdrawn))
-        })
 
+    calculatingProgress = false
+    @action
+    getProgress = async () => {
+        let that = this;
+        if(this.calculatingProgress) return
+        this.calculatingProgress = true;
+        await loadFromStore('SlugsCardsInProcess').then(slugs => {
+           
+            Promise.all(slugs.map(slug => {
+                    return CardsModel.allProgress(slug).then((progress, idx) => {
+                        Object.assign(that.cardsInProcessAndFinished, {[slug]:{progress:progress}})
+                    });
+                })
+            ).then(_ => {
+                return Promise.all( slugs.map(slug => {
+                    return Api.getAdditionlCardInfo(slug).then(info => {
+
+                        Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{info:info})})
+                        
+                        
+                        return CardsModel.isLiked(slug);
+
+                        }).then(isLiked => {
+
+                            Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{isLiked: isLiked})})
+                        })
+                }))
+            })
+            .then( _ => {
+                return Api.getWithdrawn(Auth.uid)
+            }).then( amountWithdrawn => {
+                that.totalIMP = Math.max(0, Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['progress'] ? prog['progress'].number * prog['info'].reward : 0, -amountWithdrawn)) 
+            })
+
+          }, _ => {})
+
+          this.calculatingProgress = false;
     }
 
     @action.bound
     setEntered = _ => {
+        if(this.wallet == '') return 
         this.enteder = true;
     }
 
@@ -665,10 +793,27 @@ class Account extends React.Component{
     @action.bound
     payoff = _ => {
         let that = this;
-        Api.withdraw(Auth.uid, this.totalIMP, this.wallet).then( amount => {
-            that.getProgress();
-            that.getHistory();
-        })
+        if(that.totalIMP <= 0) return
+        Api.auth().onAuthStateChanged(function(user) {
+
+            if (user) {
+                user.getIdToken(true).then(function(idToken) {
+                    Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken).then( amount => {
+                        that.getProgress();
+                        that.getHistory();
+                    })
+                  }).catch(function(error) {
+                    console.trace(error.stack)
+                  });
+        
+            } 
+
+            else{
+              console.error("user not logged in");
+            }
+        
+        });
+       
     }
 
     render(){
@@ -738,7 +883,7 @@ class Account extends React.Component{
                             </Button>
                         </div>}
 
-                    { this.enteder && <Button variant="raised" disabled color="secondary" className={classes.submitBtn} onClick={this.payoff}>
+                    { this.enteder && <Button variant="raised" color="secondary"  className={classes.submitBtn} onClick={this.payoff}>
                         <Typography variant="button" >Payoff</Typography>
                     </Button>}
                     

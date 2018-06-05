@@ -8,17 +8,21 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import quizzesSVG from './../assets/quizzes.svg';
 import pollsSVG from './../assets/polls.svg';
+import Api from './../services/Api';
 
 const styles = theme => ({
 
     cardsWraper:{
         display: 'flex',
         margin: 'auto',
-        // height: '100%',
         // position: 'relative',
         width: '100%',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        height: '100%',
+        overflow: 'auto',
+        '@media (max-width: 767px)':{
+        },
     },
     cards:{
         display: 'flex',
@@ -27,7 +31,10 @@ const styles = theme => ({
         // position: 'relative',
         width: '100%',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        '@media (max-width: 767px)':{
+            flexDirection: 'column'
+        }
     },
     header: {
         width: '100%',
@@ -123,7 +130,8 @@ class Explore extends React.Component {
     }]
 
     componentDidMount(){
-
+        Api.getCatsCards('polls').then(console.log)
+        Api.getCatsCards('quizzes').then(console.log)
 
     }
 
@@ -142,11 +150,13 @@ class Explore extends React.Component {
                     {this.explore.map((card, idx) => (<div key={`explore-${idx}`} className={classes.card}>
                         <header className={classes.header}>
                             <figure className={classes.figure} >
-                                <img src={card.img} className={classes.image} />
+                                <Link style={{textDecoration: 'none'}} to={card.to}><img src={card.img} className={classes.image} /></Link>
                             </figure>
                         </header>
                         <article className={classes.article}>
-                            <Typography variant="title" className={classes.title}>{card.title}</Typography>
+                            <Link style={{textDecoration: 'none'}} to={card.to}>
+                                <Typography variant="title" className={classes.title}>{card.title}</Typography>
+                            </Link>
                             <Typography variant="body1" className={classes.description}>{card.description}</Typography>
                             <Link style={{textDecoration: 'none'}} to={card.to}><Button className={classes.btn} variant="raised" color="secondary"  side="small" >{card.btn}</Button></Link>
                         </article>

@@ -127,6 +127,14 @@ class Login extends React.Component {
     props.logout(this.logout.bind(this));
   }
 
+  componentDidMount(){
+      this.mounted = true;
+  }
+
+  componentWillUnmount(){
+      this.mounted = false;
+  }
+
   @action.bound
   componentWillReceiveProps(nextProps){
     this.open = nextProps.open
@@ -148,13 +156,13 @@ class Login extends React.Component {
 
   @observable ctx = { redirect: false, state: {} }
 
-  @action.bound
   loginWithGoogle = async (info) => {
     let _self = this;
 
     Api.auth().signInWithPopup(Api.GoogleAuthProvider()).then(function(result) {
 
-        let {credential:{ accessToken }, user: { photoURL, displayName, email, uid } = {photoURL: '', displayName:'', email: '', uid: ''}} = result;
+        let {credential:{ accessToken }, user: { uid, photoURL } = {uid: '', photoURL: ''}, additionalUserInfo:{profile: { name: displayName, email } = { displayName:'', email: ''}} = {}} = result;
+     
         Auth.authorize({
           accessToken,
           photoURL,
@@ -166,17 +174,22 @@ class Login extends React.Component {
             let user = Api.auth().currentUser;
             let ctx = {};
             if(user){
+                Auth.logging = true;
+                if(! _self.mounted) return
+                    _self.ctx = {
+                        redirect: true,
+                        pathname: '/dashboard'
+                    }
+                if(! _self.mounted) return
+                    _self.forceUpdate();
 
-                
-
-              Api.loadUserData(user.uid).then( _ => {
-                Auth.stores.map(store => store.load()); 
-                Auth.stores.map(store => store.ditch()); 
-                _self.ctx = {
-                    redirect: true,
-                    pathname: '/dashboard'
-                  }
-              });
+                Api.loadUserData().then( _ => {
+                    Auth.stores.map(store => store.load()); 
+                    Auth.stores.map(store => store.ditch());
+                    Auth.logging = false;
+                }, _ => {
+                    Auth.logging = false;
+                })
 
             }
         });
@@ -200,7 +213,10 @@ class Login extends React.Component {
     let _self = this;
 
     Api.auth().signInWithPopup(Api.FacebookAuthProvider()).then(function(result) {
-        let {credential:{ accessToken }, user: { photoURL, displayName, email, uid } = {photoURL: '', displayName:'', email: '', uid: ''}} = result;
+
+
+        let {credential:{ accessToken }, user: { uid, photoURL } = {uid: '', photoURL: ''}, additionalUserInfo:{profile: {  name: displayName, email } = { displayName:'', email: ''}} = {}} = result;
+     
 
         Auth.authorize({
           accessToken,
@@ -213,15 +229,21 @@ class Login extends React.Component {
             let user = Api.auth().currentUser;
             let ctx = {};
             if(user){
-                Api.loadUserData(user.uid).then( _ => {
-                    _self.ctx = {
-                        redirect: true,
-                        pathname: '/dashboard'
-                    }
-                }).then( _ => {
+                if(! _self.mounted) return
+                Auth.logging = true;
+                _self.ctx = {
+                    redirect: true,
+                    pathname: '/dashboard'
+                }
+                if(! _self.mounted) return
+                    _self.forceUpdate();
+                Api.loadUserData().then( _ => {
                     Auth.stores.map(store => store.load());
                     Auth.stores.map(store => store.ditch());
-                });
+                    Auth.logging = false;
+                }, () => {
+                    Auth.logging = false;
+                })
 
             }
         });

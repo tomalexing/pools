@@ -140,15 +140,15 @@ export function saveToStore(key, value) {
  * @return {Promise} Promise to storage success.
  */
 export function saveAllToStore(data) {
+  if(!data) return Promise.resolve()
   return new Promise(function(resolve, reject) {
     if (window.indexedDB) {
         let savePromise = []; 
         clearAll().then(_ => {
-
           for( let [key, val] of Object.entries(data)){
             savePromise.push(saveToStore(key, val))
           }
-          Promise.all(savePromise).then(resolve)
+          Promise.all(savePromise).then(_ => resolve(data));
         
         })
     } else {
@@ -175,3 +175,4 @@ function clearAll(){
     }
   })
 }
+

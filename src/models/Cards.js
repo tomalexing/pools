@@ -4,7 +4,7 @@ import Quiz from "./Quiz";
 import Poll from "./Poll";
 import Card from "./Card";
 import {loadFromStore , saveToStore} from "./../services/localDb";
-
+import Api from "./../services/Api";
 export default class Cards {
 
   constructor({getIds, cardSlug, dashTitle, dashOutput, tryAgainIsCleanPrevious}){
@@ -13,6 +13,7 @@ export default class Cards {
     this.dashOutput = dashOutput || 'number';
     this.tryAgainIsCleanPrevious = tryAgainIsCleanPrevious || false;
     this.bindModel(getIds);
+    this.saveSlugsCardsInProcess();
   }
 
   bindModel = (getIds) => {
@@ -20,6 +21,20 @@ export default class Cards {
 
     getIds(this.cardsModel).then( ids =>{ 
       that.cards = ids;
+    })
+  }
+
+  saveSlugsCardsInProcess = () => {
+    let cards = this;
+    this.save()
+    loadFromStore('SlugsCardsInProcess').then(val => {
+      let alreadyAdded = val.find(slug => slug == cards.cardSlug);
+      if(!alreadyAdded){
+        val.push(cards.cardSlug);
+        saveToStore('SlugsCardsInProcess', val);
+      }
+    }, _ => {
+      saveToStore('SlugsCardsInProcess', [cards.cardSlug]);
     })
   }
 
@@ -218,6 +233,8 @@ export default class Cards {
         })
   }
 
+
+  // actually only current saved here
   save(){
     let cards = this;
     loadFromStore(cards.cardSlug).then(val => {
@@ -244,13 +261,37 @@ export default class Cards {
         return current
       }, console.log)
   }
+
+  static saveLike(cardSlug){ // Todo: fallback
+    return loadFromStore(cardSlug).then(cardSlugData => {
+      if(cardSlugData.liked) return Promise.resolve(true);
+      cardSlugData.liked = true;
+      return saveToStore(cardSlug, cardSlugData).then( _ => {
+        Api.saveUserData().then(_ => Promise.resolve(true)).catch(_ => {})
+      })
+    })
+  }
+
+  static isLiked(cardSlug){ // Todo: fallback
+    return loadFromStore(cardSlug).then(cardSlugData => {
+      if(cardSlugData.liked) return Promise.resolve(true);
+      else return Promise.resolve(false);
+    }, ()=> {
+      return Promise.resolve(false);
+    })
+  }
     
-  @computed
-  get allProgress(){
-      return loadFromStore(this.cardSlug).then(val => val, console.log)
-        .then(val => {
+  static allProgress(cardSlug){
+      return loadFromStore(cardSlug).then(val => val, () => {
+        Api.loadUserData({forceLoad: true}).then(data => {
+            if( ! data[cardSlug] ) return Promise.resolve({number:0, iqValue: 0});
+            let reload = prompt('Error has happened. Reload page?', 'yes');
+            if( reload == 'yes' )
+            window.location.reload();
+        })
+      }).then(val => {
         
-          if(!val) return {number:0}
+          if(!val) return {number:0, iqValue: 0}
         
         var {number} = val.Progress;
         let iqValue = 0;

@@ -17,8 +17,9 @@ const styles = theme => ({
         height: 'calc(100% - 40px - 76px)',
         overflow: 'auto',
         '@media (max-width: 600px)':{
-            height: '350px',
+            height: 'calc(100% - 35px)',
         }
+  
     },
     question:{
         fontSize: '18px',
@@ -209,10 +210,15 @@ const styles = theme => ({
             width: 30
         },
         '@media (max-width: 600px)':{
-            padding: '0px 30px 15px',
+            padding: '0px 30px 23px',
+            background: 'transparent',
+            position: 'absolute',
+            width: '100%',
+            bottom: 0
         }
     },
     footerBtn:{
+        zIndex: 1000,
         borderRadius: 74,
         '&:hover $rightIcon': {
             transition: 'transform 1s',
@@ -251,31 +257,45 @@ class Poll extends React.Component {
 
     registerEvents = () => {
         if(!this.refs.left && !this.refs.left ) return
-        if(window.innerWidth < 600 ){
+       if(window.innerWidth < 600 ){
             
-            // this.refs.left.addEventListener('touchstart', this.rememberPoints);
-            // this.refs.left.addEventListener('touchend', this.pickCart('1').bind(this)); 
-            // this.refs.left.addEventListener('touchmove', this.drag);
+            this.refs.left.addEventListener('touchstart', this.rememberPoints);
+            this.refs.left.addEventListener('touchend', this.pickCart('1').bind(this)); 
+            this.refs.left.addEventListener('touchmove', this.drag);
             this.refs.left.addEventListener('mousedown', this.rememberPoints);
             this.refs.left.addEventListener('mouseup', this.pickCart('1').bind(this)); 
             this.refs.left.addEventListener('mousemove', this.drag); 
-            // this.refs.right.addEventListener('touchstart', this.rememberPoints);
-            // this.refs.right.addEventListener('touchend', this.pickCart('2').bind(this)); 
-            // this.refs.right.addEventListener('touchmove', this.drag);
+
+            this.refs.right.addEventListener('touchstart', this.rememberPoints);
+            this.refs.right.addEventListener('touchend', this.pickCart('2').bind(this));
+            this.refs.right.addEventListener('touchmove', this.drag);
             this.refs.right.addEventListener('mousedown', this.rememberPoints);
             this.refs.right.addEventListener('mouseup', this.pickCart('2').bind(this)); 
             this.refs.right.addEventListener('mousemove', this.drag); 
+            
+            
+            
         }else{
             this.refs.left.addEventListener('click', this.pickCart('1').bind(this)); 
             this.refs.right.addEventListener('click', this.pickCart('2').bind(this)); 
         }
-
+        
+        this.refs.footer.addEventListener('touchstart', this.prevent);
+        this.refs.footer.addEventListener('touchend', this.prevent);
+        this.refs.footer.addEventListener('touchmove', this.prevent);
+        this.refs.footer.addEventListener('mousedown', this.prevent);
+        this.refs.footer.addEventListener('mouseup', this.prevent); 
+        this.refs.footer.addEventListener('mousemove', this.prevent); 
     }
 
     componentDidUpdate(){
 
         this.setCurrentVote();
     }
+
+    prevent = (e) => {
+       e.stopImmediatePropagation();
+    } 
 
     @computed
     get getRefs(){
@@ -317,37 +337,45 @@ class Poll extends React.Component {
     startY = 0;
 
     rememberPoints = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+       // if(window.innerWidth > 600 ){
+       //     e.preventDefault();
+        //    e.stopPropagation();
+       // }
         this._dragging = true;
         this.startX = e.clientX || e.touches[0].clientX;
         this.startY = e.clientY || e.touches[0].clientY;
+        this.deltaX = 0;
+        this.deltaY = 0;
     }
 
     drag = (e) => {
+       // e.preventDefault();
+       // e.stopPropagation();
         if (!this._dragging) return;
-        e.stopPropagation();
+        // if(window.innerWidth > 600 ){
+        //}
 
         this.deltaX = (e.clientX || e.touches[0].clientX) - this.startX;
         this.deltaY = (e.clientY || e.touches[0].clientY) - this.startY;
+
     }
 
     @action.bound
     pickCart = (thisCardNumber) => async e => {
-        e.stopPropagation();
-        e.preventDefault();
-        if(this.picking || !this.props.store.canMakeAction ) return
 
+        e.preventDefault();
+
+
+        if(this.picking || !this.props.store.canMakeAction ) return
         if(window.innerWidth < 600 ){
-           // debugger;
-            if(this.deltaX && this.deltaX > 10 && this.deltaY && this.deltaY  > 10 ) return
+            if((this.deltaX && Math.abs(this.deltaX) > 10) || (this.deltaY && Math.abs(this.deltaY)  > 10) ) {
+                return;
+            }
             if (!this._dragging) return;
         }
 
-
         this.picking = true;
-
-
+        e.stopImmediatePropagation();
 
         let that = this;
         let {top, left} = e.currentTarget.getBoundingClientRect();
@@ -360,98 +388,110 @@ class Poll extends React.Component {
         this.refs[thisCard].style.top = `${eClientY - top}px`;
         this.refs[thisCard].style.left = `${eClientX - left}px`;
         
-        
+
         await requestAnimationFramePromise()
-        .then(_ => requestAnimationFramePromise())
-        .then(_ => {
-            that.refs[thisCard].style.transition = 'transform 1s ease-in-out';
-            that.refs[thisCard].style.transform = 'scale(300)';
-            return transitionEndPromise(that.refs[thisCard]);
-        })
-        .then(_ => {
+            .then(_ => requestAnimationFramePromise())
+            .then(_ => {
+                that.refs[thisCard].style.transition = 'transform 1s ease-in-out';
+                that.refs[thisCard].style.transform = 'scale(300)';
+                return transitionEndPromise(that.refs[thisCard]);
+            })
+            .then(_ => {
 
-            this.updateScore(thisCardNumber);
+                that.updateScore(thisCardNumber)
 
 
-            that.props.poll.isInfoVisible = true;
-            that.refs.check1.style.display = 'none';
-            that.refs.check2.style.display = 'none';
-            that.refs[thisCheck].style.display = 'block';
-            that.refs[thisCard].style.transform = '';
-            that.refs[thisCard].style.transition = '';
-            that.refs[thisCard].style.transformOrigin = '';
+                that.props.poll.isInfoVisible = true;
+                that.refs.check1.style.display = 'none';
+                that.refs.check2.style.display = 'none';
+                that.refs[thisCheck].style.display = 'block';
+                that.refs[thisCard].style.transform = '';
+                that.refs[thisCard].style.transition = '';
+                that.refs[thisCard].style.transformOrigin = '';
 
-            return requestAnimationFramePromise()
-                .then(async _ => {
+                return requestAnimationFramePromise()
+                    .then(async _ => {
+
+                        const width1 = parseInt( that.refs.progressBar1.style.width ); 
+                        const width2 = parseInt( that.refs.progressBar2.style.width ); 
+                        
+                        let i = 0;
+                        parallel( async _ => {
+                            while(i <= width1){
+                                await requestAnimationFramePromise().then(_ => {
+                                    if( that.refs.progressBar1)
+                                    that.refs.progressBar1.style.width = `${i}%`;
+                                })
+                                i++;
+                                i++;
+                                i++;
+                                i++;
+                            }
+                        })
+
+                        let j = 0;
+                        parallel( async _ => {
+                            while(j <= width2){
+                                await requestAnimationFramePromise().then(_ => {
+                                    if( that.refs.progressBar2)
+                                    that.refs.progressBar2.style.width = `${j}%`;
+                                })
+                                j++;
+                                j++;
+                                j++;
+                                j++;
+                            }
+                        })
+
+                        const result1 = parseInt( that.refs.result1.innerText );
+                        const result2 = parseInt( that.refs.result2.innerText );
+                        
+                        let k = 0;
+                        parallel(async _ => {
+                            while(k <= result1){
+                                await requestAnimationFramePromise().then(_ => {
+                                    if( that.refs.result1 )
+                                    that.refs.result1.innerText = `${k}`;
+                                })
+                                k++;
+                                k++;
+                                k++;
+                                k++;
+                            }
+                        })
+
+                        let l = 0;
+                        parallel(async _ => {
+                            while(l <= result2){
+                                await requestAnimationFramePromise().then(_ => {
+                                    if( that.refs.result2 )
+                                    that.refs.result2.innerText = `${l}`;
+                                })
+                                l++;
+                                l++;
+                                l++;
+                                l++;
+                            }
+                        })
                     
-                    const width1 = parseInt( that.refs.progressBar1.style.width ); 
-                    const width2 = parseInt( that.refs.progressBar2.style.width ); 
-                    
-                    let i = 0;
-                    parallel( async _ => {
-                        while(i <= width1){
-                            await requestAnimationFramePromise().then(_ => {
-                                if( that.refs.progressBar1)
-                                that.refs.progressBar1.style.width = `${i}%`;
-                            })
-                            i++;
-                            i++;
-                        }
                     })
 
-                    let j = 0;
-                    parallel( async _ => {
-                        while(j <= width2){
-                            await requestAnimationFramePromise().then(_ => {
-                                if( that.refs.progressBar2)
-                                that.refs.progressBar2.style.width = `${j}%`;
-                            })
-                            j++;
-                            j++;
-                        }
-                    })
+            })
+            this._dragging = false;
+            this.picking = false;
 
-                    const result1 = parseInt( that.refs.result1.innerText );
-                    const result2 = parseInt( that.refs.result2.innerText );
-                    
-                    let k = 0;
-                    parallel(async _ => {
-                        while(k <= result1){
-                            await requestAnimationFramePromise().then(_ => {
-                                if( that.refs.result1 )
-                                that.refs.result1.innerText = `${k}`;
-                            })
-                            k++;
-                        }
-                    })
-
-                    let l = 0;
-                    parallel(async _ => {
-                        while(l <= result2){
-                            await requestAnimationFramePromise().then(_ => {
-                                if( that.refs.result2 )
-                                that.refs.result2.innerText = `${l}`;
-                            })
-                            l++;
-                        }
-                    })
-                   
-                })
-        });
-        this._dragging = false;
-        this.picking = false;
        
     }
 
-    prev = e => { this.props.prev(e) }
-    next = e => { this.props.next(e) }
+    prev = e => { this.refs.body.scrollTop = 0; this.props.prev(e) }
+    next = e => { this.refs.body.scrollTop = 0; this.props.next(e) }
     finish = e => { this.props.finish(e) }
 
     @action.bound
     updateScore(thisCardNumber){
         
         if(thisCardNumber == 1 && !this.props.store.currentCard.voteSetted){
-
+            
             this.props.store.currentCard.setUserVote({
                 l: 1,
                 r: 0
@@ -474,7 +514,7 @@ class Poll extends React.Component {
         if(thisCardNumber == 1 && this.props.store.currentCard.voteSetted == 'right'){
 
             this.props.store.currentCard.setUserVote({
-                l: 1,
+                l:  1,
                 r: -1 
             });
             
@@ -486,7 +526,7 @@ class Poll extends React.Component {
 
             this.props.store.currentCard.setUserVote({
                 l: -1,
-                r: 1,
+                r:  1,
             });
             
             this.props.store.currentCard.voteSetted = 'right';
@@ -506,13 +546,13 @@ class Poll extends React.Component {
 
         let {classes, poll} = this.props;
         if(!poll || typeof poll.then == 'function'){
-            return(<div key="body" className={classes.pollBody}>
+            return(<div key="body" ref="body" className={classes.pollBody}>
                     
             </div>)
         }
 
         return (
-            [<div key="body" className={classes.pollBody}>
+            [<div key="body" ref="body" className={classes.pollBody}>
                 <Typography variant="headline" gutterBottom  className={classes.question}>
                     {poll.question}
                 </Typography>
@@ -572,8 +612,8 @@ class Poll extends React.Component {
                     </div>
                 </div>
             </div>,
-            <div key="footer" className={classes.footer}>
-                    {poll.number > 1 &&  <Button className={classes.footerBtn} variant="raised" color="secondary" side="small"  onClick={this.prev} >
+            <div key="footer" ref="footer" className={classes.footer}>
+                    {poll.number > 1 &&  <Button className={classes.footerBtn} variant="raised" color="secondary" side="small" onClick={this.prev} >
                         <Icon className={classes.leftIcon}>navigate_before</Icon>
                         Prev
                     </Button>}
@@ -584,7 +624,7 @@ class Poll extends React.Component {
                         <Icon className={classes.rightIcon}>navigate_next</Icon>
                     </Button>}
 
-                    {poll.number === this.props.store.allCardsNumber && <Button className={classes.footerBtn + ' ' + classes.footerRight} variant="raised" color="secondary"  side="small" onClick={this.finish} >
+                    {poll.number === this.props.store.allCardsNumber && <Button  className={classes.footerBtn + ' ' + classes.footerRight} variant="raised" color="secondary"  side="small" onClick={this.finish} >
                         Finish 
                         <Icon className={classes.rightIcon}>done</Icon>
                     </Button>}

@@ -10,8 +10,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
 import Modal from '@material-ui/core/Modal';
-
+import IconButton from '@material-ui/core/IconButton'
+import Icon  from '@material-ui/core/Icon'
 import { listener } from './../utils';
+import CardsModel from './../models/Cards'
 
 import {
   FacebookShareCount,
@@ -62,17 +64,28 @@ const styles = theme => ({
        flexDirection: 'row',
        justifyContent: 'center',
        alignItems: 'flex-start',
-       flexWrap: 'wrap'
+       flexWrap: 'noWrap'
     },
+    socialNetworksModal:{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        flexWrap: 'wrap'
+     },
     socialNetwork:{
-        margin: '0 10px 10px'
+        margin: '0 6px'
+    },
+    socialNetworkModal:{
+        margin: '0px 10px 10px'
     },
     socialNetworkBtn:{
         height: 36
     },
     paper: {
         position: 'absolute',
-        width: theme.spacing.unit * 50,
+        maxWidth: theme.spacing.unit * 50,
+        width: '85%',
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[4],
         padding: theme.spacing.unit * 2,
@@ -123,11 +136,17 @@ class Share extends React.Component {
         };
       }
 
+    socClicked = _ => {
+        CardsModel.saveLike(this.props.cardSlug).then(_ => {
+            this.props.update();
+        })
+    }
+
     render(){
         let {classes} = this.props;
         let {open} = this.state;
         return(
-            <div className={classes.socialNetworks} >
+            <div className={classes.socialNetworks} onClick={this.socClicked} >
                 <div className={classes.socialNetwork}>
                     <FacebookShareButton
                         url={this.shareUrl}
@@ -140,7 +159,7 @@ class Share extends React.Component {
 
                 </div>
 
-                <div className={classes.socialNetwork}>
+                <div className={classes.socialNetwork} onClick={this.socClicked}>
                     <TwitterShareButton
                         url={this.shareUrl}
                         title={this.title}
@@ -149,11 +168,11 @@ class Share extends React.Component {
                         size={36}
                         round />
                     </TwitterShareButton>
-                </div>
+                </div>  
 
-                <Button variant="raised" color="secondary" onClick={this.handleOpen} className={classes.modalBtn}>
-                        Share
-                </Button>
+                <IconButton style={{height: 36, width: 36}} size='small' onClick={this.handleOpen}>
+                    <Icon>more_horiz</Icon>
+                </IconButton>
 
                 <Modal
                     aria-labelledby="share-modal-title"
@@ -165,8 +184,8 @@ class Share extends React.Component {
                     <Typography variant="display1" id="share-modal-title">
                         Share
                     </Typography>
-                    <div className={classes.socialNetworks}  id="share-modal-description">
-                        <div className={classes.socialNetwork}>
+                    <div className={classes.socialNetworksModal}  id="share-modal-description">
+                        <div className={classes.socialNetworkModal} onClick={this.socClicked}>
                   
                             <TelegramShareButton
                                 url={this.shareUrl}
@@ -177,7 +196,7 @@ class Share extends React.Component {
 
                         </div>
 
-                        <div className={classes.socialNetwork}>
+                        <div className={classes.socialNetworkModal} onClick={this.socClicked}>
                             <WhatsappShareButton
                                 url={this.shareUrl}
                                 title={this.title}
@@ -188,7 +207,7 @@ class Share extends React.Component {
 
                         </div>
 
-                        <div className={classes.socialNetwork}>
+                        <div className={classes.socialNetworkModal} onClick={this.socClicked}>
                             <GooglePlusShareButton
                                 url={this.shareUrl}
                                 className={classes.socialNetworkBtn}>
@@ -199,7 +218,7 @@ class Share extends React.Component {
 
                         </div>
 
-                        <div className={classes.socialNetwork}>
+                        <div className={classes.socialNetworkModal} onClick={this.socClicked}>
                             <LinkedinShareButton
                                 url={this.shareUrl}
                                 title={this.title}
@@ -212,7 +231,7 @@ class Share extends React.Component {
                             </LinkedinShareButton>
                        </div>
 
-                        <div className={classes.socialNetwork}>
+                        <div className={classes.socialNetworkModal} onClick={this.socClicked}>
                             <PinterestShareButton
                                 url={String(window.location)}
                                 media={`${String(window.location)}/${logo}`}
@@ -225,7 +244,7 @@ class Share extends React.Component {
                         
                         </div>
 
-                        <div className={classes.socialNetwork}>
+                        <div className={classes.socialNetworkModal} onClick={this.socClicked}>
                             <RedditShareButton
                                 url={this.shareUrl}
                                 title={this.title}
@@ -239,7 +258,7 @@ class Share extends React.Component {
 
                             </div>
 
-                            <div className={classes.socialNetwork}>
+                            <div className={classes.socialNetworkModal } onClick={this.socClicked}>
                             <TumblrShareButton
                                 url={this.shareUrl}
                                 title={this.title}
@@ -253,7 +272,7 @@ class Share extends React.Component {
 
                             </div>
 
-                            <div className={classes.socialNetwork}>
+                            <div className={classes.socialNetworkModal} onClick={this.socClicked}>
                             <EmailShareButton
                                 url={this.shareUrl}
                                 subject={this.title}

@@ -21,6 +21,7 @@ export default class Quiz {
   isCurrent(cur){ 
     return cur == this.number - 1
   }
+
   
   @action.bound
   setImageLoaded(){
@@ -33,12 +34,12 @@ export default class Quiz {
           if(Quiz.isCorrect)
             val.Progress.number = val.Progress.number + 1;
           // we need next card here current = (Quiz.number - 1) + 1
-          saveToStore(Quiz.slug, val ).then(_ => Api.saveUserData() )
+          saveToStore(Quiz.slug, val ).then(_ => Api.saveUserData().catch(_=>{}) )
         }, _ => { 
           if(Quiz.isCorrect){
-            saveToStore(Quiz.slug, {current:Quiz.number, Progress:{number:1}}).then(_ => Api.saveUserData() )
+            saveToStore(Quiz.slug, {current:Quiz.number, Progress:{number:1}}).then(_ => Api.saveUserData().catch(_=>{}) )
           }else{
-            saveToStore(Quiz.slug, {current:Quiz.number, Progress:{number:0}}).then(_ => Api.saveUserData() )
+            saveToStore(Quiz.slug, {current:Quiz.number, Progress:{number:0}}).then(_ => Api.saveUserData().catch(_=>{}) )
           }
         } )
 

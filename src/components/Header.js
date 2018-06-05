@@ -48,7 +48,10 @@ const styles = theme => ({
         color: 'white',
     },
     mobileMenu:{
-        color: 'white'
+        color: 'white',
+        '@media (max-width: 600px)':{
+            marginLeft: 'auto'
+        },
     },
     startMenu: {
         display: 'flex',

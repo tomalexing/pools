@@ -28,13 +28,11 @@ import {
 
 import './services/seed';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import noPullToRefresh from './no-pull-to-refresh.js';
 import Api from './services/Api';
 import Term from './term-of-use';
 import Auth from './models/Auth';
 
 injectTapEventPlugin();
-noPullToRefresh();
 
 
 const Card = (props) => <Lazy {...props} load={() => import('./components/CardWrapper')}/>
@@ -191,7 +189,10 @@ const styles = theme => ({
             width: '100%'
         },
         '&.fullscreen > div':{
-            height: '100%'
+            height: '100%',
+        },
+        '&.cardpage > div':{
+            height: '100%',
         },
         '&.fullscreen':{
             margin: '0px 0px !important'
@@ -224,7 +225,7 @@ class App extends React.Component{
         return (
             <div className={"App".concat(' ' + classes.mainScreen)} >
                 <Header />
-                <div className={cn(classes.container, {'fullscreen': this.props.fullscreen})}>
+                <div className={cn(classes.container, {'fullscreen': this.props.fullscreen}, {cardpage: this.props.cardpage})}>
                     {this.firstChild(this.props.children)}
 
                 </div>
@@ -241,8 +242,8 @@ const PrivateRoute =  ({ component: Component, ...rest }) => (
     <Route {...rest} render={props => (
       Auth.isAuthenticated && rest.role.includes(Auth.role) ? (
          <Component currentRole={Auth.role} {...rest}/>
-      ) : (
-           <div>Private Route. You should be logged in!!!</div>
+      ) : Auth.signout() && (
+            <div>Private Route. You should be logged in!!!</div> 
         )
     )} />
 )
@@ -251,14 +252,14 @@ render(<Router>
     <Route render={({ location }) => (
             <MuiThemeProvider theme={theme}>
                 <CssBaseline />
-                <ReactCSSTransitionGroup
+                {/*<ReactCSSTransitionGroup
                     transitionName={"fade"}
                     transitionAppear={false}
                     transitionEnterTimeout={200}
                     transitionLeaveTimeout={200}
-                >
-                
-                    <Route path={'/'} exact location={location} key={getUniqueKey()} component={() => <App><Explore/></App>}/>
+                >*/}
+                    <Switch>
+                    <Route path={'/'} exact location={location} key={getUniqueKey()} component={() => <App fullscreen={true} ><Explore/></App>}/>
 
                     { /* <Route path={'/polls'} location={location} key={getUniqueKey()} component={() =>        <App >
                             <div>
@@ -267,9 +268,9 @@ render(<Router>
                         </App>}/>
                     */}
                     
-                    <Route path={'/quizzes/:id'} location={location} key={getUniqueKey()}  component={() => <App><DCard key="quizzes" /></App>}/>
+                    <Route path={'/quizzes/:id'} location={location} key={getUniqueKey()} component={() => <App cardpage={true}  ><DCard key="quizzes" /></App>}/>
 
-                    <Route path={'/polls/:id'} location={location} key={getUniqueKey()}  component={() => <App><DCard key="polls" /></App>}/>
+                    <Route path={'/polls/:id'} location={location} key={getUniqueKey()} component={() => <App cardpage={true}  ><DCard key="polls" /></App>}/>
                     
                     <Route path={'/card/:id'} location={location} key={getUniqueKey()} exact component={() => <App><OneCard key="OneCard"/></App>}/>
                     
@@ -278,8 +279,9 @@ render(<Router>
                     <Route path={'/cats'}  key={getUniqueKey()} component={() => <App fullscreen={true} ><Cats match={{ params: { slug: '/' }, url: "" }} /></App>}/>
                     
                     <PrivateRoute role={['user']} path={'/dashboard'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} nofooter={true}><Dashboard /></App>} />
-                    
-                    </ReactCSSTransitionGroup>
+                    <Route path={'*'}  key={getUniqueKey()} component={() => <App fullscreen={true} >404</App>}/>
+                    </Switch>
+                   {/* </ReactCSSTransitionGroup> */}
             </MuiThemeProvider>
         )}/>
     </Router>,
@@ -328,3 +330,4 @@ function isgetMobileOperatingSystem() {
 if ( isgetMobileOperatingSystem() ){
     window.isMobileDevice = true
 }
+

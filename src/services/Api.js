@@ -8,12 +8,15 @@ const settings = { timestampsInSnapshots: true};
 let db = fire.firestore();
 db.settings(settings)
 
-var getReward = query => {
+var getAdditionlCardInfo = (slug) => {
+    let [empty, query, doc] = slug.replace('/v1','').split('/');
     return new Promise((resolve, reject) => {
-        db.collection(`${query}`).doc('reward').get().then(snap => {
-
+        db.collection(`${query}`).doc(doc).get().then(snap => {
+            
             // acc.push({id: snap.docs[0].id,...snap.docs[0].data()});
-                if(snap.empty) return resolve(1);
+                if(!snap.exists) return resolve({});
+
+                resolve(snap.data());
 
             })
     })
@@ -66,7 +69,7 @@ function getCard(collection, id){
 
 function changeScoresPolls(id, {l,r}){
     // Create a reference to the SF doc.
-    if(!id) return
+    if(!id) return Promise.resolve();
     var cardRef = db.collection("polls").doc(`${id}`);
 
     // Uncomment to initialize the doc.
@@ -126,15 +129,19 @@ function auth(){
 }
 
 function GoogleAuthProvider(){
-  return new firebase.auth.GoogleAuthProvider()
+  let provider = new firebase.auth.GoogleAuthProvider()
+  provider.addScope('email');
+  return provider
 }
 
 function FacebookAuthProvider(){
-  return new firebase.auth.FacebookAuthProvider();
+  let provider = new firebase.auth.FacebookAuthProvider();
+  provider.addScope('email');
+  return provider
 }
 
 function subscription(email){
-    if(!email) return
+    if(!email) return Promise.resolve();
 
     return new Promise(resolve => {
         let exist = false;
@@ -152,7 +159,7 @@ function subscription(email){
 }
 
 function addReview(id, name, question, email){
-    if(!id || !name || !question || !email) return
+    if(!id || !name || !question || !email) return Promise.resolve();
     return new Promise(resolve => {
         let userRef = db.collection('users').doc(id);
         var setWithMerge = userRef.set({
@@ -163,8 +170,8 @@ function addReview(id, name, question, email){
 }
 
 
-function withdraw(id, amount, wallet){
-    if(!id || !amount || !wallet) return
+function withdraw(id, amount, wallet, idTocken){
+    if(!id || !amount || !wallet) return Promise.resolve();
     var batch = db.batch();
 
     return new Promise(resolve => {
@@ -185,7 +192,7 @@ function withdraw(id, amount, wallet){
 }
 
 function getWithdrawn(id){
-    if(!id) return
+    if(!id) return Promise.resolve();
     return new Promise(resolve => {
         let userRef = db.collection('users').doc(id);
         var setWithMerge = userRef.get().then(doc => {
@@ -203,7 +210,7 @@ function getWithdrawn(id){
 
 
 function saveWallet(id, wallet){
-    if(!id || !wallet) return
+    if(!id || !wallet) return Promise.resolve();
     return new Promise(resolve => {
         let userRef = db.collection('users').doc(id);
         var setWithMerge = userRef.set({
@@ -214,7 +221,7 @@ function saveWallet(id, wallet){
 }
 
 function getWallet(id){
-    if(!id) return
+    if(!id) return Promise.resolve();
     return new Promise(resolve => {
         let userRef = db.collection('users').doc(id);
         userRef.get().then(doc => {
@@ -232,7 +239,7 @@ function getWallet(id){
 
 function saveUserData(id){
 
-    if(!id && !Auth.uid) return
+    if(!id && !Auth.uid) return Promise.resolve();
 
     id = id || Auth.uid;
     return loadAllFromStore().then( UserData => {
@@ -244,26 +251,28 @@ function saveUserData(id){
     })
 }
 
-function loadUserData(id){
-    if(!id && !Auth.uid) return
+function loadUserData({id, forceLoad } = {id: null, forceLoad : false}){
+    if(!id && !Auth.uid) return Promise.resolve();
     id = id || Auth.uid;
     return new Promise(resolve => {
         let userRef = db.collection('users').doc(id);
         userRef.get().then(doc => {
             if(doc.exists){
                 let docDate = doc.data()
-                if('UserData' in docDate){
+                if('UserData' in docDate || forceLoad){
                     resolve(saveAllToStore(docDate.UserData))
                 }else{
                     resolve(saveUserData(id))
                 }
+            }else{
+                resolve(saveUserData(id))
             }
         });
     })
 }
 
 function getHistory(id){
-    if(!id) return
+    if(!id) return Promise.resolve();
     return new Promise(resolve => {
         let userRef = db.collection('users').doc(id);
         userRef.get().then(doc => {
@@ -341,6 +350,8 @@ function getCatsCards(path){
     })
 }
 
+
+
 const Api = {
     getCard,
     getQuizzesIds,
@@ -360,6 +371,7 @@ const Api = {
     loadUserData,
     getHistory,
     getCatsMenu,
-    getCatsCards
+    getCatsCards,
+    getAdditionlCardInfo
 }
 export default Api;

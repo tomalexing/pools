@@ -24,6 +24,7 @@ class Auth {
   @observable isAuthenticated =  false;
   @observable token = null;
   @observable uid = null;
+  @observable logging = false;
   stores = [];
   
   
@@ -61,7 +62,7 @@ class Auth {
       
       if(typeof window === 'undefined') return reject();
 
-      window.localStorage.setItem('accessToken', JSON.stringify(_self.accessToken));
+      window.localStorage.setItem('accessToken', _self.accessToken);
       window.localStorage.setItem('photoURL', _self.photoURL);
       window.localStorage.setItem('displayName', _self.displayName);
       window.localStorage.setItem('email', _self.email);
@@ -83,7 +84,7 @@ class Auth {
   @action
   init = () => {
     if( typeof window === 'undefined' ) return 
-    this.isAuthenticated = !!JSON.parse(window.localStorage.getItem('accessToken'));
+    this.isAuthenticated = !!window.localStorage.getItem('accessToken');
     this.accessToken = window.localStorage.getItem('accessToken');;
     this.photoURL = window.localStorage.getItem('photoURL');
     this.displayName = window.localStorage.getItem('displayName');
