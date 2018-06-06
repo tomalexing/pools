@@ -135,6 +135,8 @@ class Card extends React.Component {
 
     registerEvents = () => {
 
+        if(window.innerWidth > 768) return
+
         this.listeners.forEach(func => func());
         let cardPlace = this.props.cardPlace, that = this;
         

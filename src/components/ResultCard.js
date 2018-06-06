@@ -10,7 +10,7 @@ import Auth from './../models/Auth';
 import Button from '@material-ui/core/Button'
 import Divider from '@material-ui/core/Divider';
 
-import { LazyImage, lerp, listener, getIMP } from './../utils';
+import { LazyImage, lerp, listener, getCoinName, roundeWithDec } from './../utils';
 import CardsModel from './../models/Cards'
 import Api from './../services/Api';
 
@@ -277,7 +277,7 @@ class ResultCard extends React.Component {
                                     <div className={classes.share}>
                                         {!this.isLiked &&
                                         <Typography variant="body1" className={classes.resHeader}>
-                                            Share and get +0.5 IMP:
+                                            Share and get +0.5 {Api.getCoinName()}:
                                         </Typography>}
                                         {this.isLiked &&
                                         <Typography variant="body1" className={classes.resHeader}>
@@ -292,8 +292,8 @@ class ResultCard extends React.Component {
                                         Your reward:
                                     </Typography>
                                     <div className={classes.Imp}>
-                                        <Typography variant="display2" > { this.finalCard.progress && getIMP(this.finalCard.progress.number) }  </Typography>
-                                        <Typography variant="display1" className={classes.ImpAddon} >{this.finalCard.progress && 'IMP'}</Typography>
+                                        <Typography variant="display2" > { this.finalCard.progress &&  roundeWithDec(this.finalCard.progress.number * this.finalCard.info.reward) }  </Typography>
+                                        <Typography variant="display1" className={classes.ImpAddon} >{ this.finalCard.progress && Api.getCoinName()}</Typography>
                                     </div>
                                     { !Auth.isAuthenticated && <div className={classes.col}>
                                         

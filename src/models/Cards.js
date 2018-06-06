@@ -290,8 +290,7 @@ export default class Cards {
             window.location.reload();
         })
       }).then(val => {
-        
-          if(!val) return {number:0, iqValue: 0}
+        if(!val) return {number:0, iqValue: 0}
         
         var {number} = val.Progress;
         let iqValue = 0;

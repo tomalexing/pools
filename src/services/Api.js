@@ -350,6 +350,9 @@ function getCatsCards(path){
     })
 }
 
+function getCoinName(){
+    return "IMP"
+}
 
 
 const Api = {
@@ -372,6 +375,7 @@ const Api = {
     getHistory,
     getCatsMenu,
     getCatsCards,
-    getAdditionlCardInfo
+    getAdditionlCardInfo,
+    getCoinName
 }
 export default Api;

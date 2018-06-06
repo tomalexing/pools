@@ -6,7 +6,7 @@ import { observer }  from 'mobx-react';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
-import { listener, getMonthName } from './../utils';
+import { listener, getMonthName, roundeWithDec } from './../utils';
 
 import {Switch, Route, Redirect, Link, withRouter} from 'react-router-dom';
 import {NavLink} from './NavLink';
@@ -385,7 +385,7 @@ class Common extends React.Component{
                 ).then(_ => {
                     return Promise.all( slugs.map(slug => {
                         return Api.getAdditionlCardInfo(slug).then(info => {
-
+                            if(!info || !info.cat) return
                             that.catsAvailable.add(info.cat);
 
                             Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{info:info},{slug: slug})})
@@ -400,7 +400,8 @@ class Common extends React.Component{
                     }))
                 }).then(_ => {
                     that.forceUpdate();
-                    that.totalIMP = Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['progress'] ? prog['progress'].number : 0,0)
+                    
+                    that.totalIMP = Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? prog['progress'].number * prog['info'].reward : 0,0)
                 })
             }, _ => {
                 Api.loadUserData({forceLoad: true}).then(data => {
@@ -424,13 +425,13 @@ class Common extends React.Component{
                 return <div key={`${cat}`} className={classes.catWrapper}>
                     <Typography variant="display4" className={classes.catTitle}>{cat}:</Typography>
                     <div className={classes.cardWrapper} >
-                        { Object.values(that.cardsInProcessAndFinished).filter(o => o['info'].cat == cat).map(({progress, info, slug, isLiked}, idx) => {
+                        { Object.values(that.cardsInProcessAndFinished).filter(o => o['info'] && o['info'].cat == cat).map(({progress, info, slug, isLiked}, idx) => {
                                 return  info ? (<div key={`card-${idx}`} className={classes.card}>
                                         <div ref='header' className={classes.header}>
                                             <Link style={{textDecoration: 'none'}} to={slug.replace('/v1','')} ><Typography variant="display1" className={classes.title}>{info.title}<Icon>navigate_next</Icon></Typography> </Link>
                                             <span className={classes.delimeter}></span>
                                             <Typography variant="display1" className={classes.impNum}>  
-                                                {progress && progress.number * info.reward} IMP
+                                                {progress && roundeWithDec(progress.number * info.reward)} {Api.getCoinName()}
                                             </Typography>
                                         </div>
                                         <div className={classes.cardBodyResult}>
@@ -449,7 +450,7 @@ class Common extends React.Component{
                                             <div className={classes.share}>
                                                 {!isLiked &&
                                                 <Typography variant="body1" gutterBottom className={classes.resHeader}>
-                                                    Share and get +0.5 IMP:
+                                                    Share and get +0.5 {Api.getCoinName()}:
                                                 </Typography>}
                                                 {isLiked &&
                                                 <Typography gutterBottom variant="body1" className={classes.resHeader}>
@@ -693,34 +694,6 @@ class Account extends React.Component{
             that.wallet = wallet;
         });
 
-        Api.auth().onAuthStateChanged(function(user) {
-            
-            if (user) {
-                user.getIdToken().then(function(idToken) {
-                    fetch(`http://polls/getUser/${Auth.uid}`,{
-                        method: 'post',
-                        headers: {
-                            'content-type': 'application/x-www-form-urlencoded; charset=utf-8',
-                            'Accept': 'application/json'},
-                        mode: 'cors',
-                        body: 'token=' + idToken
-                    }).then(resp => {
-                        return resp.json()}).then(console.log)
-                    // Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken).then( amount => {
-                    //     that.getProgress();
-                    //     that.getHistory();
-                    // })
-                  }).catch(function(error) {
-                    console.trace(error.stack)
-                  });
-        
-            } 
-            
-            else{
-              console.error("user not logged in");
-            }
-        
-        });
     }
 
     @observable cardsInProcessAndFinished = [];
@@ -746,7 +719,7 @@ class Account extends React.Component{
             ).then(_ => {
                 return Promise.all( slugs.map(slug => {
                     return Api.getAdditionlCardInfo(slug).then(info => {
-
+                        if(!info || !info.reward) return
                         Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{info:info})})
                         
                         
@@ -761,7 +734,7 @@ class Account extends React.Component{
             .then( _ => {
                 return Api.getWithdrawn(Auth.uid)
             }).then( amountWithdrawn => {
-                that.totalIMP = Math.max(0, Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['progress'] ? prog['progress'].number * prog['info'].reward : 0, -amountWithdrawn)) 
+                that.totalIMP = Math.max(0, Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? prog['progress'].number * prog['info'].reward : 0, -amountWithdrawn)) 
             })
 
           }, _ => {})
@@ -794,6 +767,39 @@ class Account extends React.Component{
     payoff = _ => {
         let that = this;
         if(that.totalIMP <= 0) return
+
+        Api.auth().onAuthStateChanged(function(user) {
+            
+            if (user) {
+
+                user.getIdToken().then(function(idToken) {
+
+                    fetch(`http://polls/getUser/${Auth.uid}`,{
+                        method: 'post',
+                        headers: {
+                            'content-type': 'application/x-www-form-urlencoded; charset=utf-8',
+                            'Accept': 'application/json'},
+                        mode: 'cors',
+                        body: 'token=' + idToken + '&totalIMP=' + that.totalIMP + '&wallet=' + that.wallet
+                    }).then(resp => {
+                        return resp.json()}).then(()=>{
+                            Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken).then( amount => {
+                                that.getProgress();
+                                that.getHistory();
+                            })
+                        })
+                        
+                  }).catch(function(error) {
+                    console.trace(error.stack)
+                  });
+        
+            } 
+            
+            else{
+              console.error("user not logged in");
+            }
+        
+        });
         Api.auth().onAuthStateChanged(function(user) {
 
             if (user) {
@@ -846,8 +852,8 @@ class Account extends React.Component{
                             </Typography>
                         </div>
                         <div className={classes.accountImp}>
-                            <Typography variant="display1" className={classes.accountImpVal} > { this.totalIMP } </Typography>
-                            <Typography variant="display1" className={classes.accountImpAddon} >IMP</Typography>
+                            <Typography variant="display1" className={classes.accountImpVal} > { roundeWithDec(this.totalIMP) } </Typography>
+                            <Typography variant="display1" className={classes.accountImpAddon} >{Api.getCoinName()}</Typography>
                         </div>
                     </div>
                     <Divider className={classes.divider} />
@@ -883,7 +889,7 @@ class Account extends React.Component{
                             </Button>
                         </div>}
 
-                    { this.enteder && <Button variant="raised" color="secondary"  className={classes.submitBtn} onClick={this.payoff}>
+                    { this.enteder && <Button variant="raised" color="secondary"  disabled className={classes.submitBtn} onClick={this.payoff}>
                         <Typography variant="button" >Payoff</Typography>
                     </Button>}
                     
@@ -908,7 +914,7 @@ class Account extends React.Component{
                             </div>
                             <div className={classes.col}>
                                 <Typography variant="body1" className={classes.bold} gutterBottom>
-                                        Amount, IMP
+                                        Amount, {Api.getCoinName()}
                                 </Typography>
                             </div>
                             <div className={classes.col}>

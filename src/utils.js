@@ -490,6 +490,10 @@ export const LightenDarkenColor = (col, amt) => {
 }
 
 
+export const roundeWithDec = (num) => {
+  return Math.floor(num) + Math.floor(num % 1 * 100) / 100;
+}
+
 util.listener = listener
 util.requestAnimationFramePromise = requestAnimationFramePromise
 util.transitionEndPromise = transitionEndPromise

@@ -5,7 +5,7 @@ import { getUniqueKey  } from './../utils';
 
 const settings = { timestampsInSnapshots: true};
 let db = fire.firestore();
-db.settings(settings)
+db.settings(settings);
 
 const polls = [{
         "answers" : {
@@ -458,7 +458,7 @@ function setQuizzes(){
         cat: 'Quizzes',
         title: 'Quiz',
         linksite: 'quizi.io',
-        title: 'Poll',
+        title: 'Quiz',
         desc: 'Discover answers to the most provocative question.',
         img: './assets/polls.png',
         result: 'Your IQ is {{iqValue}}.'
@@ -542,7 +542,7 @@ function setCats(){
         desc: 'The average IQ is 100. Have you wondered what your IQ score is?',
         cardtype: 'Quiz',
         number: 20,
-        btn: 'Pass quiz',
+        btn: 'Take quiz',
         slug: 'quizzes/iq',
         img: null,
         link: `/quizzes/${QuizzesId}`,
@@ -556,11 +556,25 @@ function setCats(){
       desc: 'Impleum is a powerful and scalable path to develop DApps.',
       cardtype: 'Quiz',
       number: 20,
-      btn: 'Pass quiz',
+      btn: 'Take quiz',
       slug: 'quizzes/blockchain',
       img: './assets/impleum.png',
       reward: 0.1,
-    })
+    });
+
+    db.collection('cats/quizzes/blockchain').doc().set({
+      type: 'term',
+      title: 'Cybersecurity test',
+      linksite: '10guards.com',
+      desc: 'The development of technologies opens up new business opportunities, and also, new threats to your assets.',
+      cardtype: 'Quiz', // todo lowercase
+      number: 10,
+      btn: 'Take quiz',
+      slug: 'quizzes/blockchain',
+      img: './assets/impleum.png',
+      reward: 0.1,
+    });
+
     db.collection('cats/polls/common').doc().set({
       type: 'term',
       title: 'Common Polls',
@@ -568,7 +582,7 @@ function setCats(){
       desc: 'Discover answers to the most provocative question.',
       cardtype: 'Poll',
       number: 20,
-      btn: 'Pass polls',
+      btn: 'Take polls',
       slug: 'polls/common',
       img: './assets/polls.png',
       link: `/polls/${PollsId}`,
@@ -581,7 +595,7 @@ function setCats(){
       desc: 'Social platform where you can see what your friends are watching.',
       cardtype: 'Poll',
       number: 10,
-      btn: 'Pass polls',
+      btn: 'Take polls',
       slug: 'polls/movies',
       img: './assets/raters.png',
       reward: 0.1,
