@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
-import {requestAnimationFramePromise, transitionEndPromise, parallel, wait} from './../utils';
+import {requestAnimationFramePromise, transitionEndPromise, parallel, wait, listener} from './../utils';
 import * as cn  from 'classnames'; 
 import { LazyImage } from './../utils';
 
@@ -253,39 +253,44 @@ class Poll extends React.Component {
 
         this.registerEvents();
         this.setCurrentVote();
+        this.props.passRef(this.refs.body);
+        console.log('mountt');
     }
+
+    listeners = [];
 
     registerEvents = () => {
         if(!this.refs.left && !this.refs.left ) return
        if(window.innerWidth < 600 ){
             
-            this.refs.left.addEventListener('touchstart', this.rememberPoints);
-            this.refs.left.addEventListener('touchend', this.pickCart('1').bind(this)); 
-            this.refs.left.addEventListener('touchmove', this.drag);
-            this.refs.left.addEventListener('mousedown', this.rememberPoints);
-            this.refs.left.addEventListener('mouseup', this.pickCart('1').bind(this)); 
-            this.refs.left.addEventListener('mousemove', this.drag); 
+            this.listeners.push(listener(this.refs.left,'touchstart', this.rememberPoints, false));
+            this.listeners.push(listener(this.refs.left, 'touchend', this.pickCart('1').bind(this), false)); 
+            this.listeners.push(listener(this.refs.left, 'touchmove', this.drag, false));
+            this.listeners.push(listener(this.refs.left, 'mousedown', this.rememberPoints, false));
+            this.listeners.push(listener(this.refs.left, 'mouseup', this.pickCart('1').bind(this), false)); 
+            this.listeners.push(listener(this.refs.left, 'mousemove', this.drag, false)); 
 
-            this.refs.right.addEventListener('touchstart', this.rememberPoints);
-            this.refs.right.addEventListener('touchend', this.pickCart('2').bind(this));
-            this.refs.right.addEventListener('touchmove', this.drag);
-            this.refs.right.addEventListener('mousedown', this.rememberPoints);
-            this.refs.right.addEventListener('mouseup', this.pickCart('2').bind(this)); 
-            this.refs.right.addEventListener('mousemove', this.drag); 
-            
-            
+            this.listeners.push(listener(this.refs.right, 'touchstart', this.rememberPoints, false));
+            this.listeners.push(listener(this.refs.right, 'touchend', this.pickCart('2').bind(this), false));
+            this.listeners.push(listener(this.refs.right, 'touchmove', this.drag, false));
+            this.listeners.push(listener(this.refs.right, 'mousedown', this.rememberPoints, false));
+            this.listeners.push(listener(this.refs.right, 'mouseup', this.pickCart('2').bind(this), false)); 
+            this.listeners.push(listener(this.refs.right, 'mousemove', this.drag, false)); 
             
         }else{
-            this.refs.left.addEventListener('click', this.pickCart('1').bind(this)); 
-            this.refs.right.addEventListener('click', this.pickCart('2').bind(this)); 
+            this.listeners.push(listener(this.refs.left, 'mousedown', this.rememberPoints, false));
+            this.listeners.push(listener(this.refs.right, 'mousedown', this.rememberPoints, false));
+
+            this.listeners.push(listener(this.refs.left, 'click', this.pickCart('1').bind(this), false)); 
+            this.listeners.push(listener(this.refs.right, 'click', this.pickCart('2').bind(this), false)); 
         }
         
-        this.refs.footer.addEventListener('touchstart', this.prevent);
-        this.refs.footer.addEventListener('touchend', this.prevent);
-        this.refs.footer.addEventListener('touchmove', this.prevent);
-        this.refs.footer.addEventListener('mousedown', this.prevent);
-        this.refs.footer.addEventListener('mouseup', this.prevent); 
-        this.refs.footer.addEventListener('mousemove', this.prevent); 
+        this.listeners.push(listener(this.refs.footer, 'touchstart', this.prevent, false));
+        this.listeners.push(listener(this.refs.footer, 'touchend', this.prevent, false));
+        this.listeners.push(listener(this.refs.footer, 'touchmove', this.prevent, false));
+        this.listeners.push(listener(this.refs.footer, 'mousedown', this.prevent, false));
+        this.listeners.push(listener(this.refs.footer, 'mouseup', this.prevent, false)); 
+        this.listeners.push(listener(this.refs.footer, 'mousemove', this.prevent, false)); 
     }
 
     componentDidUpdate(){
@@ -296,6 +301,12 @@ class Poll extends React.Component {
     prevent = (e) => {
        e.stopImmediatePropagation();
     } 
+
+    componentWillUnmount(){
+        console.log('Unmountt');
+
+        this.listeners.forEach(func => func());
+    }
 
     @computed
     get getRefs(){
@@ -337,11 +348,12 @@ class Poll extends React.Component {
     startY = 0;
 
     rememberPoints = (e) => {
+        //e.stopPropagation();
+        //     e.preventDefault();
        // if(window.innerWidth > 600 ){
-       //     e.preventDefault();
-        //    e.stopPropagation();
        // }
         this._dragging = true;
+        console.log('rememberPoints');
         this.startX = e.clientX || e.touches[0].clientX;
         this.startY = e.clientY || e.touches[0].clientY;
         this.deltaX = 0;
@@ -364,14 +376,17 @@ class Poll extends React.Component {
     pickCart = (thisCardNumber) => async e => {
 
         e.preventDefault();
+        console.log('pickCart');
+        console.log(this._dragging);
 
+
+        if (!this._dragging) return;
 
         if(this.picking || !this.props.store.canMakeAction ) return
         if(window.innerWidth < 600 ){
             if((this.deltaX && Math.abs(this.deltaX) > 10) || (this.deltaY && Math.abs(this.deltaY)  > 10) ) {
                 return;
             }
-            if (!this._dragging) return;
         }
 
         this.picking = true;

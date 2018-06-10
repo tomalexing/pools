@@ -27,6 +27,7 @@ import { LightenDarkenColor } from "./../utils";
 import Api from "./../services/Api";
 import Auth from "./../models/Auth";
 import Redirect from 'react-router-dom/Redirect';
+import Checkbox from '@material-ui/core/Checkbox';
 
 // const isActive = (match, location,to) => {
 //   return ['/quizzes','/polls'].some(str => location.pathname.includes(str))
@@ -62,25 +63,34 @@ const styles = theme => ({
         width: '100%',
         margin: '9px 0',
         borderRadius: '74px',
+        color: 'white',
+        '&$disabled': {
+            background: '#ff88b8',
+            color: 'white',
+            boxShadow: 'none',
+            opacity: .8
+        },
     },
     facebook:{
         height: '40px',
         width: '100%',
         margin: '9px 0',
         borderRadius: '74px',
+        color: 'white',
         backgroundColor: '#5378d1',
         '&:focus, &:hover': {
             backgroundColor: LightenDarkenColor('#5378d1', -20)
-        }
-    },
-    mainMenu:{
-        maxHeight: ITEM_HEIGHT * 4.5,
-        width: 200,
-        top: '60px !important'
-    },
-    mainMenuIcon:{
+        },
+        '&$disabled': {
+            background: '#5378d1',
+            color: 'white',
+            boxShadow: 'none',
+            opacity: .8
+        },
 
     },
+    disabled: {},
+    
     font12:{
         fontSize: 12
     },
@@ -110,6 +120,12 @@ const styles = theme => ({
     },
     paddingBottom4: {
         paddingBottom: theme.spacing.unit * 4
+    },
+
+    agree: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });
 
@@ -151,9 +167,7 @@ class Login extends React.Component {
     })
   }
 
-  @observable open = false
-
-
+  @observable open = false;
   @observable ctx = { redirect: false, state: {} }
 
   loginWithGoogle = async (info) => {
@@ -277,6 +291,14 @@ class Login extends React.Component {
       transform: `translate(-${top}%, -${left}%)`,
     };
   }
+
+  @observable email = false;
+  @observable terms = false
+
+
+  checkbox = name => event => {
+      this[name] = event.target.checked;
+  }
     
   render() {
     const { classes } = this.props;
@@ -297,7 +319,6 @@ class Login extends React.Component {
             open={this.open}
             onClose={this.closeLoginModal}
             >
-           
             <div style={this.getModalStyle()} className={classes.paper + ' ' + classes.paddingBottom3}>
                 <Typography variant="display1" id="login-modal-title">
                     Login/registration
@@ -306,11 +327,34 @@ class Login extends React.Component {
                     <Typography variant="body1" className={classes.font14 + ' ' + classes.paddingTop1 + ' ' +  classes.paddingBottom1 } >
                         You can login / register with Quizion via social networks
                     </Typography>
-                    <Button  variant="raised" color="secondary" className={classes.facebook } onClick={this.loginWithFb}>Facebook</Button>
-                    <Button  variant="raised" color="secondary"  className={classes.google} onClick={this.loginWithGoogle}>Google</Button>
-                    <Typography variant="body1" className={classes.font12  + ' ' + classes.paddingTop1}>
-                    By using our website and/or services, you agree to our Terms of Service and Privacy Policy.
-                    </Typography>
+                    <Button  variant="raised" color="secondary" className={classes.facebook } disabled={!(this.terms && this.email)} classes={{disabled:classes.disabled}} onClick={this.loginWithFb}>Facebook</Button>
+                    <Button  variant="raised" color="secondary"  className={classes.google} disabled={!(this.terms && this.email)} classes={{disabled:classes.disabled}} onClick={this.loginWithGoogle}>Google</Button>
+                    <div className={classes.agree}>
+                    
+                        <Checkbox
+                        checked={this.terms}
+                        value="terms"
+                        onChange={this.checkbox('terms')}
+
+                        />
+                        <Typography variant="body1" className={classes.font12  + ' ' + classes.paddingTop1}>
+                            I agree to Quizi’s Terms of Use and Privacy Policy
+                        </Typography>
+
+                    </div>
+                    <div className={classes.agree}>
+                    
+                        <Checkbox
+                        checked={this.email}
+                        value="email"
+                        onChange={this.checkbox('email')}
+
+                        />
+                        <Typography variant="body1" className={classes.font12  + ' ' + classes.paddingTop1}>
+                            I agree to receive emails from Quizi
+                        </Typography>
+
+                    </div>
                     <div style={{height: '12px'}} />
                     <Button size="small" color="primary" className={classes.closeModal} onClick={this.closeLoginModal}>Close</Button>
                 </div>

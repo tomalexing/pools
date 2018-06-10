@@ -24,7 +24,7 @@ import classNames from 'classnames';
 
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
-import {loadFromStore , saveToStore} from "./../services/localDb";
+import {loadFromStore , saveToStore, clearAll} from "./../services/localDb";
 
 import Grow from '@material-ui/core/Grow';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -32,6 +32,9 @@ import Tooltip from '@material-ui/core/Tooltip';
 import CardsModel from './../models/Cards'
 
 import Share from './Share';
+import SModal from './Modal';
+
+import Checkbox from '@material-ui/core/Checkbox';
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
   (!redirect
@@ -404,12 +407,12 @@ class Common extends React.Component{
                     that.totalIMP = Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? prog['progress'].number * prog['info'].reward : 0,0)
                 })
             }, _ => {
-                Api.loadUserData({forceLoad: true}).then(data => {
-                    if(!data || !data['SlugsCardsInProcess']) return
-                    let reload = prompt('Error has happened. Reload page?', 'yes');
-                    if( reload == 'yes' )
-                    window.location.reload();
-                })
+                // Api.loadUserData({forceLoad: true}).then(data => {
+                //     if(!data || !data['SlugsCardsInProcess']) return
+                //     let reload = prompt('Error has happened. Reload page?', 'yes');
+                //     if( reload == 'yes' )
+                //     window.location.reload();
+                // })
             })
         });
     }
@@ -763,6 +766,8 @@ class Account extends React.Component{
         this.enteder = false;
     }
 
+
+
     @action.bound
     payoff = _ => {
         let that = this;
@@ -782,7 +787,10 @@ class Account extends React.Component{
                         mode: 'cors',
                         body: 'token=' + idToken + '&totalIMP=' + that.totalIMP + '&wallet=' + that.wallet
                     }).then(resp => {
-                        return resp.json()}).then(()=>{
+                        return resp.json()}).then(resp => {
+                            if(resp.status == false) {
+                                return that.isErrorModalOpened = true;
+                            }
                             Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken).then( amount => {
                                 that.getProgress();
                                 that.getHistory();
@@ -800,27 +808,13 @@ class Account extends React.Component{
             }
         
         });
-        Api.auth().onAuthStateChanged(function(user) {
-
-            if (user) {
-                user.getIdToken(true).then(function(idToken) {
-                    Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken).then( amount => {
-                        that.getProgress();
-                        that.getHistory();
-                    })
-                  }).catch(function(error) {
-                    console.trace(error.stack)
-                  });
-        
-            } 
-
-            else{
-              console.error("user not logged in");
-            }
-        
-        });
-       
     }
+
+    @observable isErrorModalOpened = false    
+    @action.bound
+    closeErrorModal = () => {
+        this.isErrorModalOpened = false;
+    };
 
     render(){
         let {classes} = this.props;
@@ -889,9 +883,11 @@ class Account extends React.Component{
                             </Button>
                         </div>}
 
-                    { this.enteder && <Button variant="raised" color="secondary"  disabled className={classes.submitBtn} onClick={this.payoff}>
+                    { this.enteder && <Button variant="raised" disabled={this.totalIMP <= 0} color="secondary" className={classes.submitBtn} onClick={this.payoff}>
                         <Typography variant="button" >Payoff</Typography>
                     </Button>}
+
+                    <SModal title="Something went wrong" body="Maybe is being problems with conection. Try again later." open={this.isErrorModalOpened} close={this.closeErrorModal}/>
                     
                 </div>
             </div>
@@ -954,6 +950,11 @@ class Account extends React.Component{
 
                 </div>
             </div>
+            
+            <Button color="secondary" variant="raised" className={classes.submitBtn} onClick={clearAll}>
+                    <Icon>delete</Icon>    
+                    <Typography  className={classes.editBtnTypo}  variant="button">Delete Local Data</Typography>
+            </Button>
         </div>)
     }
 }
@@ -1082,6 +1083,12 @@ const stylesContact = theme => ({
         marginTop: 20,
         marginBottom: 5,
         borderRadius: 74,
+    },
+    
+    agree: {
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center'
     }
 })
 
@@ -1095,6 +1102,7 @@ class Contacts extends React.Component{
 
     @action.bound
     send = e => {
+        if(!this.confirmEmail) return
         e.preventDefault();
         let that = this;
         Api.addReview(Auth.uid, this.name, this.question, Auth.email).then(_ => {
@@ -1115,6 +1123,11 @@ class Contacts extends React.Component{
     @observable question = '';
     @action
     setQuestion = ({target}) => this.question = target.value
+
+    @observable confirmEmail = false;
+    comfirm = name => event => {
+        this[name] = event.target.checked;
+    }
 
     render(){
         let {classes} = this.props;
@@ -1165,7 +1178,20 @@ class Contacts extends React.Component{
                                 className: classes.formInput
                             }}
                         />
-                        <Button type="submit" variant="raised" color="secondary" className={classes.submitBtn} onClick={this.send}>
+                        <div className={classes.agree}>
+                    
+                            <Checkbox
+                            checked={this.confirmEmail}
+                            value="email"
+                            onChange={this.comfirm('confirmEmail')}
+
+                            />
+                            <Typography variant="body1" className={classes.font12  + ' ' + classes.paddingTop1}>
+                                I agree to receive emails from Quizi
+                            </Typography>
+
+                        </div>
+                        <Button type="submit" variant="raised" color="secondary" className={classes.submitBtn} onClick={this.send} disabled={!this.confirmEmail}>
                             <Typography variant="button">Send</Typography>
                         </Button>
                     </form>

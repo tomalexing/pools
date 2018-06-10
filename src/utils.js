@@ -32,6 +32,7 @@ export class LazyImage extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.load !== this.props.load) {
+      this.setState({loaded: false})
       this.load(nextProps)
     }
   }

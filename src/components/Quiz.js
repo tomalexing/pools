@@ -63,6 +63,7 @@ const styles = theme => ({
             objectFit: 'cover',
             zIndex: 1,
             height: '100%',
+            objectFit: 'contain',
             '@media (max-width: 840px)':{
                 height: '100%'
             }

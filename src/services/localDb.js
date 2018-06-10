@@ -160,7 +160,8 @@ export function saveAllToStore(data) {
   });
 }
 
-function clearAll(){
+export function clearAll(){
+
   return new Promise(function(resolve, reject) {
     if (window.indexedDB) {
       let dbPromise = prepareDb_();

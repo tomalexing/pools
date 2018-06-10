@@ -41,6 +41,8 @@ const styles = theme => ({
         }
     },
     header:{
+        position: 'relative',
+        zIndex: 10,
         color: 'white',
         background: '#FC3868',
         fontWeight: 100,
@@ -260,7 +262,7 @@ class Card extends React.Component {
             that.props.store.current = that.props.store.current + 1;
             return
         }
-
+        console.log(target, opt);
         this.refs.card.style.transition = 'transform .2s ease-in-out';
         if( opt.action != 'none') this.props.store.canMakeAction = false;
 
@@ -290,6 +292,7 @@ class Card extends React.Component {
             }) // pull next card it back
             .then( _ => {
                 if( opt.action == 'none') {
+                    console.log('here');
                     that.refs.card.style.transition = ''; // set current card back
                     return
                 }
@@ -396,6 +399,7 @@ class Card extends React.Component {
     finish = e => {
         this.props.store.IsEnd = true;
         this.props.store.saveFinalCard();
+        this.listeners.forEach(func => func()); 
     }
 
     _dragging = false;
@@ -412,9 +416,14 @@ class Card extends React.Component {
     
     stopDrag = (event) => {
         // we catch event from all page so do no prevent Defalut it break whole btns
+        console.log('Card stop');
         let cardPlace = this.props.cardPlace;
         if (this.props.store[cardPlace] && this.props.store[cardPlace].inmovable) return;
-        if (!this._dragging) return;
+        
+        if (!this._dragging || !this._allowDrag) {
+            this._allowDrag = undefined;
+            return;
+        }
         this._allowDrag = undefined;
         this._dragging = false;
         const deltaX = (event.clientX || event.changedTouches[0].clientX) - this.startX;
@@ -433,34 +442,40 @@ class Card extends React.Component {
     }
     
     drag = (event) => {
+        
         let cardPlace = this.props.cardPlace;
-
+        
         if (this.props.store[cardPlace] && this.props.store[cardPlace].inmovable) return;
         if (!this._dragging) return;
 
         const deltaX = (event.clientX || event.touches[0].clientX) - this.startX;
         const deltaY = (event.clientY || event.touches[0].clientY) - this.startY;
-
+        
         
         if( this._allowDrag == undefined) {
             if( Math.abs(deltaX) < Math.abs(deltaY) ){
+                return
                 this._allowDrag  = false;
-                this._dragging = false;
-                return;
             }else{
                 this._allowDrag = true
             }
         }
-
+        
         if( this._allowDrag ){
             event.preventDefault();
             this.refs.card.style.transform = `rotate(${this.props.store._rotationLerp(deltaX)}deg) translate(${deltaX}px, ${deltaY}px)`;
-
+            
         }
     }
 
+    getRef = (ref)  => {
+        this.innerContainerRef = ref;
+    }
+
     @action.bound
-    again = () => {
+    again = (e) => {
+        e.preventDefault();
+        //e.stopImmediatePropagation();
         this.props.store.IsEnd = false;
         this.startAgain = true; 
         this.props.store.current = 0;
@@ -486,7 +501,7 @@ class Card extends React.Component {
             return (
                 <div ref='card'
                 className={[classes.card, cardPlace].join(' ')} style={{ ...this.props.store.getPositionStyles}}>
-                    <ResultCard adjustStyle={this.adjustStyle} again={this.again}cardSlug={this.props.store.cardSlug}/>
+                    <ResultCard adjustStyle={this.adjustStyle} again={this.again} cardSlug={this.props.store.cardSlug}/>
                 </div>
             )
         }
@@ -503,7 +518,7 @@ class Card extends React.Component {
                         
                     </div>
 
-                    { card.cardType == 'poll' && <Poll store={this.props.store} poll={card} next={this.next} prev={this.prev} finish={this.finish}/> }
+                    { card.cardType == 'poll' && <Poll passRef={this.getRef} store={this.props.store} poll={card} next={this.next} prev={this.prev} finish={this.finish}/> }
                     { card.cardType == 'quiz' && <Quiz store={this.props.store} Quiz={card} next={this.next} prev={this.prev} finish={this.finish} currentIsEnd={this.props.store.currentIsEnd} /> }
                 </div>
             </div>

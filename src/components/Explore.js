@@ -21,6 +21,7 @@ const styles = theme => ({
         alignItems: 'center',
         height: '100%',
         overflow: 'auto',
+        '-webkit-overflow-scrolling': 'touch',
         '@media (max-width: 767px)':{
         },
     },

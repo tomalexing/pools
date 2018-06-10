@@ -114,6 +114,21 @@ const styles = theme => ({
         width: 200,
         top: '60px !important'
     },
+
+    headerBarCover: {
+        height: 64,
+        '@media (max-width: 600px)': {
+            height: 48,
+        }
+    },
+
+    headerBar: {
+        position: 'fixed',
+        width: '100%',
+        width: '100vw',
+        top: 0,
+        left: 0
+    }
 });
 
 const ITEM_HEIGHT = 48;
@@ -158,7 +173,8 @@ class Header extends React.Component {
     const { classes } = this.props;
 
     return (
-     <AppBar position="static" style={{zIndex: 1201}} color="primary">
+    <div className={classes.headerBarCover} >
+     <AppBar className={classes.headerBar}  color="primary">
         <Login open={this.open} logout={this.getLogOut} close={this.closeLoginModal}/>
         <Toolbar className={classes.header}>
             <a href="/">
@@ -289,6 +305,7 @@ class Header extends React.Component {
 
         </Toolbar>
       </AppBar>
+      </div>
     );
   }
 

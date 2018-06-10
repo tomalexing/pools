@@ -29,11 +29,12 @@ import {
 import './services/seed';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import Api from './services/Api';
-import Term from './term-of-use';
 import Auth from './models/Auth';
-
 injectTapEventPlugin();
 
+const Term = (props) => <Lazy {...props} load={() => import('./term-of-use')}/>
+const Privacy = (props) => <Lazy {...props} load={() => import('./privacy-policy')}/>
+const Subscribe = (props) => <Lazy {...props} load={() => import('./subscribe')}/>
 
 const Card = (props) => <Lazy {...props} load={() => import('./components/CardWrapper')}/>
 const OneCard = (props) => <Lazy {...props} load={() => import('./components/OneCard')}/>
@@ -41,6 +42,7 @@ const Dashboard = (props) => <Lazy {...props} load={() => import('./components/D
 const Explore = (props) => <Lazy {...props} load={() => import('./components/Explore')}/>
 const Cats = (props) => <Lazy {...props} load={() => import('./components/Cats')}/>
 const DCard = (props) => <Lazy {...props} load={() => import('./components/DCard')}/>
+const Cookies = (props) => <Lazy {...props} load={() => import('./components/Cookies')}/>
 
 
 
@@ -69,7 +71,7 @@ const theme = createMuiTheme(
             hover: "rgba(0, 0, 0, 0.08)",
             hoverOpacity: 0.08,
             selected: "rgba(0, 0, 0, 0.14)",
-            disabled: "rgba(0, 0, 0, 0.26)",
+            disabled: "rgba(255, 255, 255, 1)",
             disabledBackground: LightenDarkenColor("#FC3868", 80),
         }
     },
@@ -274,13 +276,19 @@ render(<Router>
                     
                     <Route path={'/card/:id'} location={location} key={getUniqueKey()} exact component={() => <App><OneCard key="OneCard"/></App>}/>
                     
-                    <Route path={'/term-of-use'} location={location} key={getUniqueKey()} component={() => <App><Term /></App>}/>
+                    <Route path={'/term-of-use'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} ><Term /></App>}/>
+
+                    <Route path={'/privacy-policy'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} ><Privacy /></App>}/>
+                    
+                    <Route path={'/subscribe'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} ><Subscribe /></App>}/>
 
                     <Route path={'/cats'}  key={getUniqueKey()} component={() => <App fullscreen={true} ><Cats match={{ params: { slug: '/' }, url: "" }} /></App>}/>
                     
                     <PrivateRoute role={['user']} path={'/dashboard'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} nofooter={true}><Dashboard /></App>} />
+                    
                     <Route path={'*'}  key={getUniqueKey()} component={() => <App fullscreen={true} >404</App>}/>
                     </Switch>
+                    <Cookies/>
                    {/* </ReactCSSTransitionGroup> */}
             </MuiThemeProvider>
         )}/>

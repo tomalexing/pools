@@ -91,9 +91,7 @@ function changeScoresPolls(id, {l,r}){
         });
     }).then(function() {
        // console.log("Transaction successfully committed!");
-    }).catch(function(error) {
-        console.log("Transaction failed: ", error);
-    });
+    })
 
 }
 

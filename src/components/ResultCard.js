@@ -42,13 +42,13 @@ const styles = theme => ({
         padding: '23px 30px 30px',
         backgroundColor: 'white',
         margin: '-1px 0',
-        height: 'calc(100% - 40px - 76px)',
+        height: '100%',
         overflow: 'auto',
         overflowX: 'hidden',
+        '-webkit-overflow-scrolling': 'touch',
         '@media (max-width: 600px)':{
-            height: '350px',
-            display: 'block'
-      
+            display: 'block',
+            padding: '23px 6px 30px'
         }
     },
     row: {
@@ -71,7 +71,8 @@ const styles = theme => ({
         flexDirection: 'column',
         width: 250,
         '@media (max-width: 600px)':{
-            marginBottom: 20
+            marginBottom: 20,
+            width: '100%'
         }
     },
     col1:{
@@ -201,9 +202,9 @@ const styles = theme => ({
 class ResultCard extends React.Component {
 
     componentDidMount(){
-
         this.loadFinal();
     }
+
 
     @observable finalCard = null;
     @observable isLiked = true;
@@ -241,7 +242,7 @@ class ResultCard extends React.Component {
     render(){
         let {classes} = this.props;
         
-        return (this.finalCard ? <div>
+        return (this.finalCard ? <div style={{height: '100%'}}>
                     <div ref='header' className={classes.header}>
                         <Typography variant="display1">
                             Congratulations!
@@ -259,7 +260,7 @@ class ResultCard extends React.Component {
                                     <Typography variant="title" className={classes.resTitle}>{this.finalCard.info.title}</Typography>
                                     <a className={classes.linksite} href={`http://${this.finalCard.info.linksite}`} target="_blank" ><Typography variant="display1" className={classes.linksite}>{this.finalCard.info.linksite}</Typography></a>
                                     <Typography variant="body1" className={classes.description}>{this.finalCard.info.desc}</Typography>
-                                    <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small" onTouchEnd={this.props.again} onClick={this.props.again} >Take again
+                                    <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small" onClick={this.props.again} >Take again
                                     </Button>
                                 </div>
                             </div>
@@ -297,7 +298,7 @@ class ResultCard extends React.Component {
                                     </div>
                                     { !Auth.isAuthenticated && <div className={classes.col}>
                                         
-                                        <Button className={classes.resBtn} variant="raised" color="secondary"  side="small" onClick={this.openLoginModal} >Withdrawal
+                                        <Button className={classes.resBtn} variant="raised" color="secondary"  side="small" onMouseUp={this.openLoginModal} onTouchEnd={this.openLoginModal}>Withdrawal
                                         </Button>
                                     </div> }
                                     { Auth.isAuthenticated && <div className={classes.col}>

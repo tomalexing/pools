@@ -62,7 +62,7 @@ export default class Cards {
       if(Object.keys(this.positionStyles).length > 0 ){
         addAbsolute = true;
       }
-      return Object.entries(this.positionStyles).reduce((acc,[key, val]) => Object.assign(acc,{[key]:`${val}px`}), addAbsolute ? {'position':'absolute', display: 'block'}:{});
+      return Object.entries(this.positionStyles).reduce((acc,[key, val]) => Object.assign(acc,{[key]:`${val}px`}), addAbsolute ? {'position':'fixed', display: 'block'}:{});
   }
 
   @computed
@@ -224,12 +224,16 @@ export default class Cards {
           saveToStore(cards.cardSlug, {
             current: cards.allCardsNumber - 1,
             Progress: val.Progress
-          });
+          }).then(_=>{
+            Api.saveUserData().then(_ => Promise.resolve(true))
+          })
         }, _ => {
             saveToStore(cards.cardSlug, {
               current: cards.current,
               Progress: cards.Progress
-            });
+            }).then(_=>{
+              Api.saveUserData().then(_ => Promise.resolve(true))
+            })
         })
   }
 
@@ -239,11 +243,16 @@ export default class Cards {
     let cards = this;
     loadFromStore(cards.cardSlug).then(val => {
       val.current = cards.current
-      saveToStore(cards.cardSlug, val);
+      saveToStore(cards.cardSlug, val)
+        .then(_=>{
+        Api.saveUserData().then(_ => Promise.resolve(true))
+      })
     }, _ => {
         saveToStore(cards.cardSlug, {
           current: cards.current,
           Progress: cards.Progress
+        }).then(_=>{
+          Api.saveUserData().then(_ => Promise.resolve(true))
         });
     })
   }
@@ -267,7 +276,7 @@ export default class Cards {
       if(cardSlugData.liked) return Promise.resolve(true);
       cardSlugData.liked = true;
       return saveToStore(cardSlug, cardSlugData).then( _ => {
-        Api.saveUserData().then(_ => Promise.resolve(true)).catch(_ => {})
+        Api.saveUserData().then(_ => Promise.resolve(true))
       })
     })
   }
@@ -283,12 +292,13 @@ export default class Cards {
     
   static allProgress(cardSlug){
       return loadFromStore(cardSlug).then(val => val, () => {
-        Api.loadUserData({forceLoad: true}).then(data => {
-            if( ! data[cardSlug] ) return Promise.resolve({number:0, iqValue: 0});
-            let reload = prompt('Error has happened. Reload page?', 'yes');
-            if( reload == 'yes' )
-            window.location.reload();
-        })
+        // Api.loadUserData({forceLoad: true}).then(data => {
+        //     if( ! data[cardSlug] ) return Promise.resolve({number:0, iqValue: 0});
+        //     let reload = prompt('Error has happened. Reload page?', 'yes');
+        //     if( reload == 'yes' )
+        //     window.location.reload();
+        // })
+        return Promise.resolve({number:0, iqValue: 0});
       }).then(val => {
         if(!val) return {number:0, iqValue: 0}
         

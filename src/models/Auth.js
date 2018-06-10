@@ -25,6 +25,7 @@ class Auth {
   @observable token = null;
   @observable uid = null;
   @observable logging = false;
+  @observable loadingUserData = false;
   stores = [];
   
   
@@ -92,6 +93,11 @@ class Auth {
     this.uid = window.localStorage.getItem('uid');
     this.role = this.uid ? ROLES(1) : undefined;
 
+    this.loadingUserData = true;
+    let that = this;
+    Api.loadUserData({id: this.uid, forceLoad: true }).then(_ => {
+      that.loadingUserData = false;
+    })
   }
 
   @action
