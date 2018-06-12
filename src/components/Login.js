@@ -28,6 +28,8 @@ import Api from "./../services/Api";
 import Auth from "./../models/Auth";
 import Redirect from 'react-router-dom/Redirect';
 import Checkbox from '@material-ui/core/Checkbox';
+import { Link } from 'react-router-dom';
+
 
 // const isActive = (match, location,to) => {
 //   return ['/quizzes','/polls'].some(str => location.pathname.includes(str))
@@ -338,7 +340,7 @@ class Login extends React.Component {
 
                         />
                         <Typography variant="body1" className={classes.font12  + ' ' + classes.paddingTop1}>
-                            I agree to Quizi’s Terms of Use and Privacy Policy
+                            I agree to Quizi’s <Link style={{color: '#FC3868', textDecoration: 'none'}} to={'/terms-of-use'} >Terms of Use</Link> and <Link style={{color: '#FC3868', textDecoration: 'none'}} to={'/privacy-policy'} >Privacy Policy</Link>
                         </Typography>
 
                     </div>

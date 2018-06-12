@@ -13,13 +13,13 @@ import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import Modal from '@material-ui/core/Modal';
 
-import { observable, action } from "mobx";
+import { observable, action, when } from "mobx";
 import { observer } from "mobx-react";
 
 import { listener } from './../utils';
 
 import { Link } from 'react-router-dom';
-import Api from './../services/Api'
+import Api from './../services/Api';
 
 const styles = theme => ({
 
@@ -30,9 +30,11 @@ const styles = theme => ({
         lineHeight: '1em',
         overflow: 'hidden',
         '@media (max-width: 600px)': {
-            height: '30px',
+            display: 'none',
         }
     },
+
+
     footerText: {
         color: 'white',
         fontSize: '0.875rem',
@@ -58,6 +60,10 @@ const styles = theme => ({
         fontSize: 20
     },
 
+    space: {
+        flex: 1
+    }
+
 });
 @withStyles(styles)
 @observer
@@ -70,10 +76,15 @@ class Footer extends React.Component {
 
     componentDidMount(){
         let that = this;
+        this._mounted = true;
         this.adjustStyle();
         this.listeners.push(listener(window, 'resize' , _ => {
             that.adjustStyle();
         }, false))
+    }
+    
+    componentWillUnmount(){
+        this._mounted = false;
     }
 
     componentDidUpdate(){
@@ -81,6 +92,7 @@ class Footer extends React.Component {
     }
 
     adjustStyle = _ => {
+        if(!this._mounted) return
         if(window.innerWidth <  600){
             let { height } =  this.refs.footer.getBoundingClientRect();
             this.refs.footer.style.bottom = `-${height  - 60}px` ;
@@ -92,14 +104,10 @@ class Footer extends React.Component {
     render() {
         const { classes } = this.props;
         return ( <footer ref='footer' className={classes.footer} >
+
                 <Divider className={classes.divider} />
                 <Toolbar className={classes.bar}>
-                    <Typography ref='copyright' variant="body1" className={classes.menuBtnSpacings + ' ' + classes.footerText} >
-                        © 2018 Quizion
-                    </Typography>
-                    
-                    <span className={classes.delimiter}>·</span>
-                    
+                                        
                     <Link to={'/term-of-use'} className={classes.menuBtnSpacings}>
                         <Typography variant="body1"  className={classes.footerText}  > Terms of service </Typography>
                     </Link>
@@ -109,15 +117,26 @@ class Footer extends React.Component {
                     <Link to={'/privacy-policy'} className={classes.menuBtnSpacings}>
                         <Typography variant="body1"  className={classes.footerText}  > Privacy Policy </Typography>
                     </Link>
+                    
                     <span className={classes.delimiter}>·</span>
-
+                    
                     <Link to={'/subscribe'} className={classes.menuBtnSpacings}>
                         <Typography variant="body1"  className={classes.footerText}  > 
                         Subscribe </Typography>
                     </Link>
+
+                    <span className={classes.delimiter}>·</span>
+                    
+                    <Typography ref='copyright' variant="body1" className={classes.menuBtnSpacings + ' ' + classes.footerText}>
+                    </Typography>
+
+                    <span className={classes.space} ></span>
+
+                    <Typography ref='copyright' variant="body1" className={classes.menuBtnSpacings + ' ' + classes.footerText} >
+                        Copyright © 2018. Quizi. All Rights Reserved
+                    </Typography>
                     
                 </Toolbar>
-          
              </footer>
         );
     }

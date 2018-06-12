@@ -17,9 +17,9 @@ import Modal from '@material-ui/core/Modal';
 import { observable, action } from "mobx";
 import { observer } from "mobx-react";
 
-import { listener } from './utils';
+import { listener } from './../utils';
 
-import Api from './services/Api'
+import Api from './../services/Api'
 
 const styles = theme => ({
 
@@ -38,15 +38,13 @@ const styles = theme => ({
         maxHeight: '100%',
         zIndex: '100',
         position: 'relative',
-        marginBottom: 40,
-        marginRight: 40,
         borderRadius: '8px',
         overflow: 'hidden',
         maxWidth: '690px',
         height: '100%',
         boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
         '@media (max-width: 600px)':{
-            marginRight: 0,
+            margin: '10px'
         }
     },
     header:{
@@ -134,6 +132,7 @@ const styles = theme => ({
 
     formInput:{
         width: '100%',
+        fontWeight: 700,
         '&:after, &:hover:before': {
             borderBottomColor: '#FC3868 !important'
         },  
@@ -142,7 +141,6 @@ const styles = theme => ({
     headerField:{
         fontSize: 16,
         fontWeight: 600,
-        margin: '0 0 12px',
     },
 
     submitBtn:{
@@ -290,7 +288,7 @@ class Subscribe extends React.Component {
 
                         </div>
                         <div className={classes.cardBodyResult}>
-                            <Typography variant="body1" className={classes.headerField} >We sent only news, no span.
+                            <Typography variant="body1" className={classes.headerField} >We sent only news, no spam.
                             </Typography>
 
                             <form className={classes.form} onSubmit={this.onSubmit} noValidate autoComplete="off">

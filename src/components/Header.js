@@ -12,7 +12,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
 import logo from './../assets/quiz-logo.png';
-import {NavLink} from './NavLink';
+import { NavLink } from './NavLink';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 
 import IconButton from '@material-ui/core/IconButton';
@@ -32,6 +32,9 @@ import Redirect from 'react-router-dom/Redirect';
 
 import Login from './Login';
 
+const isActive = (match, location,to) => {
+    return ['/account','/history', '/dashboard'].some(str => location.pathname.includes(str) )
+}
 
 const styles = theme => ({
     loginBtn: {
@@ -47,17 +50,23 @@ const styles = theme => ({
     menuBtn:{
         color: 'white',
     },
+
+    startMenu: {
+        marginLeft: 'auto',
+    },
+
     mobileMenu:{
         color: 'white',
         '@media (max-width: 600px)':{
             marginLeft: 'auto'
         },
     },
-    startMenu: {
+
+    menu: {
         display: 'flex',
-        marginLeft: 'auto',
         marginTop: 0,
         marginBottom: 0,
+        padding: 0,
         '& .navmenu': {
             position: 'relative',
             listStyle: 'none',
@@ -92,7 +101,46 @@ const styles = theme => ({
         '&:hover':{
             opacity: .7
         },
+
+        '& > li': {
+            '@media (max-width: 600px)':{
+                padding: 0
+            }
+        }
     },
+
+    menuMobileLinkSpacings: {
+        display: 'block',
+        textDecoration: 'none',
+        transition: theme.transitions.create('opacity'),
+        '&:hover':{
+            opacity: .7
+        },
+    },
+
+    menuMobileItemSpacings: {
+        borderBottom: '1px solid rgba(188, 194, 217, .4)',
+        paddingLeft: 30,
+        paddingRight: 30,
+        '& > *':{
+            fontWeight: '500'
+        }
+    },
+
+    removeBorder:{
+        borderBottom: 'none'
+    },
+
+    menuMobileBtnSpacings: {
+        display: 'block',
+        textDecoration: 'none',
+        padding: '12px 30px',
+        transition: theme.transitions.create('opacity'),
+        '&:hover':{
+            opacity: .7
+        },
+    },
+
     logo: {
         marginTop: 3,
         marginRight: 20,
@@ -110,9 +158,12 @@ const styles = theme => ({
         }
     },
     mainMenu:{
-        maxHeight: ITEM_HEIGHT * 4.5,
         width: 200,
-        top: '60px !important'
+        top: '60px !important',
+        borderRadius: 8,
+        '@media (max-width: 600px)':{
+            top: '48px !important',
+        }
     },
 
     headerBarCover: {
@@ -180,128 +231,97 @@ class Header extends React.Component {
             <a href="/">
                 <img className={classes.logo} src={logo} />
             </a>
-            {  /* Deskttop menu */
-                window.innerWidth > 600 && 
-                <ul className={[classes.ul, classes.startMenu].join(" ")}>
-                    <NavLink tabIndex='1' to={'/'} className={classes.menuBtnSpacings} >
-                        <MenuItem selected={false}>
-                            <Typography variant="button" >
-                                Explore
-                            </Typography>
-                        </MenuItem>
-                    </NavLink>  
-            </ul> }
-            
-            { window.innerWidth > 600 && 
-                !Auth.isAuthenticated &&  <Button variant="raised" className={classes.loginBtn} onClick={this.openLoginModal}>
-                        Sign Up
-                </Button>
-            }
+            {  /* Desktop menu */ }
 
-            { window.innerWidth > 600 && 
-                Auth.isAuthenticated && <div className={classes.mobileMenu}>
+            <div className={classes.mobileMenu + ' ' + classes.menu + ' ' + classes.startMenu}>
                 <IconButton
                 aria-label="More"
                 aria-owns={this.anchorEl ? 'long-menu' : null}
                 aria-haspopup="true"
-                onClick={this.handleClick}
-                    >
-                    <Icon className={classes.menuBtn}>more_horiz</Icon>
+                onClick={this.handleClick}>
+                <Icon className={classes.menuBtn}>more_horiz</Icon>
                 </IconButton>
                 <Menu
                     id="long-menu"
                     anchorEl={this.anchorEl}
                     open={Boolean(this.anchorEl)}
                     onClose={this.handleClose}
+                    placement="bottom"
                     classes={{paper: classes.mainMenu}}
+                    PaperProps={{
+                        style: {width: 200},
+                    }}
                 >
-                <NavLink tabIndex='1' to={'/dashboard'} className={classes.menuBtnSpacings} >
-                    <MenuItem selected={false} onClick={this.handleClose}>
-                        <ListItemIcon className={classes.icon}>
-                            <Icon className={classes.mainMenuIcon} >dashboard</Icon>
-                        </ListItemIcon>
-                        <Typography variant="body1" >
-                            Dashboard
-                        </Typography>
-                    </MenuItem>
-                </NavLink>
-                <NavLink tabIndex='1' to={'/dashboard/account'} className={classes.menuBtnSpacings} >
-                    <MenuItem selected={false} onClick={this.handleClose}>
-                        <ListItemIcon className={classes.icon}>
-                            <Icon className={classes.mainMenuIcon} >account_box</Icon>
-                        </ListItemIcon>
-                        <Typography variant="body1" >
-                            Account
-                        </Typography>
-                    </MenuItem>
-                </NavLink> 
-                <MenuItem selected={false} onClick={this.logout}>
-                    <ListItemIcon className={classes.icon}>
-                        <Icon className={classes.mainMenuIcon} >power_settings_new</Icon>
-                    </ListItemIcon>
-                    <Typography variant="body1" >
-                        Logout
-                    </Typography>
-                </MenuItem>
-                </Menu>
-            </div>} 
-
-
-            {/* Mobile menu */}
-            { window.innerWidth <= 600 && 
-            <div className={classes.mobileMenu}>
-                <IconButton
-                aria-label="More"
-                aria-owns={this.anchorEl ? 'long-menu' : null}
-                aria-haspopup="true"
-                onClick={this.handleClick}
-                >
-                    <Icon  className={classes.menuBtn}>more_horiz</Icon>
-                </IconButton>
-                <Menu
-                id="long-menu"
-                anchorEl={this.anchorEl}
-                open={Boolean(this.anchorEl)}
-                onClose={this.handleClose}
-                PaperProps={{
-                    style: {
-                    maxHeight: ITEM_HEIGHT * 4.5,
-                    width: 200,
-                    },
-                }}
-                >
-                <NavLink tabIndex='1' to={'/'} className={classes.menuBtnSpacings} >
-                    <MenuItem selected={false} onClick={this.handleClose}>
-                        <Typography variant="body1" >
-                            Explore
-                        </Typography>
-                    </MenuItem>
-                </NavLink>  
-                 
-                {!Auth.isAuthenticated && <MenuItem selected={false} onClick={this.openLoginModal}>
-                        Sign Up
-                </MenuItem>}
-                {Auth.isAuthenticated && <NavLink tabIndex='1' to={'/dashboard'} className={classes.menuBtnSpacings} >
-                    <MenuItem selected={false}  onClick={this.handleClose}>
-                        <Typography variant="body1" >
-                            Dashboard
-                        </Typography>
-                        </MenuItem>
+                    <NavLink tabIndex='1' to={'/term-of-use'} className={classes.menuMobileLinkSpacings} >
+                        <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={this.handleClose}>
+                            <Typography variant="subheading" >
+                                Terms of service
+                            </Typography>
+                            </MenuItem>
                     </NavLink>  
-                }
-                {Auth.isAuthenticated && <NavLink tabIndex='1' to={'/dashboard/account'} className={classes.menuBtnSpacings} >
-                    <MenuItem selected={false}  onClick={this.handleClose}>
-                        <Typography variant="body1" >
-                        Account
-                        </Typography>
-                        </MenuItem>
-                </NavLink>  
-                }
-                {Auth.isAuthenticated && <MenuItem selected={false} onClick={this.logout}>
-                        Logout
-                </MenuItem>}
+
+                    <NavLink tabIndex='1' to={'/privacy-policy'} className={classes.menuMobileLinkSpacings} >
+                        <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={this.handleClose}>
+                            <Typography variant="subheading" >
+                                Privacy Policy
+                            </Typography>
+                            </MenuItem>
+                    </NavLink>  
+
+                    <NavLink tabIndex='1' to={'/subscribe'} className={classes.menuMobileLinkSpacings} >
+                        <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={this.handleClose}>
+                            <Typography variant="subheading" >
+                                Subscribe
+                            </Typography>
+                            </MenuItem>
+                    </NavLink>
+
+                    <NavLink tabIndex='1' to={'/create'} className={classes.menuMobileLinkSpacings} >
+                        <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={this.handleClose}>
+                            <Typography variant="subheading" >
+                                Create
+                            </Typography>
+                            </MenuItem>
+                    </NavLink>
+
+                    <NavLink tabIndex='1' to={'/contact'} className={classes.menuMobileLinkSpacings} >
+                        <MenuItem selected={false} className={cx(classes.menuMobileItemSpacings, { [classes.removeBorder]: !Auth.isAuthenticated})} onClick={this.handleClose}>
+                            <Typography variant="subheading" >
+                                Contant us
+                            </Typography>
+                            </MenuItem>
+                    </NavLink>
+                    
+                    {Auth.isAuthenticated && <MenuItem selected={false} className={classes.menuMobileBtnSpacings}  onClick={this.logout}>
+                        <Typography variant="subheading" >
+                            Logout
+                        </Typography> 
+                    </MenuItem>}
                 </Menu>
-            </div>}
+            </div>
+
+            
+            <ul className={classes.menu}>
+                    <NavLink tabIndex='1' to={'/'} className={classes.menuBtnSpacings} >
+                        <MenuItem selected={false}>
+                            <Typography variant="button" >
+                                Explore
+                            </Typography>
+                        </MenuItem>
+                    </NavLink>
+
+                    { Auth.isAuthenticated && <NavLink tabIndex='1' comp={isActive} to={'/dashboard'} className={classes.menuBtnSpacings} >
+                        <MenuItem selected={false} onClick={this.handleClose}>
+                            <Typography variant="button" >
+                                Dashboard
+                            </Typography>
+                        </MenuItem>
+                    </NavLink>}
+            </ul> 
+
+            { !Auth.isAuthenticated &&  <Button variant="raised" className={classes.loginBtn} onClick={this.openLoginModal}>
+                        Sign Up
+                </Button> }
 
         </Toolbar>
       </AppBar>

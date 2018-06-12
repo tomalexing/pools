@@ -12,6 +12,7 @@ import Api from './../services/Api';
 
 import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import * as cn from 'classnames'
 import { NavLink } from './NavLink';
@@ -29,6 +30,14 @@ const styles = theme => ({
         '@media (max-width: 767px)':{
             flexDirection: 'column'
         }
+    },
+
+    center: {
+        height: '100%',
+        width: '100%', 
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center', 
     },
 
     catsTitle:{
@@ -66,7 +75,8 @@ const styles = theme => ({
     catsCard:{
         width: '100%',
         overflow: 'auto',
-        flex: 1
+        flex: 1,
+        '-webkit-overflow-scrolling': 'touch',
     },
     
     catsMenuInner: {
@@ -303,6 +313,7 @@ class Explore extends React.Component {
                     </MenuList>
                 </aside>
                 <div className={classes.catsCard}>
+                    {this.Cards.length == 0 && <div className={classes.center}><CircularProgress color="secondary" /></div>}
                     {this.Cards.map((card, idx) => (<div key={`cats-${idx}`} className={classes.card}>
                         <header className={classes.header}>
 

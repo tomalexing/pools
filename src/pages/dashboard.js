@@ -9,7 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { listener, getMonthName, roundeWithDec } from './../utils';
 
 import {Switch, Route, Redirect, Link, withRouter} from 'react-router-dom';
-import {NavLink} from './NavLink';
+import {NavLink} from './../components/NavLink';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import Auth from './../models/Auth';
@@ -28,13 +28,19 @@ import {loadFromStore , saveToStore, clearAll} from "./../services/localDb";
 
 import Grow from '@material-ui/core/Grow';
 import Tooltip from '@material-ui/core/Tooltip';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import CardsModel from './../models/Cards'
 
-import Share from './Share';
-import SModal from './Modal';
+import Share from './../components/Share';
+import SModal from './../components/Modal';
 
 import Checkbox from '@material-ui/core/Checkbox';
+
+
+import BTC from './../assets/BTC.svg';
+import IMP from './../assets/IMP.svg';
+
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
   (!redirect
@@ -51,7 +57,7 @@ const PrivateRoute =  ({ component: Component, ...rest }) => (
             )
         )} />)
 
-const drawerWidth = 170;
+const drawerWidth = 200;
 
 const styles = theme => ({
 
@@ -86,11 +92,23 @@ const styles = theme => ({
 
     footerText:{
         color: 'white',
-        fontSize: 14
+        fontSize: 14,
+        textAlign: 'left',
+        width: '100%'
+    },
+
+    footerImageCover:{
+        display: 'flex',
+        alignItems: 'center',
+        marginBottom: 10
+    },
+
+    footerImage:{
+        width: 20
     },
 
     menuBtnSpacings:{
-        padding: '5px 0px',
+        padding: '3px 0px',
         textAlign: 'left'
     },
     
@@ -110,6 +128,7 @@ const styles = theme => ({
         width: drawerWidth,
         background: '#474E65',
         height: 'calc(100vh - 64px)',
+        zIndex: 1,
         transition: theme.transitions.create('width', {
           easing: theme.transitions.easing.sharp,
           duration: theme.transitions.duration.enteringScreen,
@@ -199,13 +218,13 @@ class Dashboard extends React.Component {
                             </Typography>
                         </MenuItem>
                     </NavLink>
-                    <NavLink tabIndex='1' to={'/dashboard/contacts'} className={classes.link} >
-                        <MenuItem selected={/dashboard\/contacts/.test(this.props.location.pathname)} onClick={this.handleClose}>
+                    <NavLink tabIndex='1' to={'/dashboard/history'} className={classes.link} >
+                        <MenuItem selected={/dashboard\/history/.test(this.props.location.pathname)} onClick={this.handleClose}>
                             <ListItemIcon className={classes.icon}>
-                                <Icon   className={classes.mainMenuIcon} >message</Icon>
+                                <Icon   className={classes.mainMenuIcon} >access_time</Icon>
                             </ListItemIcon>
                             <Typography variant="display1" >
-                                Contacts
+                                History
                             </Typography>
                         </MenuItem>
                     </NavLink>
@@ -216,13 +235,16 @@ class Dashboard extends React.Component {
                     { !this.state.open ? <Icon className={classes.mainMenuIcon} >chevron_right</Icon> : <Icon   className={classes.mainMenuIcon} >chevron_left</Icon>}
                 </IconButton>
                 
-                {this.state.open && <Link to={'/term-of-use'} className={classes.menuBtnSpacings + ' ' + classes.link}>
-                <Typography variant="body1"  className={classes.footerText}  > 
-                <span className={classes.delimiter}>·</span> Terms  of service </Typography>
-                </Link>}
+
+                {this.state.open && <Typography variant="body1"  className={classes.footerText + ' ' + classes.footerImageCover}> 
+                    <img className={classes.footerImage} src={IMP} /> 1IMP  =  <img className={classes.footerImage} style={{margin: '0 3px'}} src={BTC}/> 0.00013 BTC 
+                </Typography>}
                 
                 {this.state.open && <Typography ref='copyright' variant="body1" className={classes.menuBtnSpacings + ' ' + classes.footerText} >
-                © 2018  Quizion
+                    Copyright © 2018 Quizi.
+                </Typography>}
+                {this.state.open && <Typography ref='copyright' variant="body1" className={classes.menuBtnSpacings + ' ' + classes.footerText} >
+                    All Rights Reserved.
                 </Typography>}
                 
                 </div>
@@ -234,7 +256,7 @@ class Dashboard extends React.Component {
                 <Switch>
                     <PrivateRoute role={['user']} exact path="/dashboard" component={Common} /> 
                     <PrivateRoute role={['user']} path="/dashboard/account" component={Account} /> 
-                    <PrivateRoute role={['user']} path="/dashboard/contacts" component={Contacts} />
+                    <PrivateRoute role={['user']} path="/dashboard/history" component={History} />
                 </Switch>
             </div>
             </div>
@@ -376,7 +398,7 @@ class Common extends React.Component{
     @action
     getProgress = () => {
         let that = this;
-        when(() => !Auth.logging , () => {
+        when(() => !Auth.logging && !Auth.loadingUserData , () => {
             
             loadFromStore('SlugsCardsInProcess').then(slugs => {
             
@@ -424,6 +446,7 @@ class Common extends React.Component{
         
         return( 
             <div className={classes.cardWrapper} >
+            {Array.from(this.catsAvailable).length == 0 && <CircularProgress color="secondary" />}
             { Array.from(this.catsAvailable).map(cat => {
                 return <div key={`${cat}`} className={classes.catWrapper}>
                     <Typography variant="display4" className={classes.catTitle}>{cat}:</Typography>
@@ -675,7 +698,13 @@ const stylesAccount = theme => ({
         overflow: 'hidden',
         display: 'inlineBlock',
         width: '100%'
-    }
+    },
+    
+    delBtn:{
+        marginTop: 20,
+        marginBottom: 5,
+        borderRadius: 74,
+    },
 
 })
 
@@ -688,7 +717,6 @@ class Account extends React.Component{
         super(props);
 
         this.getProgress();
-        this.getHistory();
         let that = this;
         Api.getWallet(Auth.uid).then(wallet => {
             if(!wallet) return
@@ -700,7 +728,6 @@ class Account extends React.Component{
     }
 
     @observable cardsInProcessAndFinished = [];
-    @observable histories = [];
     @observable totalIMP  = 0;
     @observable enteder = false; 
     @observable wallet = '';
@@ -711,49 +738,48 @@ class Account extends React.Component{
     getProgress = async () => {
         let that = this;
         if(this.calculatingProgress) return
-        this.calculatingProgress = true;
-        await loadFromStore('SlugsCardsInProcess').then(slugs => {
-           
-            Promise.all(slugs.map(slug => {
-                    return CardsModel.allProgress(slug).then((progress, idx) => {
-                        Object.assign(that.cardsInProcessAndFinished, {[slug]:{progress:progress}})
-                    });
+
+        when(() => !Auth.logging && !Auth.loadingUserData , async () => {
+
+            this.calculatingProgress = true;
+            await loadFromStore('SlugsCardsInProcess').then(slugs => {
+            
+                Promise.all(slugs.map(slug => {
+                        return CardsModel.allProgress(slug).then((progress, idx) => {
+                            Object.assign(that.cardsInProcessAndFinished, {[slug]:{progress:progress}})
+                        });
+                    })
+                ).then(_ => {
+                    return Promise.all( slugs.map(slug => {
+                        return Api.getAdditionlCardInfo(slug).then(info => {
+                            if(!info || !info.reward) return
+                            Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{info:info})})
+                            
+                            
+                            return CardsModel.isLiked(slug);
+
+                            }).then(isLiked => {
+
+                                Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{isLiked: isLiked})})
+                            })
+                    }))
                 })
-            ).then(_ => {
-                return Promise.all( slugs.map(slug => {
-                    return Api.getAdditionlCardInfo(slug).then(info => {
-                        if(!info || !info.reward) return
-                        Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{info:info})})
-                        
-                        
-                        return CardsModel.isLiked(slug);
+                .then( _ => {
+                    return Api.getWithdrawn(Auth.uid)
+                }).then( amountWithdrawn => {
+                    that.totalIMP = Math.max(0, Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? prog['progress'].number * prog['info'].reward + (prog['isLiked'] ? .5000 : 0) : 0, -amountWithdrawn)) 
+                })
 
-                        }).then(isLiked => {
+            }, _ => {})
 
-                            Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{isLiked: isLiked})})
-                        })
-                }))
-            })
-            .then( _ => {
-                return Api.getWithdrawn(Auth.uid)
-            }).then( amountWithdrawn => {
-                that.totalIMP = Math.max(0, Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? prog['progress'].number * prog['info'].reward : 0, -amountWithdrawn)) 
-            })
-
-          }, _ => {})
-
-          this.calculatingProgress = false;
+            this.calculatingProgress = false;
+        });
     }
 
     @action.bound
     setEntered = _ => {
         if(this.wallet == '') return 
         this.enteder = true;
-    }
-
-    @action.bound
-    getHistory = _ => {
-        Api.getHistory(Auth.uid).then(histories => this.histories = histories)
     }
 
     setWallet = e => {
@@ -766,12 +792,15 @@ class Account extends React.Component{
         this.enteder = false;
     }
 
-
+    @observable
+    paying = false;
 
     @action.bound
     payoff = _ => {
         let that = this;
+        if(that.paying) return
         if(that.totalIMP <= 0) return
+        that.paying = true;
 
         Api.auth().onAuthStateChanged(function(user) {
             
@@ -779,7 +808,7 @@ class Account extends React.Component{
 
                 user.getIdToken().then(function(idToken) {
 
-                    fetch(`http://polls/getUser/${Auth.uid}`,{
+                    fetch(`http://quizi.io/api/getUser/${Auth.uid}`,{
                         method: 'post',
                         headers: {
                             'content-type': 'application/x-www-form-urlencoded; charset=utf-8',
@@ -788,17 +817,22 @@ class Account extends React.Component{
                         body: 'token=' + idToken + '&totalIMP=' + that.totalIMP + '&wallet=' + that.wallet
                     }).then(resp => {
                         return resp.json()}).then(resp => {
+
                             if(resp.status == false) {
+                                that.paying = false;
                                 return that.isErrorModalOpened = true;
                             }
-                            Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken).then( amount => {
+
+                            Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken, resp ).then( amount => {
                                 that.getProgress();
-                                that.getHistory();
+
+                                that.paying = false;
                             })
                         })
                         
                   }).catch(function(error) {
-                    console.trace(error.stack)
+                    console.trace(error.stack);
+                    that.paying = false;
                   });
         
             } 
@@ -814,6 +848,12 @@ class Account extends React.Component{
     @action.bound
     closeErrorModal = () => {
         this.isErrorModalOpened = false;
+    };
+
+    @observable conformModal = false
+    @action.bound
+    closeConformModal = () => {
+        this.conformModal = false;
     };
 
     render(){
@@ -887,10 +927,273 @@ class Account extends React.Component{
                         <Typography variant="button" >Payoff</Typography>
                     </Button>}
 
-                    <SModal title="Something went wrong" body="Maybe is being problems with conection. Try again later." open={this.isErrorModalOpened} close={this.closeErrorModal}/>
+                    <SModal title="Something went wrong" body="Maybe is being problems with conection. Try again later." open={this.isErrorModalOpened} close={this.closeErrorModal}/>  
                     
                 </div>
             </div>
+            <div className={classes.card}>
+                <div ref='header' className={classes.header}>
+                    <Typography variant="display1" className={classes.title}>
+                        My Data
+                    </Typography>
+                    <span className={classes.delimeter}></span>
+                </div>
+                <div className={classes.cardBodyResult}>
+                    <Button color="secondary" variant="raised" className={classes.delBtn} onClick={() => {this.conformModal = true;}}>
+                            <Icon>delete</Icon>
+                            <Typography  className={classes.editBtnTypo}  variant="button">Delete My Progress Data</Typography>
+                    </Button>
+                    <SModal title="Are you sure?" body={<div>
+                        <Button color="secondary" variant="raised" className={classes.delBtn} onClick={() => {clearAll().then(Api.deleteUserData).then(this.closeConformModal)}}>
+                            <Icon>delete</Icon>    
+                            <Typography  className={classes.editBtnTypo}  variant="button">Yes, Delete My Progress Data</Typography>
+                        </Button>
+                        </div>} open={this.conformModal} close={this.closeConformModal}/>
+                </div>
+            </div>
+        </div>)
+    }
+}
+
+
+
+const stylesHistory = theme => ({
+
+    cardWrapper:{
+        display: 'flex',
+        flexWrap: 'wrap'
+    },
+    card:{
+        maxHeight: '100%',
+        zIndex: '100',
+        position: 'relative',
+        marginBottom: 40,
+        marginRight: 40,
+        borderRadius: '8px',
+        overflow: 'hidden',
+        maxWidth: '690px',
+        height: '100%',
+        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
+        '@media (max-width: 600px)':{
+            marginRight: 0,
+            minWidth: 690
+        }
+    },
+    header:{
+        color: 'white',
+        background: '#FC3868',
+        fontWeight: 100,
+        display: 'flex',
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+        '& $delimeter': {
+            background: 'rgba(0, 0, 0, 0.1)',
+            height: '100%',
+            width: 1,
+            marginLeft: 'auto'
+        },
+        '& $impNum':{
+            padding: '0 10px'
+        }
+    },
+    delimeter:{},
+    impNum:{},
+
+    cardBodyResult: {
+        padding: '23px 30px',
+        backgroundColor: 'white',
+        overflow: 'hidden'
+    },
+
+    row: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        '&:nth-of-type(2)': {
+            marginTop: 20
+        }
+    },
+
+    responseRow:{
+        '@media (max-width: 600px)':{
+            flexDirection: 'column',
+            alignItems: 'center',
+            flex: '1 0 66%'
+        }
+    },
+    col:{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        width: 200,
+        height: 33,
+    },
+    btnResult: {
+        marginTop: 30,
+        borderRadius: 74
+    },
+    title: {
+        padding: '0 30px',
+    },
+    column:{
+        flexDirection: 'column',
+        alignItems: 'center'
+    },
+    headerResult: {
+        paddingBottom: '1rem'
+    },
+    noWrap:{
+        whiteSpace: 'nowrap',
+        textAlign: 'center'
+    },
+
+    history:{
+        display: 'flex',
+        flexDirection: 'column',
+        marginBottom: 22
+    },
+    historyPic:{
+        width: 80,
+        height: '100%',
+        objectFit: 'cover',
+        borderRadius: '50%',
+        overflow: 'hidden',
+        '& img': {
+            width: '100%',
+            height: 'auto',
+        }
+    },
+    historyDetails:{
+        display: 'flex',
+        flexDirection: 'column',
+        marginLeft: 20, 
+    },
+    historyName:{
+        fontSize: 16,
+        fontWeight: 600
+    },
+    historyEmail:{
+        fontSize: 14,
+        fontWeight: 400
+    },
+    historyImp:{
+        marginLeft: 'auto',
+        flexWrap: 'nowrap',
+        display: 'flex',
+        alignItems: 'baseline'
+    },
+    historyImpVal:{
+        textTransform: 'uppercase',
+        fontSize: 60,
+        fontWeight: 200,
+        letterSpacing: -1,
+        color: '#506980'
+    },
+    historyImpAddon:{
+        textTransform: 'uppercase',
+        fontweight: 400,
+        color: '#506980',
+        paddingLeft: 15
+    },
+    walletSetWrapper:{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: '100%',
+        overflow: 'hidden',
+        width: 480,
+        marginBottom: 7,
+        marginTop: 29
+
+    },
+    walletSet:{
+        width: 'calc(100% - 65px)',
+        display: 'inline-block',
+    },
+    divider: {
+        backgroundColor: "#bbc2d8"
+    },
+    headerField:{
+        margin: '20px 0 12px',
+        fontSize: 16,
+    },
+    bold:{
+        fontWeight: 600
+    },
+    formInput:{
+        width: '100%',
+        '&:after, &:hover:before': {
+            borderBottomColor: '#FC3868 !important'
+        },
+    },
+
+    formField:{
+        display: 'block',
+        width: 480,
+        '&:after': {
+            borderBottomColor: '#FC3868',
+        },
+    },
+
+    submitBtn:{
+        float: 'right',
+        marginTop: 20,
+        marginBottom: 5,
+        borderRadius: 74,
+    },
+
+    editBtn:{
+        float: 'right',
+        borderRadius: 74,
+    },
+
+    editBtnTypo:{
+        fontSize: 14,
+        fontWeight: 700
+    },
+
+    short:{
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        display: 'inlineBlock',
+        width: '100%'
+    },
+    
+    delBtn:{
+        marginTop: 20,
+        marginBottom: 5,
+        borderRadius: 74,
+    },
+
+})
+
+// History
+@withStyles(stylesHistory)
+@observer
+class History extends React.Component{
+
+    constructor(props){
+        super(props);
+        this.getHistory();
+    }
+
+
+
+    @observable histories = [];
+
+    @action.bound
+    getHistory = _ => {
+        Api.getHistory(Auth.uid).then(histories => this.histories = histories)
+    }
+
+    render(){
+        let {classes} = this.props;
+
+        return( 
+            <div className={classes.cardWrapper} >
 
             <div className={classes.card}>
                 <div ref='header' className={classes.header}>
@@ -950,261 +1253,9 @@ class Account extends React.Component{
 
                 </div>
             </div>
-            
-            <Button color="secondary" variant="raised" className={classes.submitBtn} onClick={clearAll}>
-                    <Icon>delete</Icon>    
-                    <Typography  className={classes.editBtnTypo}  variant="button">Delete Local Data</Typography>
-            </Button>
         </div>)
     }
 }
 
-
-const stylesContact = theme => ({
-
-    cardWrapper:{
-        display: 'flex',
-        flexWrap: 'wrap'
-    },
-
-    card:{
-        maxHeight: '100%',
-        zIndex: '100',
-        position: 'relative',
-        marginBottom: 40,
-        marginRight: 40,
-        borderRadius: '8px',
-        overflow: 'hidden',
-        maxWidth: '690px',
-        height: '100%',
-        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
-        '@media (max-width: 600px)':{
-            marginRight: 0,
-        }
-    },
-    header:{
-        color: 'white',
-        background: '#FC3868',
-        fontWeight: 100,
-        display: 'flex',
-        height: 40,
-        alignItems: 'center',
-        justifyContent: 'center',
-        '& $delimeter': {
-            background: 'rgba(0, 0, 0, 0.1)',
-            height: '100%',
-            width: 1,
-            marginLeft: 'auto'
-        },
-        '& $impNum':{
-            padding: '0 10px'
-        }
-    },
-    delimeter:{},
-    impNum:{},
-
-    cardBodyResult: {
-        padding: '23px 30px',
-        backgroundColor: 'white',
-        overflow: 'hidden'
-    },
-
-    row: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        '&:first-child':{
-            marginTop: 22
-        }
-    },
-
-    responseRow:{
-        '@media (max-width: 600px)':{
-            flexDirection: 'column',
-            alignItems: 'center',
-            flex: '1 0 66%'
-        }
-    },
-    col:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: 250,
-    },
-    btnResult: {
-        marginTop: 30,
-        borderRadius: 74
-    },
-    title: {
-        padding: '0 30px',
-    },
-    column:{
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-    
-    headerResult: {
-        paddingBottom: '1rem'
-    },
-
-    noWrap:{
-        whiteSpace: 'nowrap',
-        textAlign: 'center'
-    },
-
-    divider: {
-        backgroundColor: "#bbc2d8",
-    },
-
-    formField:{
-        display: 'block',
-        width: '100%',
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },  
-    },
-
-    headerField:{
-        fontSize: 16,
-        fontWeight: 600,
-        margin: '0 0 12px',
-    },
-
-    submitBtn:{
-        float: 'right',
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-    
-    agree: {
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center'
-    }
-})
-
-// Account
-@withStyles(stylesContact)
-@observer
-class Contacts extends React.Component{
-
-    componentWillMount(){
-    }
-
-    @action.bound
-    send = e => {
-        if(!this.confirmEmail) return
-        e.preventDefault();
-        let that = this;
-        Api.addReview(Auth.uid, this.name, this.question, Auth.email).then(_ => {
-            that.name = '';
-            that.question = '';
-            that.sended = true;
-            setTimeout(() => {
-                that.sended = false;
-            }, 1500);
-        })
-    }
-
-    @observable sended = false;
-
-    @observable name = '';
-    @action
-    setName = ({target}) => this.name = target.value
-    @observable question = '';
-    @action
-    setQuestion = ({target}) => this.question = target.value
-
-    @observable confirmEmail = false;
-    comfirm = name => event => {
-        this[name] = event.target.checked;
-    }
-
-    render(){
-        let {classes} = this.props;
-        return( 
-            <div className={classes.cardWrapper} >
-       
-            <div className={classes.card}>
-                <div ref='header' className={classes.header}>
-                    <Typography variant="display1" className={classes.title}>
-                        Contact us
-                    </Typography>
-                    <span className={classes.delimeter}></span>
-
-                </div>
-                <div className={classes.cardBodyResult}>
-                    
-                    <Typography variant="body1" className={classes.headerField} >Don't hesitate to contact us if you have any question
-                    </Typography>
-
-                    <form  onSubmit={this.send} noValidate autoComplete="off"> 
-                        <TextField
-                            id="name"
-                            required
-                            label="Your name"
-                            className={classes.formField}
-                            type="text"
-                            margin="normal"
-                            value={this.name}
-                            onChange={this.setName}
-                            name="name"
-                            InputProps={{
-                                className: classes.formInput
-                            }}
-                        /> 
-                        <TextField
-                            id="question"
-                            label="Your question"
-                            required
-                            multiline
-                            type="text"
-                            rowsMax="4"
-                            value={this.question}
-                            className={classes.formField}
-                            onChange={this.setQuestion}
-                            margin="normal"
-                            name="question"
-                            InputProps={{
-                                className: classes.formInput
-                            }}
-                        />
-                        <div className={classes.agree}>
-                    
-                            <Checkbox
-                            checked={this.confirmEmail}
-                            value="email"
-                            onChange={this.comfirm('confirmEmail')}
-
-                            />
-                            <Typography variant="body1" className={classes.font12  + ' ' + classes.paddingTop1}>
-                                I agree to receive emails from Quizi
-                            </Typography>
-
-                        </div>
-                        <Button type="submit" variant="raised" color="secondary" className={classes.submitBtn} onClick={this.send} disabled={!this.confirmEmail}>
-                            <Typography variant="button">Send</Typography>
-                        </Button>
-                    </form>
-                    
-                    <Grow in={this.sended} timeout={1000}>
-                        <Typography color="secondary" variant="body1">Sended</Typography>
-                    </Grow>
-                </div>
-            </div>
-        </div>)
-    }
-}
-
-const Text = () => (<div>Hi!</div>)
 
 export default Dashboard;

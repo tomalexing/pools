@@ -16,6 +16,7 @@ export default class Poll{
   @observable isInfoVisible = false;
   @observable lImageLoaded = false;
   @observable rImageLoaded = false;
+  @observable updating = false;
 
   @computed
   get leftPercentage() {
@@ -30,33 +31,35 @@ export default class Poll{
   setProgress = _ => {
     let card = this;
 
-    loadFromStore(card.id).then(_ => {}, _ => {
+    return loadFromStore(card.id).then(_ => {}, _ => {
       loadFromStore(card.slug).then((val) => {
           val.Progress.number = val.Progress.number + 1;
-          saveToStore(card.slug, val ).then(_ => Api.saveUserData() ) 
+          saveToStore(card.slug, val ).then(_ => Api.saveUserData() )
         }, _ => {
           saveToStore(card.slug, {current: card.number -1 , Progress:{number:1}}).then(_ => Api.saveUserData() )
-        } )
-    })
+        }).catch( _ => {} );
+    }).catch( _ => {} );
 
   }
 
-  setUserVote({l, r}){
+  async setUserVote({l, r}){
 
     this.answers.l.quantity += l;
     this.answers.r.quantity += r;
     
-    this.setProgress();
+    await this.setProgress().catch(_ => {});
 
     if(l > 0){
-      saveToStore(this.id, 'left' );
+      await saveToStore(this.id, 'left');
     }
 
     if(r > 0){
-      saveToStore(this.id, 'right' )
+      await saveToStore(this.id, 'right');
     }
 
-    Api.changeScoresPolls(this.id, {l, r});
+    await Api.changeScoresPolls(this.id, {l, r}).catch(_ => {});
+
+    this.updating = false; 
     
   }
   
@@ -71,7 +74,7 @@ export default class Poll{
   getUserVote(){
     return loadFromStore(this.id).then(
       choosen => choosen, _ => this.vote = null
-    );
+    ).catch( _ => {} );
   }
 
   @action

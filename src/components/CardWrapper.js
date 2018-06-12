@@ -6,7 +6,7 @@ import Card from './Card';
 import { listener } from './../utils';
 import noPullToRefresh from './../no-pull-to-refresh.js';
 
-noPullToRefresh();
+// noPullToRefresh();
 
 const styles = theme => ({
 

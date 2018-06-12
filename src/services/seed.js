@@ -521,7 +521,7 @@ let PollRunned = false;
         cat: 'Polls',
         title: 'Poll',
         linksite: 'quizi.io',
-        desc: 'The average IQ is 100. Have you wondered what your IQ score is?',
+        desc: 'Discover answers to the most provocative question.',
         img: './assets/polls.png',
         result: 'You answered {{number}} of 10 polls.'
       });

@@ -97,7 +97,6 @@ class Card extends React.Component {
         this.startDrag  = this.startDrag.bind(this)
         this.drag  = this.drag.bind(this)
         this.stopDrag  = this.stopDrag.bind(this)
-
     }
 
     listeners = [];
@@ -163,7 +162,7 @@ class Card extends React.Component {
         }
 
         if(cardPlace == 'currentCard' &&  this.props.store.currentCard &&  this.props.store.currentCard.cardType == 'poll'){
-                this.props.store.currentCard.inmovable = false
+            this.props.store.currentCard.inmovable = false
         }
     }
 
@@ -408,7 +407,7 @@ class Card extends React.Component {
     startDrag = (event) => {
         let cardPlace = this.props.cardPlace;
         if ((this.props.store[cardPlace] && this.props.store[cardPlace].inmovable) || this.props.store.currentIsEnd) return;
-        //event.preventDefault();
+        event.preventDefault();
         this._dragging = true;
         this.startX = event.clientX || event.touches[0].clientX;
         this.startY = event.clientY || event.touches[0].clientY;
@@ -443,6 +442,8 @@ class Card extends React.Component {
     
     drag = (event) => {
         
+        event.preventDefault();
+        
         let cardPlace = this.props.cardPlace;
         
         if (this.props.store[cardPlace] && this.props.store[cardPlace].inmovable) return;
@@ -461,11 +462,10 @@ class Card extends React.Component {
             }
         }
         
-        if( this._allowDrag ){
-            event.preventDefault();
-            this.refs.card.style.transform = `rotate(${this.props.store._rotationLerp(deltaX)}deg) translate(${deltaX}px, ${deltaY}px)`;
+      
+        this.refs.card.style.transform = `rotate(${this.props.store._rotationLerp(deltaX)}deg) translate(${deltaX}px, ${0}px)`;
             
-        }
+        
     }
 
     getRef = (ref)  => {

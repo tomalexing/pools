@@ -20,9 +20,8 @@ const styles = theme => ({
         margin: '-1px 0',
         overflow: 'auto',
         height: '100%',
-        '@media (max-width: 600px)':{
-            height: '350px',
-        }
+        '-webkit-overflow-scrolling': 'touch',
+    
     },
     question:{
         fontSize: '18px',
@@ -194,6 +193,8 @@ class Quiz extends React.Component {
                 <div className={classes.answersWrapper}>
                 
                     {Quiz.questionSrcImg && <LazyImage className={classes.image} loaded={this.loadedL} load={Quiz.questionSrcImg}/>}
+
+                    
                     <div className={classes.divider}> </div>
                     <RadioGroup className={classes.answers} >
                         { Quiz.answers.map((answer, idx) => {

@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import {requestAnimationFramePromise, transitionEndPromise, parallel, wait, listener} from './../utils';
 import * as cn  from 'classnames'; 
 import { LazyImage } from './../utils';
+import Auth from './../models/Auth';
 
 const styles = theme => ({
     pollBody:{
@@ -15,9 +16,10 @@ const styles = theme => ({
         backgroundColor: 'white',
         margin: '-1px 0',
         height: 'calc(100% - 40px - 76px)',
-        overflow: 'auto',
+        overflow: 'hidden',
+        '-webkit-overflow-scrolling': 'touch',
         '@media (max-width: 600px)':{
-            height: 'calc(100% - 35px)',
+            height: 'calc(100% - 55px)',
         }
   
     },
@@ -254,7 +256,6 @@ class Poll extends React.Component {
         this.registerEvents();
         this.setCurrentVote();
         this.props.passRef(this.refs.body);
-        console.log('mountt');
     }
 
     listeners = [];
@@ -303,8 +304,6 @@ class Poll extends React.Component {
     } 
 
     componentWillUnmount(){
-        console.log('Unmountt');
-
         this.listeners.forEach(func => func());
     }
 
@@ -315,31 +314,34 @@ class Poll extends React.Component {
 
     setCurrentVote = () => {
         let that = this;
-        this.props.poll.getUserVote().then(choosen => {
-            if(choosen === 'right'){
-                that.props.poll.isInfoVisible = true;
-                when(() => that.getRefs, () => { // may cause flick when switch between pollzes/polls 
-                    that.refs.check1.style.display = 'none';
-                    that.refs.check2.style.display = 'none';
-                    that.refs.check2.style.display = 'block';
-                    
-                });
-                that.props.poll.voteSetted = 'right';
+        when(() => !this.props.store.currentCard.updating && !Auth.loadingUserData, () => {
 
-            }
-            if(choosen === 'left'){
-                that.props.poll.isInfoVisible = true;
-                when(() => that.getRefs, () => {
-                    that.refs.check1.style.display = 'none';
-                    that.refs.check2.style.display = 'none';
-                    that.refs.check1.style.display = 'block';
-                })
-                that.props.poll.voteSetted = 'left';
-            }
-            if(choosen == null)
-                that.props.poll.isInfoVisible = false;
+            this.props.poll.getUserVote().then(choosen => {
+                if(choosen === 'right'){
+                    that.props.poll.isInfoVisible = true;
+                    when(() => that.getRefs, () => { // may cause flick when switch between pollzes/polls 
+                        that.refs.check1.style.display = 'none';
+                        that.refs.check2.style.display = 'none';
+                        that.refs.check2.style.display = 'block';
+                        
+                    });
+                    that.props.poll.voteSetted = 'right';
 
-            
+                }
+                if(choosen === 'left'){
+                    that.props.poll.isInfoVisible = true;
+                    when(() => that.getRefs, () => {
+                        that.refs.check1.style.display = 'none';
+                        that.refs.check2.style.display = 'none';
+                        that.refs.check1.style.display = 'block';
+                    })
+                    that.props.poll.voteSetted = 'left';
+                }
+                if(choosen == null)
+                    that.props.poll.isInfoVisible = false;
+
+                
+            });
         });
     }
     
@@ -349,7 +351,7 @@ class Poll extends React.Component {
 
     rememberPoints = (e) => {
         //e.stopPropagation();
-        //     e.preventDefault();
+        e.preventDefault(); // todo should be implemented cusom scroll
        // if(window.innerWidth > 600 ){
        // }
         this._dragging = true;
@@ -361,7 +363,7 @@ class Poll extends React.Component {
     }
 
     drag = (e) => {
-       // e.preventDefault();
+        e.preventDefault(); // todo should be implemented cusom scroll
        // e.stopPropagation();
         if (!this._dragging) return;
         // if(window.innerWidth > 600 ){
@@ -376,7 +378,6 @@ class Poll extends React.Component {
     pickCart = (thisCardNumber) => async e => {
 
         e.preventDefault();
-        console.log('pickCart');
         console.log(this._dragging);
 
 
@@ -504,7 +505,9 @@ class Poll extends React.Component {
 
     @action.bound
     updateScore(thisCardNumber){
-        
+
+        this.props.store.currentCard.updating = true;
+
         if(thisCardNumber == 1 && !this.props.store.currentCard.voteSetted){
             
             this.props.store.currentCard.setUserVote({

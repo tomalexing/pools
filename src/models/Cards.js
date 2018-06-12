@@ -5,6 +5,7 @@ import Poll from "./Poll";
 import Card from "./Card";
 import {loadFromStore , saveToStore} from "./../services/localDb";
 import Api from "./../services/Api";
+
 export default class Cards {
 
   constructor({getIds, cardSlug, dashTitle, dashOutput, tryAgainIsCleanPrevious}){
@@ -26,7 +27,7 @@ export default class Cards {
 
   saveSlugsCardsInProcess = () => {
     let cards = this;
-    this.save()
+    // this.save()
     loadFromStore('SlugsCardsInProcess').then(val => {
       let alreadyAdded = val.find(slug => slug == cards.cardSlug);
       if(!alreadyAdded){
@@ -35,11 +36,11 @@ export default class Cards {
       }
     }, _ => {
       saveToStore('SlugsCardsInProcess', [cards.cardSlug]);
-    })
+    }).catch( _ => {} );
   }
 
   @observable current = 0;
-  @observable next = 1; // correct value defined in Quiz conctructor
+  @observable next = 1; // correct value defined in Card component conctructor also, so may be empty
 
   @observable canMakeAction = true;
   
@@ -62,7 +63,7 @@ export default class Cards {
       if(Object.keys(this.positionStyles).length > 0 ){
         addAbsolute = true;
       }
-      return Object.entries(this.positionStyles).reduce((acc,[key, val]) => Object.assign(acc,{[key]:`${val}px`}), addAbsolute ? {'position':'fixed', display: 'block'}:{});
+      return Object.entries(this.positionStyles).reduce((acc,[key, val]) => Object.assign(acc,{[key]:`${val}px`}), addAbsolute ? {'position':'absolute', display: 'block'}:{});
   }
 
   @computed
@@ -180,13 +181,13 @@ export default class Cards {
         saveToStore(cards.cardSlug, {
             current: 0,
             Progress: val.Progress
-          });
+          })
         }, _ => {
           saveToStore(cards.cardSlug, {
             current: 0,
             Progress: cards.Progress
-          });
-        })
+          })
+        }).catch( _ => {} );
   }
 
   @computed
@@ -224,9 +225,7 @@ export default class Cards {
           saveToStore(cards.cardSlug, {
             current: cards.allCardsNumber - 1,
             Progress: val.Progress
-          }).then(_=>{
-            Api.saveUserData().then(_ => Promise.resolve(true))
-          })
+          }).then(_=> Api.saveUserData().then(_ => Promise.resolve(true)));
         }, _ => {
             saveToStore(cards.cardSlug, {
               current: cards.current,
@@ -234,7 +233,7 @@ export default class Cards {
             }).then(_=>{
               Api.saveUserData().then(_ => Promise.resolve(true))
             })
-        })
+        }).catch( _ => {} );
   }
 
 
@@ -244,31 +243,26 @@ export default class Cards {
     loadFromStore(cards.cardSlug).then(val => {
       val.current = cards.current
       saveToStore(cards.cardSlug, val)
-        .then(_=>{
-        Api.saveUserData().then(_ => Promise.resolve(true))
-      })
+        .then(_=> Api.saveUserData().then(_ => Promise.resolve(true)))
     }, _ => {
         saveToStore(cards.cardSlug, {
           current: cards.current,
           Progress: cards.Progress
-        }).then(_=>{
-          Api.saveUserData().then(_ => Promise.resolve(true))
-        });
-    })
+        }).then( _ => Api.saveUserData().then(_ => Promise.resolve(true)))
+    }).catch( _ => {} );
   }
 
   @action.bound
   load = _ => {
     let that = this;
-    return loadFromStore(this.cardSlug).then(
-      (val) => {
+    return loadFromStore(this.cardSlug).then((val) => {
         let current = val.current;
         that.current = current || 0;
         that.next = current + 1 || 1;
         that.Progress = val.Progress;
         that.IsEnd = val.Progress ? val.Progress.final : false;
         return current
-      }, console.log)
+      }).catch( _ => {} );
   }
 
   static saveLike(cardSlug){ // Todo: fallback
@@ -278,7 +272,7 @@ export default class Cards {
       return saveToStore(cardSlug, cardSlugData).then( _ => {
         Api.saveUserData().then(_ => Promise.resolve(true))
       })
-    })
+    }).catch( _ => {} );
   }
 
   static isLiked(cardSlug){ // Todo: fallback
@@ -287,7 +281,7 @@ export default class Cards {
       else return Promise.resolve(false);
     }, ()=> {
       return Promise.resolve(false);
-    })
+    }).catch( _ => {} );
   }
     
   static allProgress(cardSlug){
@@ -372,9 +366,8 @@ export default class Cards {
 
         return { number , iqValue }
     
-    })
+    }).catch( _ => {} );
     
-  
   }
 
 }

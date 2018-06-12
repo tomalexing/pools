@@ -156,12 +156,23 @@ function subscription(email){
     })
 }
 
-function addReview(id, name, question, email){
-    if(!id || !name || !question || !email) return Promise.resolve();
+function addReview(name, question, email){
+    if(!name || !question || !email) return Promise.resolve();
     return new Promise(resolve => {
-        let userRef = db.collection('users').doc(id);
+        let userRef = db.collection('contact').doc(email);
         var setWithMerge = userRef.set({
-            review: {[(new Date).toISOString()]:{name, question, email}}
+            body: {[(new Date).toISOString()]:{name, question, email}}
+        }, { merge: true });
+        return resolve(setWithMerge)
+    })
+}
+
+function create(name, email){
+    if(!name || !email) return Promise.resolve();
+    return new Promise(resolve => {
+        let userRef = db.collection('createNew').doc(email);
+        var setWithMerge = userRef.set({
+            body: {[(new Date).toISOString()]:{name, email}}
         }, { merge: true });
         return resolve(setWithMerge)
     })
@@ -246,6 +257,33 @@ function saveUserData(id){
             UserData: UserData
         }, { merge: true });
         return setWithMerge
+    })
+}
+
+
+function deleteUserData(id){
+
+    if(!id && !Auth.uid) return Promise.resolve();
+
+    id = id || Auth.uid;
+
+    let userRef = db.collection('users').doc(id);
+    return new Promise(resolve => {
+        
+        userRef.get().then(doc => {
+
+            if(doc.exists){
+                let docDate = doc.data()
+                if('UserData' in docDate){
+                    docDate.UserData = {};
+                    resolve(userRef.set(docDate, { merge: false }));
+                }else{
+                    resolve()
+                }
+            }else{
+                resolve()
+            }
+        })
     })
 }
 
@@ -374,6 +412,8 @@ const Api = {
     getCatsMenu,
     getCatsCards,
     getAdditionlCardInfo,
-    getCoinName
+    getCoinName,
+    deleteUserData,
+    create
 }
 export default Api;

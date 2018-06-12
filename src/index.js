@@ -32,13 +32,15 @@ import Api from './services/Api';
 import Auth from './models/Auth';
 injectTapEventPlugin();
 
-const Term = (props) => <Lazy {...props} load={() => import('./term-of-use')}/>
-const Privacy = (props) => <Lazy {...props} load={() => import('./privacy-policy')}/>
-const Subscribe = (props) => <Lazy {...props} load={() => import('./subscribe')}/>
+const Term = (props) => <Lazy {...props} load={() => import('./pages/term-of-use')}/>
+const Privacy = (props) => <Lazy {...props} load={() => import('./pages/privacy-policy')}/>
+const Subscribe = (props) => <Lazy {...props} load={() => import('./pages/subscribe')}/>
+const Dashboard = (props) => <Lazy {...props} load={() => import('./pages/dashboard')}/>
+const Contact = (props) => <Lazy {...props} load={() => import('./pages/contact')}/>
+const Create = (props) => <Lazy {...props} load={() => import('./pages/create')}/>
 
 const Card = (props) => <Lazy {...props} load={() => import('./components/CardWrapper')}/>
 const OneCard = (props) => <Lazy {...props} load={() => import('./components/OneCard')}/>
-const Dashboard = (props) => <Lazy {...props} load={() => import('./components/Dashboard')}/>
 const Explore = (props) => <Lazy {...props} load={() => import('./components/Explore')}/>
 const Cats = (props) => <Lazy {...props} load={() => import('./components/Cats')}/>
 const DCard = (props) => <Lazy {...props} load={() => import('./components/DCard')}/>
@@ -95,7 +97,7 @@ const theme = createMuiTheme(
             color: '#474e65',
             fontSize: '1.125rem',
         },
-        subheading: {
+        subheading: { // h3
             color: '#797E8F',
             fontSize: '1rem',
             fontFamily: '"Montserrat", "Open Sans", "Helvetica", "Arial", sans-serif',
@@ -183,7 +185,7 @@ const styles = theme => ({
         alignItems: 'center',
         justifyContent: 'center',
         '@media (max-width: 767px)':{
-            margin: '25px 10px'
+            margin: '25px 10px 15px'
         },
         overflowY: 'hidden',
         overflowX: 'hidden',
@@ -261,7 +263,7 @@ render(<Router>
                     transitionLeaveTimeout={200}
                 >*/}
                     <Switch>
-                    <Route path={'/'} exact location={location} key={getUniqueKey()} component={() => <App fullscreen={true} ><Explore/></App>}/>
+                    <Route path={'/'} exact location={location} key={getUniqueKey()} component={() => <App nofooter={true} fullscreen={true} ><Explore/></App>}/>
 
                     { /* <Route path={'/polls'} location={location} key={getUniqueKey()} component={() =>        <App >
                             <div>
@@ -270,19 +272,23 @@ render(<Router>
                         </App>}/>
                     */}
                     
-                    <Route path={'/quizzes/:id'} location={location} key={getUniqueKey()} component={() => <App cardpage={true}  ><DCard key="quizzes" /></App>}/>
+                    <Route path={'/quizzes/:id'} location={location} key={getUniqueKey()} component={() => <App nofooter={true} cardpage={true}  ><DCard key="quizzes" /></App>}/>
 
-                    <Route path={'/polls/:id'} location={location} key={getUniqueKey()} component={() => <App cardpage={true}  ><DCard key="polls" /></App>}/>
+                    <Route path={'/polls/:id'} location={location} key={getUniqueKey()} component={() => <App nofooter={true} cardpage={true}  ><DCard key="polls" /></App>}/>
                     
                     <Route path={'/card/:id'} location={location} key={getUniqueKey()} exact component={() => <App><OneCard key="OneCard"/></App>}/>
                     
-                    <Route path={'/term-of-use'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} ><Term /></App>}/>
+                    <Route path={'/term-of-use'} location={location} key={getUniqueKey()} component={() => <App nofooter={true} fullscreen={true} ><Term /></App>}/>
 
-                    <Route path={'/privacy-policy'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} ><Privacy /></App>}/>
+                    <Route path={'/privacy-policy'} location={location} key={getUniqueKey()} component={() => <App nofooter={true} fullscreen={true} ><Privacy /></App>}/>
                     
-                    <Route path={'/subscribe'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} ><Subscribe /></App>}/>
+                    <Route path={'/subscribe'} location={location} key={getUniqueKey()} component={() => <App nofooter={true} fullscreen={true} ><Subscribe /></App>}/>
 
-                    <Route path={'/cats'}  key={getUniqueKey()} component={() => <App fullscreen={true} ><Cats match={{ params: { slug: '/' }, url: "" }} /></App>}/>
+                    <Route path={'/cats'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><Cats match={{ params: { slug: '/' }, url: "" }} /></App>}/>
+
+                    <Route path={'/contact'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><Contact /></App>}/>
+
+                    <Route path={'/create'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><Create /></App>}/>
                     
                     <PrivateRoute role={['user']} path={'/dashboard'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} nofooter={true}><Dashboard /></App>} />
                     

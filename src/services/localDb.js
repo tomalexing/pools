@@ -40,7 +40,7 @@ export function loadFromStore(key) {
           if (event.target.result !== undefined) {
             resolve(event.target.result);
           } else {
-            reject(new Error(`Key not found: ${key}`));
+            reject();
           }
         };
       });

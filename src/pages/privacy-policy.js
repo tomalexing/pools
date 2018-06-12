@@ -11,7 +11,10 @@ const styles = theme => ({
         overflow: 'auto',
         maxWidth: 1140,
         width: '100%',
-        padding: '40px 40px'
+        padding: '40px',
+        '@media (max-width: 600px)':{
+            padding: '10px'
+        }
     },
 
 
