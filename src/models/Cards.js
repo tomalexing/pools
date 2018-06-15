@@ -8,11 +8,10 @@ import Api from "./../services/Api";
 
 export default class Cards {
 
-  constructor({getIds, cardSlug, dashTitle, dashOutput, tryAgainIsCleanPrevious}){
+  constructor({getIds, cardSlug, tryAgainIsCleanPrevious, embed}){
     this.cardSlug = cardSlug;
-    this.dashTitle = dashTitle || '';
-    this.dashOutput = dashOutput || 'number';
     this.tryAgainIsCleanPrevious = tryAgainIsCleanPrevious || false;
+    this.embed = embed;
     this.bindModel(getIds);
     this.saveSlugsCardsInProcess();
   }

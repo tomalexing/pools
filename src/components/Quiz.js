@@ -5,22 +5,27 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {requestAnimationFramePromise, transitionEndPromise, parallel, 
-        wait, listener, LazyImage} from './../utils';
+        wait, listener, LazyImage, transitionEndWithStrictPromise} from './../utils';
 import * as cn  from 'classnames'; 
 
 import Radio from '@material-ui/core/Radio';
 import RadioGroup  from '@material-ui/core/RadioGroup';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel  from '@material-ui/core/FormControlLabel';
+import SModal from './Modal';
 
 const styles = theme => ({
     quizBody:{
         padding: '23px 30px',
         backgroundColor: 'white',
         margin: '-1px 0',
-        overflow: 'auto',
+        overflow: 'hidden',
         height: '100%',
+        maxHeight: '400px',
         '-webkit-overflow-scrolling': 'touch',
+        '@media (min-width: 768px)':{
+            overflowY: 'auto'
+        }
     
     },
     question:{
@@ -71,6 +76,23 @@ const styles = theme => ({
             marginBottom: '20px'
         }
     },
+
+    imageModal:{
+        display: 'flex',
+        padding: '10px',
+        '& img': {
+            maxWidth: '100%',
+            objectFit: 'contain',
+            margin: 'auto',
+            width: '100%',
+            height: 'auto',
+            '@media (min-width: 600px)': {
+                maxHeight: 'calc(100vh - 200px)',
+                width: 'auto'
+            }
+        },
+    },
+
     answerText: {
         zIndex: 10,
         border: '6px solid transparent',
@@ -114,24 +136,16 @@ class Quiz extends React.Component {
     }
 
     registerEvents = () => {
-        this.input = document.querySelectorAll('.inputIQ-current');
 
-        if(this.input){
-            
-            this.listeners.push(Array.from(this.input).map( target => {
-                return listener(target, 'mouseup', this.pick, false)
-            }))
+        if(window.innerWidth > 768) return
 
-            this.listeners.push(Array.from(this.input).map( target => {
-                return listener(target, 'keyup', this.pick, false)
-            }))
+        this.listeners.push(listener(this.refs.body,'touchstart', this.rememberPoints, false));
+        this.listeners.push(listener(this.refs.body, 'touchmove', this.drag, false));
+        this.listeners.push(listener(this.refs.body, 'touchend', this.finishScroll, false));
+        // this.listeners.push(listener(this.refs.body, 'mousedown', this.rememberPoints, false));
+        // this.listeners.push(listener(this.refs.body, 'mousemove', this.drag, false)); 
+        // this.listeners.push(listener(this.refs.body, 'mouseup', this.finishScroll, false)); 
 
-            this.listeners.push(Array.from(this.input).map( target => {
-                return listener(target, 'touchend', this.pick, false)
-            }))
-            
-            this.listeners = Array.prototype.concat.apply([], this.listeners);
-        }
     }
 
 
@@ -140,9 +154,84 @@ class Quiz extends React.Component {
         this.listeners.forEach(func => func());
     }
 
+    rememberPoints = (e) => {
+        e.preventDefault(); // todo should be implemented cusom scroll
+     
+        this._dragging = true;
+        this.startX = e.clientX || e.touches[0].clientX;
+        this.startY = e.clientY || e.touches[0].clientY;
+        this.deltaX = 0;
+        this.deltaY = 0;
+        this.scrollStateOld = this.scrollState;
+    }
+
+    scrollStateOld = 0
+    scrollState = 0;
+
+
+
+    drag = (e) => {
+        e.preventDefault(); // todo should be implemented cusom scroll
+        if (!this._dragging) return;
+
+        this.deltaX = (e.clientX || e.touches[0].clientX) - this.startX;
+        this.deltaY = (e.clientY || e.touches[0].clientY) - this.startY;
+
+
+        
+        this.scrollState = this.deltaY + this.scrollStateOld
+        
+        
+        this.refs.body.style.transform = `translate(${0}px, ${this.scrollState}px)`;
+    }
+
+
     @action.bound
-    pick = async e => {
-        //e.preventDefault();
+    finishScroll = e => {
+        
+        if (!this._dragging) return;
+        
+        if(window.innerWidth < 600 ){
+            if(this.deltaY && Math.abs(this.deltaY) < 2) {
+                this._dragging = false
+                return;
+            }
+        }
+        
+        e.preventDefault();
+
+        let {height} = this.refs.body.getBoundingClientRect();
+
+        this.scrollState = Math.min(0, Math.max(-(height - (this.props.store.positionStyles.height - 40)), this.scrollState + this.deltaY/2));
+        let that = this;
+
+        that.refs.body.style.transition = 'transform .2s ease-out';
+
+        return requestAnimationFramePromise()
+            .then( async _ => {
+                that.refs.body.style.transform = `translate(${0}px, ${this.scrollState}px)`;
+                return transitionEndWithStrictPromise(that.refs.body, 'transform');
+            })
+            .then(_ => requestAnimationFramePromise())
+            .then(_ => {
+                that.refs.body.style.transition = '';
+            })
+            .then(_ => requestAnimationFramePromise())
+            .then(_ => requestAnimationFramePromise())
+            .then(_ =>{ that._dragging = false})
+
+    }
+
+    @action.bound
+    pick = idx => async e => { 
+
+    
+        if( !this.props.store.canMakeAction) return
+        
+        if(this.deltaY && Math.abs(this.deltaY)  > 5) {
+            return;
+        }   
+
         if(e.type == 'keyup'){
             let  code = e.keyCode || e.which;
             console.log(code)
@@ -155,7 +244,7 @@ class Quiz extends React.Component {
            ) return
 
         this.picking = true;
-        this.props.Quiz.selectedValue = e.target.value;
+        this.props.Quiz.selectedValue = idx;
         
         this.props.Quiz.setProgress();
 
@@ -163,6 +252,9 @@ class Quiz extends React.Component {
         this.props.Quiz.showCorrectAnswer = true;
         await wait(1000);
         
+        this.scrollStateOld = 0
+        this.refs.body.style.transform = `translate(${0}px, ${0}px)`;
+
         if(this.props.currentIsEnd){
             this.props.finish(e);
         }else{
@@ -177,47 +269,67 @@ class Quiz extends React.Component {
         this.props.Quiz.setImageLoaded();
     }
 
+    modalLoaded = () => {
+
+    }
+
+    @observable modalOpened = false;
+    @action.bound
+    openModal = () => {
+        if(this.deltaY && Math.abs(this.deltaY)  > 10) {
+            return;
+        }   
+        this.modalOpened = true;
+    };
+    @action.bound
+    closeModal = () => {
+        this.modalOpened = false;
+    };
+
     render() {
 
         let {classes, Quiz} = this.props;
 
         if(!Quiz || typeof Quiz.then == 'function'){
-            return(<div ref='quiz'/>);
+            return(<div ref='body'/>);
         }
 
         return (
-            <div className={classes.quizBody}>
+        <div ref="container" className={classes.quizBody}>
+            <div ref="body" >
                 <Typography variant="headline" gutterBottom  className={classes.question}>
-                    <div dangerouslySetInnerHTML={{__html:Quiz.question}} />
+                    <div ref="title" dangerouslySetInnerHTML={{__html:Quiz.question}} />
                 </Typography>
-                <div className={classes.answersWrapper}>
+                <div ref="answer" className={classes.answersWrapper}>
                 
-                    {Quiz.questionSrcImg && <LazyImage className={classes.image} loaded={this.loadedL} load={Quiz.questionSrcImg}/>}
+                    {Quiz.questionSrcImg && <div onMouseUp={this.openModal} onTouchEnd={this.openModal}><LazyImage className={classes.image} loaded={this.loadedL} load={Quiz.questionSrcImg}/></div>}
 
-                    
+                    <SModal  title={<div dangerouslySetInnerHTML={{__html:Quiz.question}} />} body={<LazyImage className={classes.imageModal} loaded={this.modalLoaded} load={Quiz.questionSrcImg}/>} open={this.modalOpened} close={this.closeModal} full={true} zoom={true} />  
+
                     <div className={classes.divider}> </div>
                     <RadioGroup className={classes.answers} >
                         { Quiz.answers.map((answer, idx) => {
                         return  <FormControlLabel  
                                     key={`answer-${idx}`}
                                     className={cn(
-                                            classes.answerText,
-                                            {[classes.answerIncorrect]: this.props.Quiz.selectedValue == idx && idx != this.props.Quiz.answerCorrect},
+                                        classes.answerText,
+                                        {[classes.answerIncorrect]: this.props.Quiz.selectedValue == idx && idx != this.props.Quiz.answerCorrect},
                                             {[classes.answerCorrect]: this.props.Quiz.showCorrectAnswer && idx == this.props.Quiz.answerCorrect
                                             },
                                             {[classes.answerCorrect]: this.props.Quiz.selectedValue == idx && idx == this.props.Quiz.answerCorrect
-                                            }
-                                            )}
+                                            },
+                                            {'inputIQ-current': this.props.Quiz.isCurrent(this.props.store.current)},
+                                            {'inputIQ-next': !this.props.Quiz.isCurrent(this.props.store.current)},
+                                        )}
+                                    value={''+idx}
+                                    onMouseUp={this.pick(idx)}
+                                    onTouchEnd={this.pick(idx)}
+                                    onKeyUp={this.pick(idx)}
                                     control={
                                         <Radio 
                                         checked={this.props.Quiz.selectedValue == ''+idx}
-                                        value={''+idx}
                                         color="secondary"
                                         style={{color: '#FC3868'}}
-                                        className={cn(
-                                            {'inputIQ-current': this.props.Quiz.isCurrent(this.props.store.current)},
-                                            {'inputIQ-next': !this.props.Quiz.isCurrent(this.props.store.current)},
-                                         )}
                                         />
                                     }
                                     label={answer}
@@ -227,6 +339,7 @@ class Quiz extends React.Component {
                     </RadioGroup>
                 </div>
             </div>
+        </div>
         )
     }
 }

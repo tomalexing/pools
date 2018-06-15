@@ -43,9 +43,9 @@ export class LazyImage extends React.Component {
     if(typeof props.load  === 'string'){
       (() => import(`${props.load}`))().then((src) => {
         if(this._isMounted)
-        this.setState({src, loaded:true})
+          this.setState({src, loaded:true})
         if(typeof props.loaded == 'function')
-        props.loaded()
+          props.loaded()
       })
 
       return
@@ -55,7 +55,7 @@ export class LazyImage extends React.Component {
       if(this._isMounted)
       this.setState({src, loaded:true})
       if(typeof props.loaded == 'function')
-      props.loaded()
+        props.loaded()
     })
 
     } catch (error) {

@@ -30,6 +30,11 @@ import './services/seed';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import Api from './services/Api';
 import Auth from './models/Auth';
+
+import Typography from '@material-ui/core/Typography';
+
+import Login from './components/Login';
+
 injectTapEventPlugin();
 
 const Term = (props) => <Lazy {...props} load={() => import('./pages/term-of-use')}/>
@@ -228,13 +233,13 @@ class App extends React.Component{
         const { classes } = this.props;
         return (
             <div className={"App".concat(' ' + classes.mainScreen)} >
-                <Header />
+                {!this.props.embed && <Header /> }
                 <div className={cn(classes.container, {'fullscreen': this.props.fullscreen}, {cardpage: this.props.cardpage})}>
                     {this.firstChild(this.props.children)}
 
                 </div>
                 {/*<DevTools />*/}
-                { !this.props.nofooter && <Footer /> }
+                { !(this.props.nofooter || this.props.embed) && <Footer /> }
             </div>
         );
     }
@@ -246,9 +251,8 @@ const PrivateRoute =  ({ component: Component, ...rest }) => (
     <Route {...rest} render={props => (
       Auth.isAuthenticated && rest.role.includes(Auth.role) ? (
          <Component currentRole={Auth.role} {...rest}/>
-      ) : Auth.signout() && (
-            <div>Private Route. You should be logged in!!!</div> 
-        )
+      ) : Auth.signout() && (<div><Login open={true} logout={()=>{}} close={()=>{}}/></div>)
+        
     )} />
 )
 
@@ -275,6 +279,8 @@ render(<Router>
                     <Route path={'/quizzes/:id'} location={location} key={getUniqueKey()} component={() => <App nofooter={true} cardpage={true}  ><DCard key="quizzes" /></App>}/>
 
                     <Route path={'/polls/:id'} location={location} key={getUniqueKey()} component={() => <App nofooter={true} cardpage={true}  ><DCard key="polls" /></App>}/>
+
+                    <Route path={'/embed/:cardtype/:id'} location={location} key={getUniqueKey()} component={() => <App embed={true} cardpage={true}  ><DCard key="emded" /></App>}/>
                     
                     <Route path={'/card/:id'} location={location} key={getUniqueKey()} exact component={() => <App><OneCard key="OneCard"/></App>}/>
                     
@@ -292,7 +298,7 @@ render(<Router>
                     
                     <PrivateRoute role={['user']} path={'/dashboard'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} nofooter={true}><Dashboard /></App>} />
                     
-                    <Route path={'*'}  key={getUniqueKey()} component={() => <App fullscreen={true} >404</App>}/>
+                    <Route path={'*'}  key={getUniqueKey()} component={() => <App nofooter={true} fullscreen={true} ><NotFound/></App>}/>
                     </Switch>
                     <Cookies/>
                    {/* </ReactCSSTransitionGroup> */}
@@ -302,6 +308,10 @@ render(<Router>
     document.getElementById("root")
 );
 
+
+function NotFound() {
+    return <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}><Typography variant="display2" color="secondary">404</Typography> <Typography component="p" variant="display1" >Page Not Found</Typography></div>
+}
 
 //registerServiceWorker();
 

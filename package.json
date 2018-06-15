@@ -15,6 +15,7 @@
     "react-addons-css-transition-group": "^15.6.2",
     "react-app-rewire-mobx": "^1.0.8",
     "react-dom": "^16.3.2",
+    "react-pinch-zoom-pan": "^1.4.5",
     "react-router-dom": "^4.2.2",
     "react-router-hash-link": "^1.2.0",
     "react-share": "^2.1.1",

@@ -296,14 +296,19 @@ class ResultCard extends React.Component {
                                         <Typography variant="display2" > { this.finalCard.progress &&  roundeWithDec(this.finalCard.progress.number * this.finalCard.info.reward) }  </Typography>
                                         <Typography variant="display1" className={classes.ImpAddon} >{ this.finalCard.progress && Api.getCoinName()}</Typography>
                                     </div>
-                                    { !Auth.isAuthenticated && <div className={classes.col}>
+                                    
+                                    { !Auth.isAuthenticated && !this.props.embed && <div className={classes.col}>
                                         
-                                        <Button className={classes.resBtn} variant="raised" color="secondary"  side="small" onMouseUp={this.openLoginModal} onTouchEnd={this.openLoginModal}>Withdrawal
+                                        <Button className={classes.resBtn} variant="raised" color="secondary"  side="small" onMouseUp={this.openLoginModal} onTouchEnd={this.openLoginModal}>Withdraw
                                         </Button>
                                     </div> }
-                                    { Auth.isAuthenticated && <div className={classes.col}>
+                                    { Auth.isAuthenticated && !this.props.embed && <div className={classes.col}>
                                        
-                                        <Link style={{textDecoration: 'none'}} to="/dashboard"><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >dashboard</Button></Link>
+                                        <Link style={{textDecoration: 'none'}} to="/dashboard"><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Withdraw</Button></Link>
+                                    </div> }
+
+                                    {this.props.embed && <div className={classes.col}>      
+                                        <a href={`${window.location.origin}/dashboard`} target="_blank" style={{textDecoration: 'none'}} ><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >dashboard</Button></a>
                                     </div> }
                                 </div>
                             </div>

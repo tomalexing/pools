@@ -425,8 +425,7 @@ class Common extends React.Component{
                     }))
                 }).then(_ => {
                     that.forceUpdate();
-                    
-                    that.totalIMP = Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? prog['progress'].number * prog['info'].reward : 0,0)
+                    that.totalIMP = Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? Math.min(prog['progress'].number, prog['info'].allCardsNumber) * prog['info'].reward : 0,0)
                 })
             }, _ => {
                 // Api.loadUserData({forceLoad: true}).then(data => {
@@ -767,7 +766,7 @@ class Account extends React.Component{
                 .then( _ => {
                     return Api.getWithdrawn(Auth.uid)
                 }).then( amountWithdrawn => {
-                    that.totalIMP = Math.max(0, Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? prog['progress'].number * prog['info'].reward + (prog['isLiked'] ? .5000 : 0) : 0, -amountWithdrawn)) 
+                    that.totalIMP = Math.max(0, Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? Math.min(prog['progress'].number, prog['info'].allCardsNumber) * prog['info'].reward + (prog['isLiked'] ? .5000 : 0) : 0, -amountWithdrawn)) 
                 })
 
             }, _ => {})
@@ -825,7 +824,6 @@ class Account extends React.Component{
 
                             Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken, resp ).then( amount => {
                                 that.getProgress();
-
                                 that.paying = false;
                             })
                         })
@@ -922,6 +920,8 @@ class Account extends React.Component{
                                 <Typography  className={classes.editBtnTypo}  variant="body1">Edit</Typography>
                             </Button>
                         </div>}
+
+                    {this.paying && <CircularProgress size={30} color="secondary"/>}
 
                     { this.enteder && <Button variant="raised" disabled={this.totalIMP <= 0} color="secondary" className={classes.submitBtn} onClick={this.payoff}>
                         <Typography variant="button" >Payoff</Typography>
@@ -1238,7 +1238,7 @@ class History extends React.Component{
 
                                     <div className={classes.col}>
                                         <Typography variant="body1" gutterBottom>
-                                                {history.amount}
+                                                {roundeWithDec(history.amount)}
                                         </Typography>
                                     </div>
 

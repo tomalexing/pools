@@ -191,7 +191,6 @@ class Card extends React.Component {
         return this.debounce(this.adjustStyle, 1000);
     }
 
-
     debounce = (func, time) => {
         var timeOut = null;
 
@@ -261,7 +260,9 @@ class Card extends React.Component {
             that.props.store.current = that.props.store.current + 1;
             return
         }
-        console.log(target, opt);
+
+        if(!this.refs.card) return
+
         this.refs.card.style.transition = 'transform .2s ease-in-out';
         if( opt.action != 'none') this.props.store.canMakeAction = false;
 
@@ -497,11 +498,12 @@ class Card extends React.Component {
             return(<div ref='card'/>);
         }
 
+
         if(this.props.store.IsEnd){
             return (
                 <div ref='card'
                 className={[classes.card, cardPlace].join(' ')} style={{ ...this.props.store.getPositionStyles}}>
-                    <ResultCard adjustStyle={this.adjustStyle} again={this.again} cardSlug={this.props.store.cardSlug}/>
+                    <ResultCard adjustStyle={this.adjustStyle} again={this.again} cardSlug={this.props.store.cardSlug} embed={this.props.store.embed} />
                 </div>
             )
         }

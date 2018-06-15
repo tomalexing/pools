@@ -142,6 +142,7 @@ class Login extends React.Component {
   constructor(props) {
     super(props)
     this.closeLoginModal = props.close
+    this.open = props.open
     props.logout(this.logout.bind(this));
   }
 

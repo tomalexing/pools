@@ -9,6 +9,7 @@ let db = fire.firestore();
 db.settings(settings)
 
 var getAdditionlCardInfo = (slug) => {
+
     let [empty, query, doc] = slug.replace('/v1','').split('/');
     return new Promise((resolve, reject) => {
         db.collection(`${query}`).doc(doc).get().then(snap => {
@@ -22,12 +23,11 @@ var getAdditionlCardInfo = (slug) => {
     })
 }
 
-var getPollsIds = (query) => (models) => {
+var getCardByIds = (query) => (models) => {
 
     return new Promise((resolve, reject) => {
         db.collection(`${query}`).orderBy("order").onSnapshot(snap => {
 
-            // acc.push({id: snap.docs[0].id,...snap.docs[0].data()});
                 if(snap.empty) return resolve([]);
 
                 let ids = [];
@@ -38,14 +38,9 @@ var getPollsIds = (query) => (models) => {
                     }
 
                     if(change.type == 'modified' ){
-                    
-                        // acc.map((o, idx) => { 
-                        //     if(o.id == change.doc.id){
-                        //         acc[idx] = {id: change.doc.id, ...change.doc.data()};
-                        //     } 
-                        // })
                         for(let [idx, model] of models){
                             if(model.id ==  change.doc.id){
+                                if(typeof model.update == 'function')
                                 model.update(change.doc.data());
                             }
                         }
@@ -394,7 +389,7 @@ function getCoinName(){
 const Api = {
     getCard,
     getQuizzesIds,
-    getPollsIds,
+    getCardByIds,
     changeScoresPolls,
     getUserById,
     auth,
