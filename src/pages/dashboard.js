@@ -389,6 +389,7 @@ class Common extends React.Component{
 
     @observable cardsInProcessAndFinished = [];
     @observable totalIMP;
+    @observable loaded = false;
     catsAvailable = new Set();
 
     componentWillMount(){
@@ -428,6 +429,7 @@ class Common extends React.Component{
                     that.totalIMP = Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? Math.min(prog['progress'].number, prog['info'].allCardsNumber) * prog['info'].reward : 0,0)
                 })
             }, _ => {
+                that.loaded = true;
                 // Api.loadUserData({forceLoad: true}).then(data => {
                 //     if(!data || !data['SlugsCardsInProcess']) return
                 //     let reload = prompt('Error has happened. Reload page?', 'yes');
@@ -445,7 +447,10 @@ class Common extends React.Component{
         
         return( 
             <div className={classes.cardWrapper} >
-            {Array.from(this.catsAvailable).length == 0 && <CircularProgress color="secondary" />}
+            {Array.from(this.catsAvailable).length == 0 && this.loaded && <div>
+                <Typography variant="display4" className={classes.catTitle}>You don't finish anything yet.</Typography>
+                </div>}
+            {Array.from(this.catsAvailable).length == 0 && !this.loaded && <CircularProgress color="secondary" />}
             { Array.from(this.catsAvailable).map(cat => {
                 return <div key={`${cat}`} className={classes.catWrapper}>
                     <Typography variant="display4" className={classes.catTitle}>{cat}:</Typography>
@@ -481,7 +486,7 @@ class Common extends React.Component{
                                                 <Typography gutterBottom variant="body1" className={classes.resHeader}>
                                                     Share with your friends:
                                                 </Typography>}
-                                                <Share update={this.getProgress} cardSlug={slug}/>
+                                                <Share link={`${window.location.protocol}//${window.location.host}${slug.replace('/v1','')}`} update={this.getProgress} cardSlug={slug}/>
                                             </div>
                                         </div>
                                     </div>) : <div key={`common-${idx}`} />
@@ -807,7 +812,7 @@ class Account extends React.Component{
 
                 user.getIdToken().then(function(idToken) {
 
-                    fetch(`http://quizi.io/api/getUser/${Auth.uid}`,{
+                    fetch(`https://quizi.io/api/getUser/${Auth.uid}`,{
                         method: 'post',
                         headers: {
                             'content-type': 'application/x-www-form-urlencoded; charset=utf-8',
@@ -927,7 +932,7 @@ class Account extends React.Component{
                         <Typography variant="button" >Payoff</Typography>
                     </Button>}
 
-                    <SModal title="Something went wrong" body="Maybe is being problems with conection. Try again later." open={this.isErrorModalOpened} close={this.closeErrorModal}/>  
+                    <SModal title="Something went wrong" body="Maybe is being problems with connection. Try again later." open={this.isErrorModalOpened} close={this.closeErrorModal}/>  
                     
                 </div>
             </div>
@@ -1158,7 +1163,7 @@ const stylesHistory = theme => ({
     short:{
         textOverflow: 'ellipsis',
         overflow: 'hidden',
-        display: 'inlineBlock',
+        display: 'inline-block',
         width: '100%'
     },
     
@@ -1167,6 +1172,13 @@ const stylesHistory = theme => ({
         marginBottom: 5,
         borderRadius: 74,
     },
+
+    explorer: {
+        verticalAlign: 'middle',
+        lineHeight: '100%',
+        fontSize: 30,
+        color: '#FC3868'
+    }
 
 })
 
@@ -1186,7 +1198,7 @@ class History extends React.Component{
 
     @action.bound
     getHistory = _ => {
-        Api.getHistory(Auth.uid).then(histories => this.histories = histories)
+        Api.getHistory(Auth.uid, this.histories)
     }
 
     render(){
@@ -1221,6 +1233,11 @@ class History extends React.Component{
                                         Date
                                 </Typography>
                             </div>
+                            <div style={{width: '50px'}} className={classes.col}>
+                                <Typography variant="body1" className={classes.bold} gutterBottom>
+                                        Explorer
+                                </Typography>
+                            </div>
                             </div>
                             
                             <Divider className={classes.divider} />
@@ -1245,6 +1262,14 @@ class History extends React.Component{
                                     <div className={classes.col}>
                                         <Typography variant="body1" gutterBottom>
                                                 {(new Date(history.date)).getDate()} {getMonthName((new Date(history.date)).getMonth())}, {(new Date(history.date)).getFullYear()}, {(new Date(history.date)).getHours()}: {(new Date(history.date)).getMinutes()}
+                                        </Typography>
+                                    </div>
+
+                                    <div style={{width: '50px'}} className={classes.col}>
+                                        <Typography variant="body1" gutterBottom>
+                                            { history.responce && <a href={`https://explorer.impleum.com/tx/${history.responce.transactionId}`}
+                                                target="_blank" className={classes.explorer}><Icon>link</Icon>
+                                            </a>}
                                         </Typography>
                                     </div>
                                 </div>

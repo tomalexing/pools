@@ -472,11 +472,198 @@ const quizzes = [
         },
 ];
 
+
+const quizzes1 = [
+  {
+    "answers" : [
+      'Federal Reserve System',
+      'Bank of America',    
+      'Bank of Japan',
+      'No one organization isn\'t engaged in emission of IMP',
+    ],
+    "question" : "What organization is engaged in emission of Impleum Coin?",
+    "answerCorrect": 3,
+    "cardType": "quiz",
+    "order" : 14,
+    "id": '6zCxhw9JwQ3TmfLzhX8m'
+  },
+  {
+    "answers" : [
+      'December 27, 2018',
+      'April 10, 2018',    
+      'March 5, 2009',
+      'October 23, 2017',
+    ],
+    "question" : "When was first Impleum block?",
+    "answerCorrect": 1,
+    "cardType": "quiz",
+    "order" : 2,
+    "id": 'UIyiDSVsHennMANYp4AO'
+  },
+  {
+    "answers" : [
+      '1',
+      '2',
+      '3',
+      '4'
+    ],
+    "questionSrcImg": './assets/impleum3q.png',
+    "question" : "How does Impleum logo look?",
+    "answerCorrect": 2,
+    "cardType": "quiz",
+    "order" : 3,
+    "id": 'j7wOPJ1FVueHdOdsM2D5'
+  },
+  {
+    "answers" : [
+      'Impleum Foundation gives an award for using user\'s computer facilities ',
+      'All IMP are created in advance and distributed for all users in ratio equal to a contribution, to network power',
+      'They are created by certain mining-companies',
+      'A reward is given to the first miner who solves a block problem'
+    ],
+    "question" : "How Impleum PoW mining does work?",
+    "answerCorrect": 3,
+    "cardType": "quiz",
+    "order" : 4,
+    "id": 'IgVcj00L6j7WM4Z5zXt5'
+  },
+  {
+    "answers" : [
+      'Yes, since they will not receive an reward ',
+      'No, since the system will move to other level and to proceed IMP release',
+      'No, since calculation of transactions is necessary always, the award will go from the increased transaction commission.',
+      'Yes, since also the Impleum system will disappear if all IMP are extracted'
+    ],
+    "question" : "When 100 million imp will have been extracted, the \"miners\" will disappear?",
+    "answerCorrect": 2,
+    "cardType": "quiz",
+    "order" : 5,
+    "id": 'p4IKuTugDtFGAl3lMgNW'
+  },
+  {
+    "answers" : [
+      'Yes, because of different complexity of a network',
+      'No',
+      'Depends on transaction confirmation speed',
+      'Yes, because of different algorithms'
+    ],
+    "question" : "Is video card productivity different while compare between mining of Impleum and  Litecoin and why?",
+    "answerCorrect": 3,
+    "cardType": "quiz",
+    "order" : 6,
+    "id": 'fQXDRAvhzym9wbPmdooF'
+  },
+  {
+    "answers" : [
+      'No, because it is only a program code',
+      'Yes, as well as any digital documents and data',
+      'No, because it is necessary to decrypt the unit of transactions again',
+      'Yes, but only by means of phishing (by deception, when transfer IMP from a wallet on a wallet is forced)'
+    ],
+    "question" : "Whether is it possible to steal IMP?",
+    "answerCorrect": 3,
+    "cardType": "quiz",
+    "order" : 7,
+    "id": '9VHsTzqkE8f7trlG10ZG'
+  },
+  {
+    "answers" : [
+      'Only creator of Impleum',
+      'Only the one who bought the Impleum code from the creator',
+      'Any person',
+      'Nobody'
+    ],
+    "question" : "Who can create fork Impleum?",
+    "answerCorrect": 2,
+    "cardType": "quiz",
+    "order" : 8,
+    "id": 'llVM8BDx93oLafrHC6WL'
+  },
+  {
+    "answers" : [
+      'In proportion to the power of miner (changes at the same time with a network speed)',
+      'From time recalculation of difficulty and power of a network',
+      'Only from the number of the got IMP',
+      'The complexity is set by the creator of a network'
+    ],
+    "question" : "What major factors does influence on complexity of the impleum network?",
+    "answerCorrect": 0,
+    "cardType": "quiz",
+    "order" : 9,
+    "id": 'AuVsDuLnzcAf38FZxTco'
+  },
+  {
+    "answers" : [
+      'Double wasting of the same IMP',
+      'Possession of 51% of the got IMP',
+      'Change of complexity at discretion',
+      'Change the information more than half of all Impleum\'s transactions and the impact on the whole system'
+    ],
+    "question" : "What is \"attack of 51%\"?",
+    "answerCorrect": 3,
+    "cardType": "quiz",
+    "order" : 10,
+    "id": 'Cd52l5hPucWVHxgKOn2C'
+  },
+  {
+    "answers" : [
+      'up to 5 signs',
+      'up to 6 signs',
+      'up to 7 signs',
+      'up to 8 signs'
+    ],
+    "question" : "How many signs after comma IMP have?",
+    "answerCorrect": 3,
+    "cardType": "quiz",
+    "order" : 11,
+    "id": 'cSQNM8SKJALbKl6Orb8G'
+  },
+  {
+    "answers" : [
+      'AMD Radeon',
+      'nVidia',
+      'Any, in one price category',
+      'Depends on an algorithm'
+    ],
+    "question" : "What video cards are suitable for mining of Impleum better?",
+    "answerCorrect": 2,
+    "cardType": "quiz",
+    "order" : 12,
+    "id": 'mXpAi26v2OOfwZNdt4DX'
+  },
+  {
+    "answers" : [
+      'X13',
+      'sha256',
+      'X16R',
+      'CryptoNight'
+    ],
+    "question" : "Impleum PoW algorithm is ",
+    "answerCorrect": 0,
+    "cardType": "quiz",
+    "order" : 13,
+    "id": 'ADC9yqia5NkhXtO4j6hI'
+  },
+  {
+    "answers" : [
+      'open ecosystem of apps based on the Impleum blockchain platform.',
+      'an open source, global payment network that is fully decentralized without any central authorities',
+      'the cryptocurrency on the basis of the CryptoNote protocol oriented on the increased anonymity of transactions',
+      'the system of bulk calculations in real time (RTGS), currency exchange and a network of money transfers.'
+    ],
+    "question" : "Impleum is ",
+    "answerCorrect": 0,
+    "cardType": "quiz",
+    "order" : 1,
+    "id": 'aa6bb8GzXEfxLBer95Q9'
+  },
+];
+
 let QuizzesId = '';
 let QuizzesRunned = false;
 function setQuizzes(){
     console.log("Add %s quizzes", quizzes.length)
-    db.collection(`quizzes`).doc('mNrynOde7h2pec3R9rKe').onSnapshot(doc => {
+    db.collection(`quizzes`).doc('mNrynOde7h2pec3R9rKe').get().then(function(doc) {
       if( QuizzesRunned ) return
       QuizzesRunned = true;
       QuizzesId = doc.id;
@@ -504,12 +691,39 @@ function setQuizzes(){
     })
 }
 
+function setQuizzes1(){
+  console.log("Add %s quizzes1", quizzes1.length)
+  db.collection(`quizzes`).doc('OMx1k83U7LcZwlvZs9Aw').get().then(function(doc) {
+    db.collection(`quizzes`).doc(doc.id).set({
+      allCardsNumber: 14,
+      dashOutput: "number",
+      dashTitle: "Quiz: Impleum Platform",
+      reward: 0.1,
+      cat: 'Quizzes',
+      title: 'Quiz',
+      linksite: 'impleum.com',
+      desc: 'Impleum is a powerful and scalable path to develop DApps.',
+      img: './assets/impleum.png',
+      result: 'You gave {{number}} right answers.'
+    });
+
+    for(let i = 0; i < quizzes1.length; i++){
+      console.log('quizzes ' + i)
+      db.collection(`quizzes`).doc(doc.id).collection(`v1`).doc(quizzes1[i].id).set({
+      ...quizzes1[i],
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      })
+    }
+  })
+}
+
+
 let PollsId = '';
 let PollRunned = false;
-  function setPolls(){
+function setPolls(){
     console.log("Add %s polles", polls.length)
     
-    db.collection(`polls`).doc('TufVMx0dkDVAaOr5KSdF').onSnapshot(doc => {
+    db.collection(`polls`).doc('TufVMx0dkDVAaOr5KSdF').get().then(function(doc) {
       if( PollRunned ) return
       PollRunned = true;
       PollsId = doc.id;
@@ -573,7 +787,7 @@ function setCats(){
         btn: 'Take quiz',
         slug: 'quizzes/iq',
         img: null,
-        link: `/quizzes/${QuizzesId}`,
+        link: `/quizzes/mNrynOde7h2pec3R9rKe`,
         reward: 0.1,
       });
     
@@ -583,11 +797,12 @@ function setCats(){
       linksite: 'impleum.com',
       desc: 'Impleum is a powerful and scalable path to develop DApps.',
       cardtype: 'Quiz',
-      number: 20,
+      number: 14,
       btn: 'Take quiz',
       slug: 'quizzes/blockchain',
       img: './assets/impleum.png',
       reward: 0.1,
+      link: `/quizzes/OMx1k83U7LcZwlvZs9Aw`,
     });
 
     db.collection('cats/quizzes/cybersecurity').doc('k2JfLJQZYkFBlwrhIXHI').set({
@@ -609,11 +824,11 @@ function setCats(){
       linksite: 'quizi.io',
       desc: 'Discover answers to the most provocative question.',
       cardtype: 'Poll',
-      number: 20,
+      number: 10,
       btn: 'Take polls',
       slug: 'polls/common',
       img: './assets/polls.png',
-      link: `/polls/${PollsId}`,
+      link: `/polls/TufVMx0dkDVAaOr5KSdF`,
       reward: 0.1,
     })
 
@@ -670,10 +885,12 @@ function setCatMenu(){
     })
 }
 
+
+
 // setPolls()
 // setQuizzes()
-//  setCatMenu();
+// setQuizzes1()
+// setCatMenu();
 
-// setTimeout(() => {
-//   setCats()
-// }, 10000);
+// setCats()
+

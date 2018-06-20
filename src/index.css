@@ -8,7 +8,6 @@ body {
   left: 0;
   height: 100%;
   width: 100%;
-  background-color: #474e65 !important;
 }
 
 html{
@@ -16,7 +15,6 @@ html{
   width: 100%;
   overflow: hidden;
   margin: 0 auto;
-  background: #474e65;
 }
 
 
@@ -25,6 +23,10 @@ a, body, div, h1, h2, h3, label, li, p, span, ul {
     -ms-user-select: none;
     user-select: none;
     -webkit-touch-callout: none;
+}
+
+a{
+  -webkit-tap-highlight-color: none;
 }
 
 /* width */

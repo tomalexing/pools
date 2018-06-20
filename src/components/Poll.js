@@ -5,7 +5,11 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
-import {requestAnimationFramePromise, transitionEndPromise, parallel, wait, listener} from './../utils';
+import { requestAnimationFramePromise, 
+        transitionEndPromise, 
+        parallel, 
+        wait, 
+        listener, isTouchDevice} from './../utils';
 import * as cn  from 'classnames'; 
 import { LazyImage } from './../utils';
 import Auth from './../models/Auth';
@@ -261,8 +265,9 @@ class Poll extends React.Component {
     listeners = [];
 
     registerEvents = () => {
-        if(!this.refs.left && !this.refs.left ) return
-       if(window.innerWidth < 600 ){
+       if(!this.refs.left && !this.refs.left ) return
+
+       if( isTouchDevice() ){
             
             this.listeners.push(listener(this.refs.left,'touchstart', this.rememberPoints, false));
             this.listeners.push(listener(this.refs.left, 'touchend', this.pickCart('1').bind(this), false)); 
@@ -405,17 +410,17 @@ class Poll extends React.Component {
         this.refs[thisCard].style.left = `${eClientX - left}px`;
         
 
-        await requestAnimationFramePromise()
+         await requestAnimationFramePromise()
             .then(_ => requestAnimationFramePromise())
             .then(_ => {
                 that.refs[thisCard].style.transition = 'transform 1s ease-in-out';
                 that.refs[thisCard].style.transform = 'scale(300)';
                 return transitionEndPromise(that.refs[thisCard]);
             })
+            .then(_ => that.updateScore(thisCardNumber))
+            .then(_ => requestAnimationFramePromise())
+            .then(_ => requestAnimationFramePromise())
             .then(_ => {
-
-                that.updateScore(thisCardNumber)
-
 
                 that.props.poll.isInfoVisible = true;
                 that.refs.check1.style.display = 'none';
@@ -428,21 +433,19 @@ class Poll extends React.Component {
                 return requestAnimationFramePromise()
                     .then(async _ => {
 
-                        const width1 = parseInt( that.refs.progressBar1.style.width ); 
-                        const width2 = parseInt( that.refs.progressBar2.style.width ); 
-                        
+                        const width1 = that.props.poll.leftPercentage; 
+                        const width2 = that.props.poll.rightPercentage; 
+
                         let i = 0;
                         parallel( async _ => {
                             while(i <= width1){
                                 await requestAnimationFramePromise().then(_ => {
                                     if( that.refs.progressBar1)
-                                    that.refs.progressBar1.style.width = `${i}%`;
-                                })
-                                i++;
-                                i++;
-                                i++;
-                                i++;
+                                        that.refs.progressBar1.style.width = `${i}%`;
+                                    });
+                                    i = Math.min(width1 + 1 , i+4);
                             }
+                            that.refs.progressBar1.style.width = `${width1}%`;
                         })
 
                         let j = 0;
@@ -450,30 +453,26 @@ class Poll extends React.Component {
                             while(j <= width2){
                                 await requestAnimationFramePromise().then(_ => {
                                     if( that.refs.progressBar2)
-                                    that.refs.progressBar2.style.width = `${j}%`;
-                                })
-                                j++;
-                                j++;
-                                j++;
-                                j++;
+                                        that.refs.progressBar2.style.width = `${j}%`;
+                                });
+                                j = Math.min(width2 + 1 , j+4);
                             }
+                            that.refs.progressBar2.style.width = `${width2}%`;
                         })
 
-                        const result1 = parseInt( that.refs.result1.innerText );
-                        const result2 = parseInt( that.refs.result2.innerText );
-                        
+                        const result1 = that.props.poll.leftPercentage;
+                        const result2 = that.props.poll.rightPercentage;
+
                         let k = 0;
                         parallel(async _ => {
                             while(k <= result1){
                                 await requestAnimationFramePromise().then(_ => {
                                     if( that.refs.result1 )
-                                    that.refs.result1.innerText = `${k}`;
-                                })
-                                k++;
-                                k++;
-                                k++;
-                                k++;
+                                        that.refs.result1.innerText = `${k}`;
+                                });
+                                k = Math.min(result1 + 1 , k+4);
                             }
+                            that.refs.result1.innerText = `${result1}`;
                         })
 
                         let l = 0;
@@ -481,13 +480,11 @@ class Poll extends React.Component {
                             while(l <= result2){
                                 await requestAnimationFramePromise().then(_ => {
                                     if( that.refs.result2 )
-                                    that.refs.result2.innerText = `${l}`;
-                                })
-                                l++;
-                                l++;
-                                l++;
-                                l++;
+                                        that.refs.result2.innerText = `${l}`;
+                                });
+                                l = Math.min(result2 + 1, l+4);
                             }
+                            that.refs.result2.innerText = `${result2}`;
                         })
                     
                     })
@@ -562,13 +559,13 @@ class Poll extends React.Component {
 
     render() {
 
+        
         let {classes, poll} = this.props;
         if(!poll || typeof poll.then == 'function'){
             return(<div key="body" ref="body" className={classes.pollBody}>
-                    
+            
             </div>)
         }
-
         return (
             [<div key="body" ref="body" className={classes.pollBody}>
                 <Typography variant="headline" gutterBottom  className={classes.question}>

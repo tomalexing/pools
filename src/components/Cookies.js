@@ -69,6 +69,7 @@ class Cookies extends React.Component {
   constructor(props){
       super(props);
       this.closeModal = props.close
+      this.embed = /embed/.test(props.location.pathname);
   }
 
   componentDidMount(){
@@ -132,7 +133,7 @@ class Cookies extends React.Component {
 
     const {classes} = this.props;
 
-    return (this.isCookiesSet ? <div className={classes.cover}/> :
+    return (this.isCookiesSet || this.embed ? <div className={classes.cover}/> :
       <div ref='body' className={classes.cover} style={{zIndex: 10000}}>
             <div className={classes.disclaimer}> 
             <Typography variant="display4" style={{fontSize: 14}}>Our website uses cookies to make your browsing experience better. By using our website you agree to our use of cookies. <Link style={{color: '#FD819F'}} to="/privacy-policy#cookies">Learn more</Link></Typography></div>

@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import {observable, action, autorun} from 'mobx';
 import { observer }  from 'mobx-react';
 import { Link, withRouter } from 'react-router-dom';
-import { listener } from './../utils';
+import { listener, roundeWithDec } from './../utils';
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import quizzesSVG from './../assets/quizzes.svg';
@@ -339,7 +339,7 @@ class Explore extends React.Component {
                             <Typography variant="body1" className={classes.description}>{card.desc}</Typography>
                             <div className={classes.footer}>
                                 {card.number && <Typography variant="display1" className={classes.number}>{card.number} cards</Typography>}
-                                {card.number && <Typography variant="display1" className={classes.reward}>up to {card.reward * card.number} {Api.getCoinName()}</Typography>}
+                                {card.number && <Typography variant="display1" className={classes.reward}>up to {roundeWithDec(card.reward * card.number)} {Api.getCoinName()}</Typography>}
                             
                                { card.link && <Link className={classes.btnlink} to={card.link}><Button className={classes.btn} variant="raised" color="secondary" side="small" >{card.btn}</Button></Link>}
                                { !card.link && <div className={classes.btnlink} ><Button  to={card.link} className={classes.btn} variant="raised" disabled color="secondary" side="small" >Coming Soon</Button></div>}

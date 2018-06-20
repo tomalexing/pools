@@ -4,7 +4,7 @@ import { observer }  from 'mobx-react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import {requestAnimationFramePromise, transitionEndPromise, parallel, wait , transitionEndWithStrictPromise} from './../utils';
+import {requestAnimationFramePromise, transitionEndPromise, parallel, wait , transitionEndWithStrictPromise, isTouchDevice} from './../utils';
 import * as cn  from 'classnames'; 
 
 import { lerp, listener } from './../utils';
@@ -136,7 +136,7 @@ class Card extends React.Component {
 
     registerEvents = () => {
 
-        if(window.innerWidth > 768) return
+        if(!isTouchDevice()) return
 
         this.listeners.forEach(func => func());
         let cardPlace = this.props.cardPlace, that = this;

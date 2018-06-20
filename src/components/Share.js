@@ -113,9 +113,15 @@ const styles = theme => ({
 class Share extends React.Component {
 
     open = false;
-    shareUrl = window.location.href;
     title = document.title;
     state= {open: false};
+    
+    constructor(p){
+        super(p);
+        this.shareUrl = this.props.link ? this.props.link : (/embed/.test(window.location.href) ? window.location.href.replace('/embed','') : window.location.href);
+        
+    }
+
 
     handleOpen = () => {
         this.setState({open: true});

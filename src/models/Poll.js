@@ -43,7 +43,6 @@ export default class Poll{
   }
 
   async setUserVote({l, r}){
-
     this.answers.l.quantity += l;
     this.answers.r.quantity += r;
     

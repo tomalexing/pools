@@ -100,7 +100,7 @@ const styles = theme => ({
         color: '#353846',
         font: 'normal 400 14px/1 Open Sans',
         paddingRight: 10,
-        height: 42
+        height: 'auto'
     },
     answerIncorrect:{
         border: '6px solid rgba(252, 56, 104, 0.5)'
@@ -176,8 +176,6 @@ class Quiz extends React.Component {
 
         this.deltaX = (e.clientX || e.touches[0].clientX) - this.startX;
         this.deltaY = (e.clientY || e.touches[0].clientY) - this.startY;
-
-
         
         this.scrollState = this.deltaY + this.scrollStateOld
         

@@ -491,8 +491,28 @@ export const LightenDarkenColor = (col, amt) => {
 }
 
 
-export const roundeWithDec = (num) => {
-  return Math.floor(num) + Math.floor(num % 1 * 100) / 100;
+export const roundeWithDec = (value) => {
+
+  const whole = Math.floor(Number(value));
+  const decimal = Math.abs(Math.round((Number(value) % 1) * 100));
+  const marker = (1.1).toLocaleString().charAt(1);
+
+  if (decimal < 10) {
+    return `${whole.toLocaleString()}${marker}0${decimal.toString()}`;
+  }
+  return `${whole.toLocaleString()}${marker}${decimal.toString()}`;
+}
+
+export const isTouchDevice = () => {
+  return (
+    !!(typeof window !== 'undefined' &&
+      ('ontouchstart' in window ||
+        (window.DocumentTouch &&
+          typeof document !== 'undefined' &&
+          document instanceof window.DocumentTouch))) ||
+    !!(typeof navigator !== 'undefined' &&
+      (navigator.maxTouchPoints || navigator.msMaxTouchPoints))
+  );
 }
 
 util.listener = listener
@@ -515,4 +535,5 @@ util.call = call
 util.withGracefulUnmount = withGracefulUnmount
 util.ScrollRestortion = ScrollRestortion
 util.getTabTime = getTabTime
+
 export default util

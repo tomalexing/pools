@@ -174,7 +174,7 @@ function create(name, email){
 }
 
 
-function withdraw(id, amount, wallet, idTocken){
+function withdraw(id, amount, wallet, idTocken, resp){
     if(!id || !amount || !wallet) return Promise.resolve();
     var batch = db.batch();
 
@@ -183,7 +183,7 @@ function withdraw(id, amount, wallet, idTocken){
         Api.getWithdrawn(id).then( amountWithdrawn  => {
             let userRef = db.collection('users').doc(id);
             batch.set(userRef, {
-                withdraw: {[(new Date).toISOString()]:{amount, wallet}}
+                withdraw: {[(new Date).toISOString()]:{amount, wallet, responce: JSON.parse(resp)}}
             }, { merge: true });
             batch.set(userRef, {
                 withdrawTotal: amountWithdrawn + amount
@@ -302,25 +302,44 @@ function loadUserData({id, forceLoad } = {id: null, forceLoad : false}){
     })
 }
 
-function getHistory(id){
+function getHistory(id, out){
     if(!id) return Promise.resolve();
-    return new Promise(resolve => {
+    if(out instanceof Array){
+
         let userRef = db.collection('users').doc(id);
-        userRef.get().then(doc => {
+        userRef.onSnapshot(doc => {
             if(doc.exists){
-                let docDate = doc.data()
+                let docDate = doc.data();
+                out.length = 0;
                 if('withdraw' in docDate){
-                    let withdrawArr = [];
                     for( let [key, value] of Object.entries(docDate.withdraw)){
-                        withdrawArr.push({date:key,...value})
+                        out.push({date:key,...value})
                     }
-                    resolve(withdrawArr);
-                }else{
-                    resolve([])
                 }
             }
-        });
-    })
+        })
+
+    }else{
+
+        return new Promise(resolve => {
+            let userRef = db.collection('users').doc(id);
+            userRef.get().then(doc => {
+                if(doc.exists){
+                    let docDate = doc.data()
+                    if('withdraw' in docDate){
+                        let withdrawArr = [];
+                        for( let [key, value] of Object.entries(docDate.withdraw)){
+                            withdrawArr.push({date:key,...value})
+                        }
+                        resolve(withdrawArr);
+
+                    }else{
+                        resolve([])
+                    }
+                }
+            });
+        })
+    }
 }
 
 

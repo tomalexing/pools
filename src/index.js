@@ -80,6 +80,9 @@ const theme = createMuiTheme(
             selected: "rgba(0, 0, 0, 0.14)",
             disabled: "rgba(255, 255, 255, 1)",
             disabledBackground: LightenDarkenColor("#FC3868", 80),
+        },
+        background: {
+            default: 'transparent'
         }
     },
     typography: {
@@ -172,7 +175,6 @@ const theme = createMuiTheme(
 
 const styles = theme => ({
     mainScreen:{
-        backgroundColor: "#474E65",
         lineHeight: "0",
         display: 'flex',
         flexDirection: 'column',
@@ -182,10 +184,18 @@ const styles = theme => ({
         width: '100%',
         height: '100%'
     },
+
+    dartBackground:{
+        backgroundColor: "#474E65"
+    },
+
+    trBackground:{
+        backgroundColor: 'transparent'
+    },
+
     container: {
         maxWidth: '100%',
         flex: 1,
-        
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -231,8 +241,9 @@ class App extends React.Component{
       
     render() {
         const { classes } = this.props;
+       
         return (
-            <div className={"App".concat(' ' + classes.mainScreen)} >
+            <div className={cn({"App": true, [classes.mainScreen]: true, [classes.dartBackground] : !this.props.embed, [classes.trBackground]: this.props.embed})} >
                 {!this.props.embed && <Header /> }
                 <div className={cn(classes.container, {'fullscreen': this.props.fullscreen}, {cardpage: this.props.cardpage})}>
                     {this.firstChild(this.props.children)}
@@ -300,7 +311,7 @@ render(<Router>
                     
                     <Route path={'*'}  key={getUniqueKey()} component={() => <App nofooter={true} fullscreen={true} ><NotFound/></App>}/>
                     </Switch>
-                    <Cookies/>
+                    <Cookies location={location} />
                    {/* </ReactCSSTransitionGroup> */}
             </MuiThemeProvider>
         )}/>

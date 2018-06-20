@@ -299,16 +299,16 @@ class ResultCard extends React.Component {
                                     
                                     { !Auth.isAuthenticated && !this.props.embed && <div className={classes.col}>
                                         
-                                        <Button className={classes.resBtn} variant="raised" color="secondary"  side="small" onMouseUp={this.openLoginModal} onTouchEnd={this.openLoginModal}>Withdraw
+                                        <Button className={classes.resBtn} variant="raised" color="secondary"  side="small" onClick={this.openLoginModal}>Withdraw
                                         </Button>
                                     </div> }
                                     { Auth.isAuthenticated && !this.props.embed && <div className={classes.col}>
                                        
-                                        <Link style={{textDecoration: 'none'}} to="/dashboard"><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Withdraw</Button></Link>
+                                        <Link style={{textDecoration: 'none'}} to="/dashboard/account"><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Withdraw</Button></Link>
                                     </div> }
 
                                     {this.props.embed && <div className={classes.col}>      
-                                        <a href={`${window.location.origin}/dashboard`} target="_blank" style={{textDecoration: 'none'}} ><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >dashboard</Button></a>
+                                        <a href={`${window.location.origin}/dashboard/account`} target="_blank" style={{textDecoration: 'none'}} ><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >dashboard</Button></a>
                                     </div> }
                                 </div>
                             </div>
