@@ -29,7 +29,8 @@ import Auth from "./../models/Auth";
 import Redirect from 'react-router-dom/Redirect';
 import Checkbox from '@material-ui/core/Checkbox';
 import { Link } from 'react-router-dom';
-
+import {saveAllToStoreMerge} from "./../services/localDb";
+import withRouter from 'react-router-dom/withRouter';
 
 // const isActive = (match, location,to) => {
 //   return ['/quizzes','/polls'].some(str => location.pathname.includes(str))
@@ -134,7 +135,7 @@ const styles = theme => ({
 const ITEM_HEIGHT = 48;
 
 
-
+@withRouter
 @withStyles(styles)
 @observer
 class Login extends React.Component {
@@ -147,7 +148,7 @@ class Login extends React.Component {
   }
 
   componentDidMount(){
-      this.mounted = true;
+    this.mounted = true;
   }
 
   componentWillUnmount(){
@@ -195,12 +196,14 @@ class Login extends React.Component {
                 if(! _self.mounted) return
                     _self.ctx = {
                         redirect: true,
-                        pathname: '/dashboard'
+                        pathname: '/dashboard',
+                        search: _self.props.location.search
                     }
                 if(! _self.mounted) return
                     _self.forceUpdate();
 
-                Api.loadUserData().then( _ => {
+                Api.loadUserData()
+                .then( _ => {
                     Auth.stores.map(store => store.load()); 
                     Auth.stores.map(store => store.ditch());
                     Auth.logging = false;
@@ -250,11 +253,13 @@ class Login extends React.Component {
                 Auth.logging = true;
                 _self.ctx = {
                     redirect: true,
-                    pathname: '/dashboard'
+                    pathname: '/dashboard',
+                    search: _self.props.location.search
                 }
                 if(! _self.mounted) return
                     _self.forceUpdate();
-                Api.loadUserData().then( _ => {
+                Api.loadUserData()
+                .then( _ => {
                     Auth.stores.map(store => store.load());
                     Auth.stores.map(store => store.ditch());
                     Auth.logging = false;
@@ -308,9 +313,8 @@ class Login extends React.Component {
 
 
     let froms  = !!this.ctx.pathname 
-                ? {pathname: this.ctx.pathname, state: this.ctx.state } 
+                ? {pathname: this.ctx.pathname, state: this.ctx.state, search: this.ctx.search } 
                 : {pathname: '/dashboard'} ;
-
     if(this.ctx.redirect){
         return  <Redirect to={froms} />
     } 

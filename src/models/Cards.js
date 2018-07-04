@@ -1,10 +1,11 @@
-import { observable, computed, action, autorun } from "mobx";
+import { observable, computed, action, autorun, when } from "mobx";
 import {LazyImagem, lerp} from '../utils'
 import Quiz from "./Quiz";
 import Poll from "./Poll";
 import Card from "./Card";
 import {loadFromStore , saveToStore} from "./../services/localDb";
 import Api from "./../services/Api";
+import Auth from "./../models/Auth";
 
 export default class Cards {
 
@@ -26,16 +27,17 @@ export default class Cards {
 
   saveSlugsCardsInProcess = () => {
     let cards = this;
-    // this.save()
-    loadFromStore('SlugsCardsInProcess').then(val => {
-      let alreadyAdded = val.find(slug => slug == cards.cardSlug);
-      if(!alreadyAdded){
-        val.push(cards.cardSlug);
-        saveToStore('SlugsCardsInProcess', val);
-      }
-    }, _ => {
-      saveToStore('SlugsCardsInProcess', [cards.cardSlug]);
-    }).catch( _ => {} );
+    when(() => !Auth.logging && !Auth.loadingUserData , () => {
+      loadFromStore('SlugsCardsInProcess').then(val => {
+        let alreadyAdded = val.find(slug => slug == cards.cardSlug);
+        if(!alreadyAdded){
+          val.push(cards.cardSlug);
+          saveToStore('SlugsCardsInProcess', val);
+        }
+      }, _ => {
+        saveToStore('SlugsCardsInProcess', [cards.cardSlug]);
+      }).catch( _ => {} );
+    });
   }
 
   @observable current = 0;
@@ -169,6 +171,7 @@ export default class Cards {
     }
 
     loadFromStore(cards.cardSlug).then(val => {
+
         if(!val.Progress) return
 
         val.Progress.final = false;
@@ -176,16 +179,19 @@ export default class Cards {
 
         if(this.tryAgainIsCleanPrevious)
           val.Progress.number = 0;
+
+        
         
         saveToStore(cards.cardSlug, {
             current: 0,
             Progress: val.Progress
-          })
+          }).then( _ => Api.saveUserData())
+
         }, _ => {
           saveToStore(cards.cardSlug, {
             current: 0,
             Progress: cards.Progress
-          })
+          }).then( _ => Api.saveUserData())
         }).catch( _ => {} );
   }
 
@@ -220,7 +226,6 @@ export default class Cards {
 
           val.Progress.final = true;
           cards.Progress.final = true;
-          cards.Progress.number = cards.current;
           saveToStore(cards.cardSlug, {
             current: cards.allCardsNumber - 1,
             Progress: val.Progress

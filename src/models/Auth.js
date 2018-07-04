@@ -1,6 +1,7 @@
 import { observable, computed, action } from "mobx";
 import firebase from "firebase";
 import Api from "./../services/Api";
+import {clearAll} from "./../services/localDb";
 
 const singleton = Symbol();
 const singletonInstance = Symbol();
@@ -120,6 +121,7 @@ class Auth {
       }else{
         Api.auth().signOut().then(resolve)
       }
+      clearAll();
     })
   }
 

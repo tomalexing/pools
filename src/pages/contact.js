@@ -133,7 +133,6 @@ const stylesContact = theme => ({
     formInput:{
         width: '100%',
         fontWeight: 700,
-
         '&:after, &:hover:before': {
             borderBottomColor: '#FC3868 !important'
         },  

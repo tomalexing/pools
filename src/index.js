@@ -33,7 +33,9 @@ import Auth from './models/Auth';
 
 import Typography from '@material-ui/core/Typography';
 
+import { saveAllToStoreMerge } from './services/localDb';
 import Login from './components/Login';
+
 
 injectTapEventPlugin();
 
@@ -222,16 +224,21 @@ const styles = theme => ({
 
 Auth.init();
 
-
+@withRouter
 @withStyles(styles)
 class App extends React.Component{
-
     static propTypes = {
         classes: PropTypes.object.isRequired
     }
 
     componentDidMount(){
-     
+       if( /backup/.test(this.props.location.search) ){
+            saveAllToStoreMerge( JSON.parse(window.atob(
+                    this.props.location.search.replace('?backup=', ''))))
+                .then(_ => {
+                    Api.saveUserData();
+                });
+       }
     }
 
     firstChild(children) {

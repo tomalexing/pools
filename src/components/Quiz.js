@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {requestAnimationFramePromise, transitionEndPromise, parallel, 
-        wait, listener, LazyImage, transitionEndWithStrictPromise} from './../utils';
+        wait, listener, LazyImage, transitionEndWithStrictPromise, isTouchDevice} from './../utils';
 import * as cn  from 'classnames'; 
 
 import Radio from '@material-ui/core/Radio';
@@ -137,7 +137,7 @@ class Quiz extends React.Component {
 
     registerEvents = () => {
 
-        if(window.innerWidth > 768) return
+        if(!isTouchDevice()) return
 
         this.listeners.push(listener(this.refs.body,'touchstart', this.rememberPoints, false));
         this.listeners.push(listener(this.refs.body, 'touchmove', this.drag, false));
@@ -204,7 +204,7 @@ class Quiz extends React.Component {
         let that = this;
 
         that.refs.body.style.transition = 'transform .2s ease-out';
-
+        that._dragging = false;
         return requestAnimationFramePromise()
             .then( async _ => {
                 that.refs.body.style.transform = `translate(${0}px, ${this.scrollState}px)`;
@@ -214,10 +214,7 @@ class Quiz extends React.Component {
             .then(_ => {
                 that.refs.body.style.transition = '';
             })
-            .then(_ => requestAnimationFramePromise())
-            .then(_ => requestAnimationFramePromise())
-            .then(_ =>{ that._dragging = false})
-
+           
     }
 
     @action.bound
@@ -244,7 +241,7 @@ class Quiz extends React.Component {
         this.picking = true;
         this.props.Quiz.selectedValue = idx;
         
-        this.props.Quiz.setProgress();
+        await this.props.Quiz.setProgress();
 
         await wait(300);
         this.props.Quiz.showCorrectAnswer = true;
@@ -261,6 +258,8 @@ class Quiz extends React.Component {
 
         await wait(1000);
         this.picking = false;
+        this.scrollStateOld = 0
+        this.scrollState = 0;
     }
 
     loadedL = () => {
@@ -302,7 +301,7 @@ class Quiz extends React.Component {
                 
                     {Quiz.questionSrcImg && <div onMouseUp={this.openModal} onTouchEnd={this.openModal}><LazyImage className={classes.image} loaded={this.loadedL} load={Quiz.questionSrcImg}/></div>}
 
-                    <SModal  title={<div dangerouslySetInnerHTML={{__html:Quiz.question}} />} body={<LazyImage className={classes.imageModal} loaded={this.modalLoaded} load={Quiz.questionSrcImg}/>} open={this.modalOpened} close={this.closeModal} full={true} zoom={true} />  
+                    <SModal width="100%" title={<div dangerouslySetInnerHTML={{__html:Quiz.question}} />} body={<LazyImage className={classes.imageModal} loaded={this.modalLoaded} load={Quiz.questionSrcImg}/>} open={this.modalOpened} close={this.closeModal} full={true} zoom={true} />  
 
                     <div className={classes.divider}> </div>
                     <RadioGroup className={classes.answers} >

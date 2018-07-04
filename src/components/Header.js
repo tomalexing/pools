@@ -281,7 +281,7 @@ class Header extends React.Component {
                             <Typography variant="subheading" >
                                 Create
                             </Typography>
-                            </MenuItem>
+                        </MenuItem>
                     </NavLink>
 
                     <NavLink tabIndex='1' to={'/contact'} className={classes.menuMobileLinkSpacings} >

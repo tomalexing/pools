@@ -6,7 +6,7 @@ import { observer }  from 'mobx-react';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
-import { listener, getMonthName, roundeWithDec } from './../utils';
+import { listener, getMonthName, roundeWithDec, loadScript } from './../utils';
 
 import {Switch, Route, Redirect, Link, withRouter} from 'react-router-dom';
 import {NavLink} from './../components/NavLink';
@@ -710,6 +710,13 @@ const stylesAccount = theme => ({
         borderRadius: 74,
     },
 
+    captcha:{
+        display: 'flex',
+        '& > *':{
+            margin: 'auto'
+        }
+    }
+
 })
 
 // Account
@@ -729,12 +736,17 @@ class Account extends React.Component{
             that.wallet = wallet;
         });
 
+        window.onloadCaptchaCallback = () => {
+            this.grecaptcha = true;
+        }
+
     }
 
     @observable cardsInProcessAndFinished = [];
     @observable totalIMP  = 0;
     @observable enteder = false; 
     @observable wallet = '';
+    @observable grecaptcha;
     
 
     calculatingProgress = false
@@ -796,16 +808,62 @@ class Account extends React.Component{
         this.enteder = false;
     }
 
-    @observable
-    paying = false;
+    @observable paying = false;
+    @observable captchaVerified = false;
+    @observable openCaptcha = false;
+
+    @action.bound
+    closeCaptchaModal = () => {
+        this.openCaptcha = false;
+        for( let el of this.refs.captcha.childNodes){
+            this.refs.captcha.removeChild(el);
+        }
+    };
+
+    @action.bound
+    verifyCallback = (resp) => {
+        let that = this;
+        Api.checkCaptcha(resp).then(resp => resp.json()).then(ans => {
+            that.captchaVerified = ans.success;
+            that.openCaptcha = false;
+            that.payoff();
+        }, _ => {
+            that.openCaptcha = false;
+            that.isErrorModalOpened = true;
+        })
+    }
+
+    @action.bound
+    loadCaptcha = () => {
+        let that = this;
+
+        return loadScript('https://www.google.com/recaptcha/api.js?onload=onloadCaptchaCallback', false ).then(_ =>{
+            when(() => that.grecaptcha, () => {
+                window.grecaptcha.render(that.refs.captcha || "captcha", {
+                    'sitekey' : '6LdJP2AUAAAAAHxPTd_XPBXrfH9S5-wfTwpxd_Oc',
+                    'callback' : that.verifyCallback,
+                    'theme' : 'light'
+                });
+            });
+
+        }, _ => {
+            that.isErrorModalOpened = true;
+        })
+    }
 
     @action.bound
     payoff = _ => {
         let that = this;
         if(that.paying) return
         if(that.totalIMP <= 0) return
-        that.paying = true;
 
+        if(!this.captchaVerified){
+            this.openCaptcha = true;
+            this.loadCaptcha()
+            return
+        }
+        
+        that.paying = true;
         Api.auth().onAuthStateChanged(function(user) {
             
             if (user) {
@@ -934,6 +992,8 @@ class Account extends React.Component{
 
                     <SModal title="Something went wrong" body="Maybe is being problems with connection. Try again later." open={this.isErrorModalOpened} close={this.closeErrorModal}/>  
                     
+                    <SModal title="Verification" width="auto" body={<div className={classes.captcha} ref="captcha" id="captcha"></div>} open={this.openCaptcha} close={this.closeCaptchaModal}/> 
+
                 </div>
             </div>
             <div className={classes.card}>

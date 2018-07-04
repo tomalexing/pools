@@ -13,6 +13,8 @@ import Divider from '@material-ui/core/Divider';
 import { LazyImage, lerp, listener, getCoinName, roundeWithDec } from './../utils';
 import CardsModel from './../models/Cards'
 import Api from './../services/Api';
+import { getlocalDBBtoa, clearLocalDB } from "./../services/localDb";
+
 
 const styles = theme => ({
     header:{
@@ -125,11 +127,20 @@ const styles = theme => ({
         height: 20
     },
 
+    btnsRow:{
+        display: 'flex',
+        alignItems: 'baseline'
+    },
+
     btnResultSmaller:{
         marginTop: 6,
         borderRadius: 74,
-        borderColor: '#fc3868'
+        borderColor: '#fc3868',
+        color: '#fc3868',
+        fontWeight: 700,
+        textDecoration: 'none'
     },
+
 
     divider: {
         margin: '30px 0 ',
@@ -208,6 +219,7 @@ class ResultCard extends React.Component {
 
     @observable finalCard = null;
     @observable isLiked = true;
+    @observable backup;
 
     @action.bound
     loadFinal = () => {
@@ -221,6 +233,24 @@ class ResultCard extends React.Component {
         })
 
         CardsModel.isLiked(this.props.cardSlug).then(val => that.isLiked = val);
+
+        try {
+             if (window.indexedDB)
+               window.indexedDB.open('db', 1);
+        } catch(e) {
+            let backupPromise = getlocalDBBtoa();
+            backupPromise.then( backup => {
+                that.backup = backup
+            })
+        }
+
+        if( !Auth.isAuthenticated ){
+            let backupPromise = getlocalDBBtoa();
+            backupPromise.then(backup => {
+                that.backup = backup
+            })
+        }
+
     }
 
     // Login stuff
@@ -238,6 +268,10 @@ class ResultCard extends React.Component {
         this.open = false;
     };
     // Login stuff end
+    again = (e) => {
+        this.props.again(e);
+        clearLocalDB();
+    }
 
     render(){
         let {classes} = this.props;
@@ -260,8 +294,17 @@ class ResultCard extends React.Component {
                                     <Typography variant="title" className={classes.resTitle}>{this.finalCard.info.title}</Typography>
                                     <a className={classes.linksite} href={`http://${this.finalCard.info.linksite}`} target="_blank" ><Typography variant="display1" className={classes.linksite}>{this.finalCard.info.linksite}</Typography></a>
                                     <Typography variant="body1" className={classes.description}>{this.finalCard.info.desc}</Typography>
-                                    <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small" onClick={this.props.again} >Take again
-                                    </Button>
+                                    <div className={classes.btnsRow}>
+                                        <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small" onClick={this.again} >Take again
+                                        </Button>
+                                        {!this.props.embed && 
+                                        <div>
+                                            <span style={{margin:"0 20px"}}>or</span>
+                                            <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/cats'} > View more
+                                            </Link>
+                                        </div>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                             <div className={classes.space}/>
@@ -307,8 +350,8 @@ class ResultCard extends React.Component {
                                         <Link style={{textDecoration: 'none'}} to="/dashboard/account"><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Withdraw</Button></Link>
                                     </div> }
 
-                                    {this.props.embed && <div className={classes.col}>      
-                                        <a href={`${window.location.origin}/dashboard/account`} target="_blank" style={{textDecoration: 'none'}} ><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >dashboard</Button></a>
+                                    {this.props.embed && <div className={classes.col}>
+                                        <a href={`${window.location.origin}/dashboard/account${this.backup ? `?backup=${this.backup}` : ''}`} target="_blank" style={{textDecoration: 'none'}} ><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >dashboard</Button></a>
                                     </div> }
                                 </div>
                             </div>

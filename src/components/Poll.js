@@ -496,8 +496,18 @@ class Poll extends React.Component {
        
     }
 
-    prev = e => { this.refs.body.scrollTop = 0; this.props.prev(e) }
-    next = e => { this.refs.body.scrollTop = 0; this.props.next(e) }
+    prev = e => { 
+        this.refs.body.scrollTop = 0; 
+        if(!this.props.store.currentCard.updating)
+            this.props.prev(e) 
+    }
+    
+    next = e => { 
+        this.refs.body.scrollTop = 0; 
+        if(!this.props.store.currentCard.updating)
+            this.props.next(e) 
+    }
+
     finish = e => { this.props.finish(e) }
 
     @action.bound

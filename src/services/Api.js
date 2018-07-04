@@ -404,6 +404,17 @@ function getCoinName(){
     return "IMP"
 }
 
+function checkCaptcha(resp) {
+    return fetch(`https://quizi.io/api/checkCaptcha`,{
+        method: 'post',
+        headers: {
+            'content-type': 'application/x-www-form-urlencoded; charset=utf-8',
+            'Accept': 'application/json'},
+        mode: 'cors',
+        body: 'resp=' + resp
+    })
+}
+
 
 const Api = {
     getCard,
@@ -428,6 +439,7 @@ const Api = {
     getAdditionlCardInfo,
     getCoinName,
     deleteUserData,
-    create
+    create,
+    checkCaptcha
 }
 export default Api;

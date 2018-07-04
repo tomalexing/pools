@@ -9,21 +9,24 @@ import cx from 'classnames';
 import {PinchView} from 'react-pinch-zoom-pan'
 import { action } from 'mobx';
 
-function getModalStyle() {
+function getModalStyle(props) {
   const top = 50;
   const left = 50;
+
+  const width = props.width ? width : '270px';
 
   return {
     top: `${top}%`,
     left: `${left}%`,
     transform: `translate(-${top}%, -${left}%)`,
+    width: width
   };
 }
 
 const styles = theme => ({
     paper: {
         position: 'absolute',
-        width: '270px',
+        maxWidth: '100%',
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[4],
         padding: theme.spacing.unit * 4,
@@ -257,7 +260,7 @@ class SimpleModal extends React.Component {
           open={open}
           onClose={this.closeModal}
         >
-          <div style={getModalStyle()} className={cx(classes.paper, classes.paddingBottom3,{[classes.full]: this.props.full})}>
+          <div style={getModalStyle(this.props)} className={cx(classes.paper, classes.paddingBottom3,{[classes.full]: this.props.full})}>
             <Typography variant="display1" id="simple-modal-title">
                 {this.props.title}
             </Typography>

@@ -341,7 +341,7 @@ class Explore extends React.Component {
                                 {card.number && <Typography variant="display1" className={classes.number}>{card.number} cards</Typography>}
                                 {card.number && <Typography variant="display1" className={classes.reward}>up to {roundeWithDec(card.reward * card.number)} {Api.getCoinName()}</Typography>}
                             
-                               { card.link && <Link className={classes.btnlink} to={card.link}><Button className={classes.btn} variant="raised" color="secondary" side="small" >{card.btn}</Button></Link>}
+                               { card.link && <Link className={classes.btnlink} to={card.link.startsWith('/') ?  card.link : window.location.pathname + '/' + card.link }><Button className={classes.btn} variant="raised" color="secondary" side="small" >{card.btn}</Button></Link>}
                                { !card.link && <div className={classes.btnlink} ><Button  to={card.link} className={classes.btn} variant="raised" disabled color="secondary" side="small" >Coming Soon</Button></div>}
                             </div>
                         </article>

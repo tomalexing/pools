@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import {observable, action} from 'mobx';
+import {observable, action, when} from 'mobx';
 import { observer }  from 'mobx-react';
 import Card from './Card';
 import { listener } from './../utils';
 import noPullToRefresh from './../no-pull-to-refresh.js';
-
+import Auth from './../models/Auth';
 // noPullToRefresh();
 
 const styles = theme => ({
@@ -40,10 +40,11 @@ class CardWrapper extends React.Component {
                 that.props.store.currentCard.reactClass.adjustStyle();
             }, false))
         }
-
-        this.props.store && this.props.store.load().then(current => {
-            that.current = current + 1;
-            that.next = current + 2;
+        when(() => !Auth.logging && !Auth.loadingUserData , () => {
+            this.props.store && this.props.store.load().then(current => {
+                that.current = current + 1;
+                that.next = current + 2;
+            })
         })
 
         // window.addEventListener("beforeunload", function (event) {

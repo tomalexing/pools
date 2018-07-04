@@ -30,12 +30,14 @@ export default class Quiz {
 
   setProgress(){
     let Quiz = this;
-    loadFromStore(Quiz.slug).then((val) => {
+    return loadFromStore(Quiz.slug).then((val) => {
           if(Quiz.isCorrect)
             val.Progress.number = val.Progress.number + 1;
           // we need next card here current = (Quiz.number - 1) + 1
+
           saveToStore(Quiz.slug, val ).then(_ => Api.saveUserData());
         }, _ => { 
+
           if(Quiz.isCorrect){
             saveToStore(Quiz.slug, {current:Quiz.number, Progress:{number:1}}).then(_ => Api.saveUserData());
           }else{
