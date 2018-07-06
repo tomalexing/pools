@@ -730,7 +730,7 @@ function setPolls(){
       db.collection(`polls`).doc(doc.id).set({
         allCardsNumber: 10,
         dashOutput: 'number',
-        dashTitle: 'Poll: Best',
+        dashTitle: '',
         reward: 0.1,
         cat: 'Polls',
         title: 'Poll',

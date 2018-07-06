@@ -45,6 +45,7 @@ const Subscribe = (props) => <Lazy {...props} load={() => import('./pages/subscr
 const Dashboard = (props) => <Lazy {...props} load={() => import('./pages/dashboard')}/>
 const Contact = (props) => <Lazy {...props} load={() => import('./pages/contact')}/>
 const Create = (props) => <Lazy {...props} load={() => import('./pages/create')}/>
+const Landing = (props) => <Lazy {...props} load={() => import('./pages/landing')}/>
 
 const Card = (props) => <Lazy {...props} load={() => import('./components/CardWrapper')}/>
 const OneCard = (props) => <Lazy {...props} load={() => import('./components/OneCard')}/>
@@ -313,6 +314,8 @@ render(<Router>
                     <Route path={'/contact'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><Contact /></App>}/>
 
                     <Route path={'/create'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><Create /></App>}/>
+                    
+                    <Route path={'/landing'}  key={getUniqueKey()} component={() =>  <App nofooter={true} fullscreen={true} ><Landing /></App>}/>
                     
                     <PrivateRoute role={['user']} path={'/dashboard'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} nofooter={true}><Dashboard /></App>} />
                     
