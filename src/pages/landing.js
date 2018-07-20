@@ -21,6 +21,9 @@ import { listener } from './../utils';
 
 import Api from './../services/Api'
 
+import Grid from '@material-ui/core/Grid';
+
+
 
 import Path from './../assets/landing/Path.png'
 import Path2x from './../assets/landing/Path@2x.png'
@@ -29,28 +32,59 @@ import main from './../assets/landing/main.png'
 import Oval from './../assets/landing/Oval.png'
 import Oval2x from './../assets/landing/Oval@2x.png'
 
+import bg2 from './../assets/landing/bg2.png'
+import bg22x from './../assets/landing/bg2@2x.png'
+
+import explorer_1_dark from './../assets/landing/explorer_1_dark.png'
+import explorer_1_dark2x from './../assets/landing/explorer_1_dark@2x.png'
+
+import explorer_2_dark from './../assets/landing/explorer_2_dark.png'
+import explorer_2_dark2x from './../assets/landing/explorer_2_dark@2x.png'
+
+import Group9 from './../assets/landing/Group 9.png'
+
+import Promotion from './../assets/landing/Promotion.png'
+import Promotion2x from './../assets/landing/Promotion@2x.png'
+
+import radius_pink from './../assets/landing/radius-pink.png'
+import radius from './../assets/landing/radius.png'
+import radius2x from './../assets/landing/radius@2x.png'
+
+import Unchangeble from './../assets/landing/Unchangeble.png'
+import Unchangeble2x from './../assets/landing/Unchangeble@2x.png'
+
+import zoom from './../assets/landing/zoom.png'
+import zoom2x from './../assets/landing/zoom@2x.png'
+
+import Customer_Acquisition from './../assets/landing/Customer acquisition.png'
+import Customer_Acquisition2x from './../assets/landing/Customer acquisition@2x.png'
+
+import Embed from './../assets/landing/Embed.png'
+import Embed2x from './../assets/landing/Embed@2x.png'
+
+
+
+
 const styles = theme => ({
   
     page:{
-        display: 'flex',
-        flexDirection: 'column',
-        margin: 'auto',
         overflow: 'auto',
-        maxWidth: 1140,
         width: '100%',
-        padding: '40px',
-        '@media (max-width: 600px)':{
-            padding: '10px'
-        }
+        height: '100%',
     },
 
     cardWrapper:{
         display: 'flex',
-        
     },
 
     topSlide: {
         
+    },
+    topSlideBall: {
+
+    },
+    cards: {
+
     },
 
     topheader: {
@@ -59,7 +93,6 @@ const styles = theme => ({
         fontSize: '60px',
         fontWeight: '700',
         letterSpacing: '1',
-
     },
 
     topdescription: {
@@ -70,9 +103,38 @@ const styles = theme => ({
     },
 
     topSlideBack:{
-       
+        backgroundImage: 'linear-gradient(-20deg, rgba(255, 0, 62, 0.8) 0%, rgba(158, 0, 249, 0.8) 100%)',
+        width:'100%',
+        height: '100%',
     },
+    topSlideBackImg:{
+        backgroundImage: 'linear-gradient(-20deg, rgba(255, 0, 62, 0.8) 0%, rgba(158, 0, 249, 0.8) 100%)',
+        width:'100%',
+        height: '100%',
+    },
+    topSlideRadius:{
 
+    },
+    topSlideRadius_pink:{
+
+    },
+    topSlideCustomer_Acquisition:{
+
+
+    },
+    topSlideEmbed:{
+
+    },
+    topSlideCards:{
+
+    },
+    topSlideView:{
+        
+    },  
+    topSlideZoom:{
+
+
+    },
     card:{
         maxHeight: '100%',
         zIndex: '100',
@@ -310,22 +372,44 @@ class Landing extends React.Component {
     @observable confirmEmail = false;
     comfirm = name => event => {
         this[name] = event.target.checked;
-    }
+    } 
 
     render() {
         const { classes } = this.props;
         return (
-            <div ref='body' className={classes.page} >
-
-                <div className={classes.topSlide} >
+        <div className={classes.page}>
+            <div className={classes.topSlideBack}>
                     <h1 className={classes.topheader}>Quizi.io</h1>
                     <p className={classes.topdescription}>Quizi is a powerful marketing tool. It is a service of convenient and informative quizzes and polls.</p>
                     <div className={classes.topSlideBack}><img srcSet={`${Path2x} 2x, ${Path} 1x`} src={Path} alt="Quizi" /></div>
                     <div className={classes.topSlideView}><img srcSet={`${main2x} 2x, ${main} 1x`} src={main} alt="Quizi" /></div>
                     <div className={classes.topSlideBall}><img srcSet={`${Oval2x} 2x, ${Oval} 1x`} src={Oval} alt="Quizi" /></div>
-                </div>
+
+                    <div className={classes.topSlideBack}><img srcSet={`${bg22x} 2x, ${bg2} 1x`} src={bg2} alt="Quizi" /></div>
+
+                    <div className={classes.topSlideCards}><img srcSet={`${explorer_1_dark2x} 2x, ${explorer_1_dark} 1x`} src={explorer_1_dark} alt="Quizi" /></div>
+
+                    <div className={classes.topSlideCards}><img srcSet={`${explorer_2_dark2x} 2x, ${explorer_2_dark} 1x`} src={explorer_2_dark} alt="Quizi" /></div>
+
+                    <div className={classes.topSlideZoom}><img srcSet={`${zoom2x} 2x, ${zoom} 1x`} src={zoom} alt="Quizi" /></div>
+
+                    <div className={classes.topSlideGroup}><img srcSet={`${Group9} 1x`} src={Group9} alt="Quizi" /></div>
+
+                    <div className={classes.topSlidePromotion}><img srcSet={`${Promotion2x} 2x, ${Promotion} 1x`} src={Promotion} alt="Quizi" /></div>
+                    <div className={classes.topSlideEmbed}><img srcSet={`${Embed2x} 2x, ${Embed} 1x`} src={Embed} alt="Quizi" /></div>
+                    <div className={classes.topSlideRadius}><img srcSet={`${radius2x} 2x, ${radius} 1x`} src={radius} alt="Quizi" /></div>
+
+                    <div className={classes.topSlideRadius_pink}><img srcSet={`${radius_pink} 1x`} src={radius_pink} alt="Quizi" /></div>
+
+                    <div className={classes.topSlideUnchangeble}><img srcSet={`${Unchangeble2x} 2x, ${Unchangeble} 1x`} src={Unchangeble} alt="Quizi" /></div>
+                    <div className={classes.topSlideCustomer_Acquisition}><img srcSet={`${Customer_Acquisition2x} 2x, ${Customer_Acquisition} 1x`} src={Customer_Acquisition} alt="Quizi" /></div>
+            </div>
+            
+            
+            
+            
                 
-                <div className={classes.cardWrapper} >
+                {/* <div className={classes.cardWrapper} >
         
                     <div className={classes.card}>
                         <div ref='header' className={classes.header}>
@@ -372,7 +456,8 @@ class Landing extends React.Component {
                             </form>
                         </div>
                     </div>
-                </div>
+                </div> */}
+
                 <Modal
                     aria-labelledby="Subscribe-modal-title"
                     aria-describedby="Subscribe-modal-description"
@@ -389,10 +474,9 @@ class Landing extends React.Component {
                     <Button size="small" variant="raised" color="secondary" className={classes.closeModal} onClick={this.handleClose}>close</Button>
                     </div>
                 </Modal>
-             </div>
+                </div>
         );
     }
-
 }
 
 
