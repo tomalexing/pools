@@ -286,7 +286,7 @@ render(<Router>
                     transitionLeaveTimeout={200}
                 >*/}
                     <Switch>
-                    <Route path={'/landing'} exact location={location} key={getUniqueKey()} component={() => <App nofooter={true} fullscreen={true} ><Explore/></App>}/>
+                    <Route path={'/'} exact location={location} key={getUniqueKey()} component={() => <App nofooter={true} fullscreen={true} ><Explore/></App>}/>
 
                     { /* <Route path={'/polls'} location={location} key={getUniqueKey()} component={() =>        <App >
                             <div>
@@ -315,7 +315,7 @@ render(<Router>
 
                     <Route path={'/create'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><Create /></App>}/>
                     
-                    <Route path={'/'}  key={getUniqueKey()} component={() =>  <App nofooter={true} fullscreen={true} ><Landing /></App>}/>
+                    <Route path={'/landing'}  key={getUniqueKey()} component={() =>  <App nofooter={true} fullscreen={true} ><Landing /></App>}/>
                     
                     <PrivateRoute role={['user']} path={'/dashboard'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} nofooter={true}><Dashboard /></App>} />
                     

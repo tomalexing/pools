@@ -19,7 +19,7 @@ class DCard extends React.Component {
         let slug = match.url;
         if(slug[slug.length-1] == '/'){
             slug = slug.substring(0, slug.length-1);
-        } 
+        }
 
 
         if(/^\/polls/.test(match.path)){
