@@ -32,7 +32,7 @@ var getCardByIds = (query) => (models) => {
 
                 let ids = [];
 
-                snap.docChanges.forEach(change => {
+                snap.docChanges().forEach(change => {
                     if(change.type == 'added' ){
                         ids.push(change.doc.id);
                     }
@@ -99,7 +99,7 @@ var getQuizzesIds = (query) => (models) => {
                 if(snap.empty) return resolve([]);
             // acc.push({id: snap.docs[0].id,...snap.docs[0].data()});
                 let ids = [];
-                snap.docChanges.forEach(change => {
+                snap.docChanges().forEach(change => {
                     if(change.type == 'added' ){
                         ids.push(change.doc.id);
                     }

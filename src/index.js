@@ -252,7 +252,7 @@ class App extends React.Component{
        
         return (
             <div className={cn({"App": true, [classes.mainScreen]: true, [classes.dartBackground] : !this.props.embed, [classes.trBackground]: this.props.embed})} >
-                {!this.props.embed && <Header /> }
+                {!this.props.embed && <Header isLanding={this.props.landingscreen} /> }
                 <div className={cn(classes.container, {'fullscreen': this.props.fullscreen}, {cardpage: this.props.cardpage})}>
                     {this.firstChild(this.props.children)}
 
@@ -315,7 +315,7 @@ render(<Router>
 
                     <Route path={'/create'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><Create /></App>}/>
                     
-                    <Route path={'/landing'}  key={getUniqueKey()} component={() =>  <App nofooter={true} fullscreen={true} ><Landing /></App>}/>
+                    <Route path={'/landing'}  key={getUniqueKey()} component={() =>  <App nofooter={true}  fullscreen={true}  landingscreen={true} ><Landing /></App>}/>
                     
                     <PrivateRoute role={['user']} path={'/dashboard'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} nofooter={true}><Dashboard /></App>} />
                     

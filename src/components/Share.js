@@ -152,8 +152,8 @@ class Share extends React.Component {
         let {classes} = this.props;
         let {open} = this.state;
         return(
-            <div className={classes.socialNetworks} onClick={this.socClicked} >
-                <div className={classes.socialNetwork}>
+            <div className={classes.socialNetworks} >
+                <div className={classes.socialNetwork} onClick={this.socClicked} >
                     <FacebookShareButton
                         url={this.shareUrl}
                         quote={this.title}

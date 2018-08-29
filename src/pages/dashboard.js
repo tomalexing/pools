@@ -387,7 +387,7 @@ const stylesCommon = theme => ({
 @observer
 class Common extends React.Component{
 
-    @observable cardsInProcessAndFinished = [];
+    @observable cardsInProcessAndFinished = {};
     @observable totalIMP;
     @observable loaded = false;
     catsAvailable = new Set();
@@ -742,7 +742,7 @@ class Account extends React.Component{
 
     }
 
-    @observable cardsInProcessAndFinished = [];
+    @observable cardsInProcessAndFinished = {};
     @observable totalIMP  = 0;
     @observable enteder = false; 
     @observable wallet = '';

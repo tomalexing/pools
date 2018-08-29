@@ -153,6 +153,7 @@ const styles = theme => ({
     },
     header: {
         zIndex: 1202,
+        fontFamily: "'Montserrat', 'Open Sans', sans-sarif",
         '@media (max-width: 600px)': {
             minHeight: 48,
         }
@@ -167,10 +168,14 @@ const styles = theme => ({
     },
 
     headerBarCover: {
-        height: 64,
+        height: '64px',
         '@media (max-width: 600px)': {
             height: 48,
         }
+    },
+
+    headerBarCoverZeroHeight: {
+        height: '0',
     },
 
     headerBar: {
@@ -179,6 +184,15 @@ const styles = theme => ({
         width: '100vw',
         top: 0,
         left: 0
+    },
+
+    landing: {
+        background: 'linear-gradient(to right, #d3129e 0%, #ed116f 100%)',
+        '& > *': {
+            width: '1140px',
+            maxWidth: '100%',
+            margin: '0 auto'
+        }
     }
 });
 
@@ -193,8 +207,8 @@ class Header extends React.Component {
     super(props)
   }
 
-  @observable anchorEl: null;
-  @observable makeLogout: null;
+  @observable anchorEl = null;
+  @observable makeLogout = null;
 
   handleClick = event => {
     this.anchorEl = event.currentTarget
@@ -224,10 +238,10 @@ class Header extends React.Component {
     const { classes } = this.props;
 
     return (
-    <div className={classes.headerBarCover} >
-     <AppBar className={classes.headerBar}  color="primary">
+    <div id="header" className={cx(classes.headerBarCover, { [ classes.headerBarCoverZeroHeight ]: this.props.isLanding} )} >
+     <AppBar className={cx(classes.headerBar, { [ classes.landing ]: this.props.isLanding})}  color="primary">
         <Login open={this.open} logout={this.getLogOut} close={this.closeLoginModal}/>
-        <Toolbar className={classes.header}>
+        <Toolbar  className={classes.header}>
             <a href="/">
                 <img className={classes.logo} src={logo} />
             </a>
