@@ -1,5 +1,4 @@
 import { observable, computed, action } from "mobx";
-import firebase from "firebase";
 import Api from "./../services/Api";
 import {clearAll} from "./../services/localDb";
 

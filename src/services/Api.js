@@ -1,6 +1,7 @@
 import fire from './../config'
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import 'firebase/firestore';
+import 'firebase/auth';
 import { loadAllFromStore, saveAllToStore } from './localDb';
 import Auth from '../models/Auth';
 
