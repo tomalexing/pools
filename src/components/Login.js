@@ -313,11 +313,11 @@ class Login extends React.Component {
 
 
     let froms  = !!this.ctx.pathname 
-                ? {pathname: this.ctx.pathname, state: this.ctx.state, search: this.ctx.search } 
+                ? {pathname: this.ctx.pathname, state: {}, search: this.ctx.search || '' } 
                 : {pathname: '/dashboard'} ;
 
     if(this.ctx.redirect){
-        return  <Redirect to={'/'} />
+        return <Redirect to={froms} />
     } 
 
     return (

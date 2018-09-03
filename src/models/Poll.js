@@ -56,7 +56,7 @@ export default class Poll{
       await saveToStore(this.id, 'right');
     }
 
-    await Api.changeScoresPolls(this.id, {l, r}).catch(_ => {});
+    await Api.changeScoresPolls(this.slug ,this.id, {l, r}).catch(_ => {});
 
     this.updating = false; 
     

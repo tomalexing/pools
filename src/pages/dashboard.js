@@ -41,6 +41,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import BTC from './../assets/BTC.svg';
 import IMP from './../assets/IMP.svg';
 
+import info from './../assets/info.svg';
+
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
   (!redirect
@@ -226,6 +228,7 @@ class Dashboard extends React.Component {
                             <Typography variant="display1" >
                                 History
                             </Typography>
+                            
                         </MenuItem>
                     </NavLink>
                 </MenuList>
@@ -715,7 +718,25 @@ const stylesAccount = theme => ({
         '& > *':{
             margin: 'auto'
         }
-    }
+    },
+
+    getIMP: {
+        display: 'flex',
+        textDecoration: 'none',
+        marginTop: '34px',
+    },
+
+    getIMPmark: {
+        width: 21,
+        marginRight: '10px',
+    },
+
+    getIMPtext: {
+        fontSize: '13px'
+
+    },
+
+
 
 })
 
@@ -960,7 +981,7 @@ class Account extends React.Component{
                             id="wallet"
                             required
                             label="wallet"
-                            placeholder="Your impleum wallet adress"
+                            placeholder="Your impleum wallet address"
                             className={classes.formField}
                             type="text"
                             margin="normal"
@@ -989,6 +1010,13 @@ class Account extends React.Component{
                     { this.enteder && <Button variant="raised" disabled={this.totalIMP <= 0} color="secondary" className={classes.submitBtn} onClick={this.payoff}>
                         <Typography variant="button" >Payoff</Typography>
                     </Button>}
+
+                    <a href="https://impleum.com/wallet/" target="_blank" className={classes.getIMP}>
+                        <img className={classes.getIMPmark} src={info} />  
+                        <Typography className={classes.getIMPtext} variant="body1">
+                                Get Impleum wallet here
+                        </Typography>
+                    </a>
 
                     <SModal title="Something went wrong" body="Maybe is being problems with connection. Try again later." open={this.isErrorModalOpened} close={this.closeErrorModal}/>  
                     

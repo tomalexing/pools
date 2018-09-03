@@ -63,10 +63,11 @@ function getCard(collection, id){
     })
 }
 
-function changeScoresPolls(id, {l,r}){
+function changeScoresPolls(slug ,id, {l,r}){
     // Create a reference to the SF doc.
-    if(!id) return Promise.resolve();
-    var cardRef = db.collection("polls").doc(`${id}`);
+
+    if (!id || !slug) return Promise.resolve();
+    var cardRef = db.collection(slug.substr(1)).doc(`${id}`);
 
     // Uncomment to initialize the doc.
     // sfDocRef.set({ population: 0 });

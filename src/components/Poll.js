@@ -360,7 +360,7 @@ class Poll extends React.Component {
        // if(window.innerWidth > 600 ){
        // }
         this._dragging = true;
-        console.log('rememberPoints');
+
         this.startX = e.clientX || e.touches[0].clientX;
         this.startY = e.clientY || e.touches[0].clientY;
         this.deltaX = 0;
@@ -383,8 +383,6 @@ class Poll extends React.Component {
     pickCart = (thisCardNumber) => async e => {
 
         e.preventDefault();
-        console.log(this._dragging);
-
 
         if (!this._dragging) return;
 

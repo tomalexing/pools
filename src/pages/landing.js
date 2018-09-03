@@ -271,7 +271,8 @@ const styles = theme => ({
         marginLeft: 23,
         userSelect: 'text',
         '@media (max-width: 768px)': {
-            marginLeft: 0
+            marginLeft: 0,
+            marginTop: 100,
         }
     },
     
@@ -611,7 +612,7 @@ class Landing extends React.Component {
     }
     @action.bound
     onScroll = e => {
-        if(e.target.scrollTop > 40){
+        if(e.target.scrollTop > 140){
             document.querySelector('header').style = '';
         }else{
             document.querySelector('header').style.boxShadow = 'none';
@@ -765,11 +766,11 @@ class Landing extends React.Component {
                 <div className={classes.slideInto}>
                     <div className={cx(classes.space40, classes.displayOffOnMobile)} />
                     <Grid container className={classes.root} spacing={40}>
-                        <Grid item xs={12} sm={7} className={cx(classes.center, classes.toRight, classes.zIndex10)} >
+                        <Grid item xs={12} sm={8} xl={7} className={cx(classes.center, classes.toRight, classes.zIndex10)} >
                             <div className={classes.center}><img  className={classes.imgMob} srcSet={`${zoom2x} 2x, ${zoom} 1x`} src={zoom} alt="zoom" /></div>
                         </Grid>
 
-                        <Grid item xs={12} sm={5} className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
+                        <Grid item xs={12} sm={4} xl={5} className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
                             <h2 className={classes.header}>More than…</h2>
                             <p className={classes.description}>Solving tests and answering questionnaires  and get reward in cryptocurrency</p>
                             <Button variant="raised" color="secondary"  className={classes.btn} onClick={this.openLoginModal}>Explore</Button> 

@@ -292,7 +292,6 @@ class Card extends React.Component {
             }) // pull next card it back
             .then( _ => {
                 if( opt.action == 'none') {
-                    console.log('here');
                     that.refs.card.style.transition = ''; // set current card back
                     return
                 }
@@ -416,7 +415,6 @@ class Card extends React.Component {
     
     stopDrag = (event) => {
         // we catch event from all page so do no prevent Defalut it break whole btns
-        console.log('Card stop');
         let cardPlace = this.props.cardPlace;
         if (this.props.store[cardPlace] && this.props.store[cardPlace].inmovable) return;
         
