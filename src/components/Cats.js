@@ -317,7 +317,7 @@ class Explore extends React.Component {
                     {this.Cards.map((card, idx) => (<div key={`cats-${idx}`} className={classes.card}>
                         <header className={classes.header}>
 
-                            { card.link && <Link style={{textDecoration: 'none'}} to={card.link}>                   {!card.img && card.cardtype == 'Poll' && <LazyImage className={classes.image} load={'./assets/polls.png'}/>}
+                            { card.link && <Link style={{textDecoration: 'none'}} to={card.link.startsWith('/') ?  card.link : window.location.pathname + '/' + card.link}>   {!card.img && card.cardtype == 'Poll' && <LazyImage className={classes.image} load={'./assets/polls.png'}/>}
                                 {!card.img && card.cardtype == 'Quiz' && <LazyImage className={classes.image} load={'./assets/quiz.png'}/>}
                                 {card.img && <LazyImage className={classes.image} load={card.img}/>}
                             </Link> }

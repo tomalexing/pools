@@ -25,10 +25,7 @@ import { observer } from 'mobx-react';
 
 import Grow from '@material-ui/core/Grow';
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import { LightenDarkenColor } from "./../utils"; 
-import Api from "./../services/Api";
 import Auth from "./../models/Auth";
-import Redirect from 'react-router-dom/Redirect';
 
 import Login from './Login';
 
@@ -316,7 +313,7 @@ class Header extends React.Component {
 
             
             <ul className={classes.menu}>
-                    <NavLink tabIndex='1' to={'/'} className={classes.menuBtnSpacings} >
+                    <NavLink tabIndex='1' to={'/explore'} className={classes.menuBtnSpacings} >
                         <MenuItem selected={false}>
                             <Typography variant="button" >
                                 Explore

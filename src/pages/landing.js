@@ -1,16 +1,14 @@
 import React from 'react';
-import Dialog from '@material-ui/core/Dialog';
+
 import Button from '@material-ui/core/Button';
 import cx from 'classnames';
 import MenuItem from '@material-ui/core/MenuItem';
 import PropTypes from 'prop-types'; // ES6
 import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
+
 import Typography from '@material-ui/core/Typography';
 import { NavLink } from './../components/NavLink';
 
-import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import Modal from '@material-ui/core/Modal';
@@ -18,10 +16,10 @@ import Modal from '@material-ui/core/Modal';
 import { observable, action } from "mobx";
 import { observer } from "mobx-react";
 
-import { listener } from './../utils';
+import { Link, Redirect } from 'react-router-dom';
 
 import Api from './../services/Api'
-
+import Auth from './../models/Auth';
 import Grid from '@material-ui/core/Grid';
 
 
@@ -324,7 +322,6 @@ const styles = theme => ({
 
     // 2 Slides
 
-
     exploreImg:{
         boxShadow: '0px 12px 120px rgba(206, 0, 0, 0.2)',
         transition: 'box-shadow 0.5s cubic-bezier(.38,-0.3,.41,1.83), transform 0.5s cubic-bezier(.38,-0.3,.41,1.83)',
@@ -388,6 +385,47 @@ const styles = theme => ({
         transition: 'transform 0.1s ease-in-out',
     },
 
+    enlargeWrapper:{
+        position: 'relative',
+        cursor: 'crosshair',
+        touchAction: 'none',
+        boxShadow: '0 12px 120px 0 rgba(0,0,0, .2)',
+        overflow: 'hidden',
+        borderRadius: 8,
+        '&:hover $enlargeRange':{
+            visibility: 'visible'
+        }
+    },
+
+    enlarge:{
+        position: 'absolute',
+        zIndex: 10,
+        top: 30,
+        width: 300,
+        height: 300,
+        border: '2px solid #fc3868',
+        overflow: 'hidden',
+        boxShadow: '0 20px 60px 0 rgba(0,0,0, .2)',
+        borderRadius: '50%',
+        backgroundColor: '#fff',
+        zIndex: 10,
+        '& img': {
+            position: 'absolute'
+        }
+    },
+
+    enlargeRange:{
+ 
+        top: '0',
+        left: '0',
+        position: 'absolute',
+        width: '60px',
+        height: '60px',
+        borderRadius: '50%',
+        border: '1px solid #fc3868'
+    },
+
+
     // 3 Slides
 
     cardFeature:{
@@ -396,12 +434,21 @@ const styles = theme => ({
         alignItems: 'center',
         padding: '30px 40px',
         borderRadius: '10px',
-        transition: 'box-shadow 0.5s cubic-bezier(.38,-0.3,.41,1.83)',
+        transition: 'box-shadow 0.5s cubic-bezier(.38,-0.3,.41,1.83), transform 0.5s cubic-bezier(.38,-0.3,.41,1.83)',
+
+        transform: 'scale(1) translateZ(0)',
+        willChange: 'transform',
+        backfaceVisibility: 'hidden',
+
+        '&:hover':{
+            transform: 'scale(1.05) translateZ(0)'
+        },
+
         '@media (max-width: 768px)': {
             flexDirection: 'column',
         }
-    },
 
+    },
 
     cardFeature1:{
         boxShadow: ' 0 12px 120px rgba(206, 0, 0, .2)',
@@ -409,18 +456,21 @@ const styles = theme => ({
             boxShadow: ' 0 12px 120px 20px rgba(206, 0, 0, .2)',
         }
     },
+
     cardFeature2:{
         boxShadow: ' 0 12px 120px rgba(148, 0, 206, .2)',
         '&:hover':{
             boxShadow: ' 0 12px 120px 20px rgba(148, 0, 206, .2)',
         }
     },
+
     cardFeature3:{
         boxShadow: ' 0 12px 120px rgba(0, 13, 206, .2)',
         '&:hover':{
             boxShadow: ' 0 12px 120px 20px rgba(0, 13, 206, .2)',
         }
     },
+
     cardFeature4:{
         boxShadow: ' 0 12px 120px rgba(206, 59, 0, .2)',
         '&:hover':{
@@ -574,15 +624,19 @@ class Landing extends React.Component {
         super(props)
         this.listeners = [];
         document.querySelector('header').style.boxShadow = 'none';
+        this.parallexRef = React.createRef();
 
     }
 
     componentDidMount(){
         if(window.innerWidth > 768){
-            this.animateOval();
-        } 
+            window.Pace.on('done', this.animateOval)
+            this.initParallax();
+        }
 
     }
+
+
 
     componentWillUnmount(){
         this.listeners.forEach(func => func());
@@ -599,13 +653,32 @@ class Landing extends React.Component {
         setTimeout(_ => {
             this[`oval${this.i++}`] = true; 
             this.animateOval()
-        } , 500)
+        } , 1500/this.i)
+    }
+
+    @action.bound
+    initParallax = _ => {
+        var options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0
+        }
+        var observer = new IntersectionObserver(entries =>  {
+            entries.forEach(entry => {
+                this.allowParallax = entry.isIntersecting
+            });
+          }, options);
+        if(this.parallexRef.current instanceof Element)
+        observer.observe(this.parallexRef.current);
     }
 
     @observable subscribeValue = '';
     @observable open = false;
     @observable title = '';
     @observable description = '';
+    @observable parallaxY = 0;
+    @observable allowParallax = false;
+    startParallaxY = -1;
 
     static propTypes = {
         classes: PropTypes.object.isRequired
@@ -616,6 +689,12 @@ class Landing extends React.Component {
             document.querySelector('header').style = '';
         }else{
             document.querySelector('header').style.boxShadow = 'none';
+        }
+
+        if(this.allowParallax){
+            if(this.startParallaxY == -1) this.startParallaxY = e.target.scrollTop;
+            this.parallaxY = (e.target.scrollTop - this.startParallaxY) / 10
+            
         }
     };
 
@@ -691,9 +770,44 @@ class Landing extends React.Component {
         this[name] = event.target.checked;
     } 
 
+    onMouseMoveFeature = e => {
+
+        let  {left, top, width, height} = e.currentTarget.firstElementChild.getBoundingClientRect();
+        console.log(e.clientY - top - 30)
+        let enlargeRange = document.getElementById('enlargeRange');
+        enlargeRange.style.top =  Math.max(Math.min(e.clientY - top - 30 , height - 60), 0)   + 'px';
+        enlargeRange.style.left =  Math.max(Math.min(e.clientX - left - 30, width - 60), 0) + 'px';
+
+        let enlarge = document.getElementById('enlarge').firstElementChild;
+        
+        let {width:widthZoomed, height:heightZoomed} = enlarge.getBoundingClientRect();
+
+        let koef1 = heightZoomed/height,
+            koef2 = widthZoomed/width;
+      
+        enlarge.style.top =  Math.max( Math.min(-(e.clientY - top - 30 * koef1 - 15) * koef1 , 0), -(heightZoomed - 60 * koef1)) + 'px';
+        enlarge.style.left = Math.max( Math.min(-(e.clientX - left - 30 * koef2 - 15) * koef2, 0) , -(widthZoomed - 60 * koef2)) + 'px';
+
+    }
+
+    onMouseEnterFeature = () => {
+        let enlargeWrapper = document.getElementById('enlarge')
+        enlargeWrapper.style.visibility = 'visible';
+        enlargeWrapper.style.zIndex = '10';
+    }
+
+    onMouseLeaveFeature = () => {
+        let enlargeWrapper = document.getElementById('enlarge')
+        //enlargeWrapper.style.visibility = 'hidden';
+        //enlargeWrapper.style.zIndex = '-1';
+    }
+
     render() {
         const { classes } = this.props;
-
+        if(Auth.isAuthenticated){
+            return <Redirect to={'/explore'}/>
+        }
+        
         return (
         <div id="landingpage" onMouseMove={this.onMouseMove} onScroll={this.onScroll} className={classes.page}>
             <div className={classes.topSlide}>
@@ -707,9 +821,9 @@ class Landing extends React.Component {
                         <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd" fillOpacity="0.2">
                             <g transform="translate(0.000000, -458.000000)" fill="#FFFFFF" id="radius">
                                 <g transform="translate(-144.000000, 458.000000)">
-                                    <circle className={cx(classes.oval, {[classes.ovalEndState]: this.oval1})} cx="150" cy="150" r="150"></circle>
+                                    <circle className={cx(classes.oval, {[classes.ovalEndState]: this.oval3})} cx="150" cy="150" r="150"></circle>
                                     <circle className={cx(classes.oval, {[classes.ovalEndState]: this.oval2})}  cx="149.5" cy="150.5" r="107.5"></circle>
-                                    <circle className={cx(classes.oval, {[classes.ovalEndState]: this.oval3})}  cx="149" cy="151" r="61"></circle>
+                                    <circle className={cx(classes.oval, {[classes.ovalEndState]: this.oval1})}  cx="149" cy="151" r="61"></circle>
                                 </g>
                             </g>
                         </g>
@@ -725,7 +839,7 @@ class Landing extends React.Component {
                         <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                             <h1 className={classes.topheader}>Quizi.io</h1>
                             <p className={classes.topdescription}>Quizi is a powerful marketing tool. It is a service of convenient and informative quizzes and polls.</p>
-                            <Button variant="raised" className={classes.exploreTopBtn} onClick={this.openLoginModal}>Explore</Button> 
+                            <Button variant="raised" className={classes.exploreTopBtn} href={'/explore'}>Explore</Button> 
                         </Grid>
                 
                     </Grid>
@@ -739,7 +853,11 @@ class Landing extends React.Component {
                     <div className={classes.space120} />
                     <Grid container className={classes.root} spacing={40}>
                         <Grid item xs={12} sm={4} className={cx(classes.center, classes.toRight)}>
-                            <div className={classes.center}><img  className={classes.exploreImg} srcSet={`${explorer_1_dark2x} 2x, ${explorer_1_dark2x} 1x`} src={explorer_1_dark2x} alt="explorer_1" /></div>
+                            <Link style={{textDecoration: 'none'}} to={'/cats/quizzes'}> 
+                                <div className={classes.center}>
+                                    <img  className={classes.exploreImg} srcSet={`${explorer_1_dark2x} 2x, ${explorer_1_dark2x} 1x`} src={explorer_1_dark2x} alt="explorer_1" />
+                                </div>
+                            </Link>
                         </Grid>
                         <Grid item xs={12} sm={4} className={classes.center}>
                             <h2 className={classes.header}>Quizzes or Polls</h2>
@@ -747,12 +865,18 @@ class Landing extends React.Component {
                             <Button variant="raised" color="secondary" className={classes.btn} onClick={this.openLoginModal}>Explore</Button> 
                         </Grid>
                         <Grid item xs={12} sm={4} className={cx(classes.center, classes.toLeft)}>
-                            <div className={classes.center}><img  className={classes.exploreImg} srcSet={`${explorer_2_dark2x} 2x, ${explorer_2_dark2x} 1x`} src={explorer_2_dark2x} alt="explorer_2" /></div>
+                            <Link style={{textDecoration: 'none'}} to={'/cats/polls'}> 
+                                <div className={classes.center}>
+                                    <img  className={classes.exploreImg} srcSet={`${explorer_2_dark2x} 2x, ${explorer_2_dark2x} 1x`} src={explorer_2_dark2x} alt="explorer_2" />
+                                </div>
+                            </Link>
                         </Grid>
                     </Grid>
                     <div className={classes.space120} />
                 </div>
             </div>
+            <div className={cx(classes.space120, classes.displayOffOnMobile)} />
+            <div className={cx(classes.space120, classes.displayOffOnMobile)} />
 
             <div className={classes.slide}>
                 
@@ -761,25 +885,35 @@ class Landing extends React.Component {
                     <img style={{transform: `translate3d(${-this.cX / 10}px, ${-this.cY / 30}px, 0)`}} className={classes.oval2} srcSet={`${Oval22x} 2x, ${Oval2} 1x`} src={Oval2} alt="Quizi" />
                 </div>
                 <div className={classes.ovalContainer3}>
-                    <img style={{transform: `translate3d(${-this.cX / 150}px, ${-this.cY / 120}px, 0)`}} className={classes.oval3} srcSet={`${Oval32x} 2x, ${Oval3} 1x`} src={Oval3} alt="Quizi" />
+                    <img style={{transform: `translate3d(${this.cX / 40}px, ${this.cY / 80}px, 0)`}} className={classes.oval3} srcSet={`${Oval32x} 2x, ${Oval3} 1x`} src={Oval3} alt="Quizi" />
                 </div>
                 <div className={classes.slideInto}>
                     <div className={cx(classes.space40, classes.displayOffOnMobile)} />
                     <Grid container className={classes.root} spacing={40}>
-                        <Grid item xs={12} sm={8} xl={7} className={cx(classes.center, classes.toRight, classes.zIndex10)} >
-                            <div className={classes.center}><img  className={classes.imgMob} srcSet={`${zoom2x} 2x, ${zoom} 1x`} src={zoom} alt="zoom" /></div>
-                        </Grid>
+                        <Grid item xs={12} sm={3}  ></Grid>
 
-                        <Grid item xs={12} sm={4} xl={5} className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
+                        <Grid item xs={12} sm={5}  className={cx(classes.center, classes.toRight, classes.zIndex10)} >
+                            <div className={classes.enlargeWrapper} onMouseMove={
+                                this.onMouseMoveFeature} onMouseEnter={this.onMouseEnterFeature} onMouseLeave={this.onMouseLeaveFeature}>
+                                <div className={classes.center}><img  className={classes.imgMob} srcSet={`${zoom2x} 2x, ${zoom} 1x`} src={zoom} alt="zoom" />
+                                </div>
+                                <div id="enlargeRange"  style={{top: '263px', left: '518px'}} className={classes.enlargeRange}></div>
+                                <div id="enlarge" className={classes.enlarge}><img style={{top: '-436px', left: '-947px'}} src={zoom2x} alt="zoom" /> </div>
+
+                            </div>    
+                        </Grid>
+                        <Grid item xs={12} sm={1}  ></Grid>
+                        <Grid item xs={12} sm={3}  className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
                             <h2 className={classes.header}>More than…</h2>
                             <p className={classes.description}>Solving tests and answering questionnaires  and get reward in cryptocurrency</p>
-                            <Button variant="raised" color="secondary"  className={classes.btn} onClick={this.openLoginModal}>Explore</Button> 
+                            <Button variant="raised" color="secondary"  className={classes.btn}  href={'/explore'}>Explore</Button> 
                         </Grid>
                 
                     </Grid>
                 </div>
 
                 <div className={classes.space120} />
+                <div className={cx(classes.space120, classes.displayOffOnMobile)} />
                 <div className={cx(classes.space120, classes.displayOffOnMobile)} />
 
                 <div className={classes.slideInto}>
@@ -789,15 +923,15 @@ class Landing extends React.Component {
                             <div className={cx(classes.centerOnMobile)} >
                                 <h2 className={classes.header}>Easy control</h2>
                                 <p className={classes.description}>Useful dashboard allows you to control  rewards and make fast withdraw.</p>
-                                <Button variant="raised" color="secondary"  className={classes.btn} onClick={this.openLoginModal}>Explore</Button> 
+                                <Button variant="raised" color="secondary"  className={classes.btn}  href={'/explore'}>Explore</Button> 
                             </div>
                         </Grid>
+                        
                         <Grid item xs={12} sm={1} className={cx(classes.center, classes.toRight, classes.zIndex10)}>
-                            
                         </Grid>
 
                         <Grid item xs={12} sm={7} className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
-                            <div className={classes.center}><img  className={classes.imgMob} srcSet={`${EasyControl2x} 2x, ${EasyControl} 1x`} src={EasyControl} alt="EasyControl" /></div>
+                            <div ref={this.parallexRef} style={{transform: `translate3d(0, ${this.parallaxY}px, 0)`}} className={classes.center}><img  className={classes.imgMob} srcSet={`${EasyControl2x} 2x, ${EasyControl} 1x`} src={EasyControl} alt="EasyControl" /></div>
                         </Grid>
                 
                     </Grid>

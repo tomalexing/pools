@@ -20,6 +20,11 @@ export default class Poll{
 
   @computed
   get leftPercentage() {
+
+    if(this.answers.l.quantity + this.answers.r.quantity == 0){
+      return 0
+    }
+
     return Math.round(this.answers.l.quantity * 100 / (this.answers.l.quantity + this.answers.r.quantity));
   }
 
@@ -46,6 +51,9 @@ export default class Poll{
     this.answers.l.quantity += l;
     this.answers.r.quantity += r;
     
+    this.answers.l.quantity = Math.max(0, this.answers.l.quantity);
+    this.answers.r.quantity = Math.max(0, this.answers.r.quantity);
+
     await this.setProgress().catch(_ => {});
 
     if(l > 0){

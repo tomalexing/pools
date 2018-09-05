@@ -35,7 +35,7 @@ import Typography from '@material-ui/core/Typography';
 
 import { saveAllToStoreMerge } from './services/localDb';
 import Login from './components/Login';
-
+import { when } from 'mobx';
 
 injectTapEventPlugin();
 
@@ -49,7 +49,7 @@ const Landing = (props) => <Lazy {...props} load={() => import('./pages/landing'
 
 const Card = (props) => <Lazy {...props} load={() => import('./components/CardWrapper')}/>
 const OneCard = (props) => <Lazy {...props} load={() => import('./components/OneCard')}/>
-const Explore = (props) => <Lazy {...props} load={() => import('./components/Explore')}/>
+const Explore = (props) => <Lazy {...props} load={() => import('./pages/Explore')}/>
 const Cats = (props) => <Lazy {...props} load={() => import('./components/Cats')}/>
 const DCard = (props) => <Lazy {...props} load={() => import('./components/DCard')}/>
 const Cookies = (props) => <Lazy {...props} load={() => import('./components/Cookies')}/>
@@ -234,11 +234,13 @@ class App extends React.Component{
 
     componentDidMount(){
        if( /backup/.test(this.props.location.search) ){
-            saveAllToStoreMerge( JSON.parse(window.atob(
-                    this.props.location.search.replace('?backup=', ''))))
-                .then(_ => {
-                    Api.saveUserData();
-                });
+            when(() => !Auth.logging && !Auth.loadingUserData , () => {
+                saveAllToStoreMerge( JSON.parse(window.atob(
+                        this.props.location.search.replace('?backup=', ''))))
+                    .then(_ => {
+                        Api.saveUserData();
+                    });
+            })
        }
     }
 
@@ -286,7 +288,7 @@ render(<Router>
                     transitionLeaveTimeout={200}
                 >*/}
                     <Switch>
-                    <Route path={'/'} exact location={location} key={getUniqueKey()} component={() => <App nofooter={true} fullscreen={true} ><Explore/></App>}/>
+                    <Route path={'/explore'} exact location={location} key={getUniqueKey()} component={() => <App nofooter={true} fullscreen={true} ><Explore/></App>}/>
 
                     { /* <Route path={'/polls'} location={location} key={getUniqueKey()} component={() =>        <App >
                             <div>
@@ -315,7 +317,7 @@ render(<Router>
 
                     <Route path={'/create'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><Create /></App>}/>
                     
-                    <Route path={'/landing'}  key={getUniqueKey()} component={() =>  <App nofooter={true}  fullscreen={true}  landingscreen={true} ><Landing /></App>}/>
+                    <Route path={'/'} exact  key={getUniqueKey()} component={() =>  <App nofooter={true}  fullscreen={true}  landingscreen={true} ><Landing /></App>}/>
                     
                     <PrivateRoute role={['user']} path={'/dashboard'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} nofooter={true}><Dashboard /></App>} />
                     

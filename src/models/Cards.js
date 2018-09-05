@@ -180,14 +180,12 @@ export default class Cards {
         if(this.tryAgainIsCleanPrevious)
           val.Progress.number = 0;
 
-        
-        
         saveToStore(cards.cardSlug, {
             current: 0,
             Progress: val.Progress
           }).then( _ => Api.saveUserData())
 
-        }, _ => {
+    }, _ => {
           saveToStore(cards.cardSlug, {
             current: 0,
             Progress: cards.Progress
@@ -300,9 +298,9 @@ export default class Cards {
       }).then(val => {
         if(!val) return {number:0, iqValue: 0}
         
-        var {number} = val.Progress;
+        var { number } = val.Progress;
         let iqValue = 0;
-        switch (number) {
+        switch ( number) {
           case 1:
             iqValue = 40;
             break;

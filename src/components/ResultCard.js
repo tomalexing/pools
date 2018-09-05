@@ -10,7 +10,7 @@ import Auth from './../models/Auth';
 import Button from '@material-ui/core/Button'
 import Divider from '@material-ui/core/Divider';
 
-import { LazyImage, lerp, listener, getCoinName, roundeWithDec } from './../utils';
+import { LazyImage, lerp, listener, getCoinName, roundeWithDec, parseMustache } from './../utils';
 import CardsModel from './../models/Cards'
 import Api from './../services/Api';
 import { getlocalDBBtoa, clearLocalDB } from "./../services/localDb";
@@ -289,7 +289,7 @@ class ResultCard extends React.Component {
                                     { !this.finalCard.info.img && this.finalCard.info.cat == 'Polls' && <LazyImage className={classes.resImage} load={'./assets/polls.png'}/>}
                                     { !this.finalCard.info.img && this.finalCard.info.cat == 'Quizzes' && <LazyImage className={classes.resImage} load={'./assets/quiz.png'}/>}
                                     { this.finalCard.info.img && <LazyImage className={classes.resImage} load={this.finalCard.info.img}/>}
-                                </div>
+                                </div> 
                                 <div className={classes.col2}>
                                     <Typography variant="title" className={classes.resTitle}>{this.finalCard.info.title}</Typography>
                                     <a className={classes.linksite} href={`http://${this.finalCard.info.linksite}`} target="_blank" ><Typography variant="display1" className={classes.linksite}>{this.finalCard.info.linksite}</Typography></a>
@@ -314,11 +314,10 @@ class ResultCard extends React.Component {
                                         Results:
                                     </Typography>
                                     <div>
-                                        <Typography variant="body1" >
-                                        {this.finalCard.info.result.replace(`{{${this.finalCard.info.dashOutput}}}`,this.finalCard.progress[this.finalCard.info.dashOutput])}
+                                        <Typography variant="body1" dangerouslySetInnerHTML={{__html: parseMustache(this.finalCard.info.result, {[ this.finalCard.info.dashOutput ]: this.finalCard.progress[this.finalCard.info.dashOutput]}) }} >
                                         </Typography>
                                     </div>
-                                    <div className={classes.share}>
+                                    <div className={classes.share}> 
                                         {!this.isLiked &&
                                         <Typography variant="body1" className={classes.resHeader}>
                                             Share and get +0.5 {Api.getCoinName()}:

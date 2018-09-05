@@ -341,7 +341,7 @@ const stylesCommon = theme => ({
     progressBar:{
         marginTop: 20,
         marginBottom: 20,
-        width: '210px',
+        minWidth: '210px',
         height: '4px',
         borderRadius: '3px',
         backgroundColor: '#bbc2d8',
@@ -369,7 +369,15 @@ const stylesCommon = theme => ({
     title: {
         padding: '0 30px',
         display: 'flex',
-        lineHeight: '24px'
+        display: 'inline-block',
+        width: '193px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
+    },
+    titleAddon:{
+        verticalAlign: 'middle',
+        height: '1.1em'
     },
     column:{
         flexDirection: 'column',
@@ -446,7 +454,6 @@ class Common extends React.Component{
     render(){
         let {classes} = this.props;
         let that = this;
-        console.log(this.cardsInProcessAndFinished);
         
         return( 
             <div className={classes.cardWrapper} >
@@ -461,19 +468,20 @@ class Common extends React.Component{
                         { Object.values(that.cardsInProcessAndFinished).filter(o => o['info'] && o['info'].cat == cat).map(({progress, info, slug, isLiked}, idx) => {
                                 return  info ? (<div key={`card-${idx}`} className={classes.card}>
                                         <div ref='header' className={classes.header}>
-                                            <Link style={{textDecoration: 'none'}} to={slug.replace('/v1','')} ><Typography variant="display1" className={classes.title}>{info.title}<Icon>navigate_next</Icon></Typography> </Link>
+                                            <Link style={{textDecoration: 'none'}} to={slug.replace('/v1','')} >
+                                                <Tooltip  title={info.dashTitle} placement="top">
+                                                    <Typography variant="display1" className={classes.title}>{info.dashTitle}<Icon className={classes.titleAddon}>navigate_next</Icon></Typography> 
+                                                </Tooltip>
+                                            </Link>
                                             <span className={classes.delimeter}></span>
                                             <Typography variant="display1" className={classes.impNum}>  
                                                 {progress && roundeWithDec(progress.number * info.reward)} {Api.getCoinName()}
                                             </Typography>
+
                                         </div>
                                         <div className={classes.cardBodyResult}>
-                                            <Typography variant="body1" gutterBottom>
-                                                {info.dashTitle}
-                                            </Typography>
-                                            
                                             {info && info.allCardsNumber > 0  &&  <Typography variant="display2" className={classes.noWrap}>
-                                                {info.dashOutput === 'number' && `${Math.floor( progress[info.dashOutput] * 100/ info.allCardsNumber)}%`}
+                                                {info.dashOutput === 'number' && `${Math.floor( progress[info.dashOutput] * 100/ info.allCardsNumber)}%` /* Bad Design */}
                 
                                                 {info.dashOutput === 'iqValue' && `${Math.floor(progress[info.dashOutput] )}`}
                                             </Typography>}

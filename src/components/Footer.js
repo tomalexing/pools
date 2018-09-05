@@ -19,7 +19,8 @@ import { observer } from "mobx-react";
 import { listener } from './../utils';
 
 import { Link } from 'react-router-dom';
-import Api from './../services/Api';
+
+import BottomBar from './text.ts';
 
 const styles = theme => ({
 

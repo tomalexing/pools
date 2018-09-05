@@ -84,7 +84,7 @@ class Cookies extends React.Component {
                 await requestAnimationFramePromise()
                     .then(_ => requestAnimationFramePromise())
                     .then(_ => {
-                        that.refs.body.style.transition = 'transform 1s ease-in-out';
+                        that.refs.body.style.transition = 'transform .4s ease-in-out';
                         that.refs.body.style.transform = 'translateY(0)';
                         return transitionEndPromise(that.refs.body);
                     })
@@ -102,7 +102,7 @@ class Cookies extends React.Component {
         await requestAnimationFramePromise()
             .then(_ => requestAnimationFramePromise())
             .then(_ => {
-                that.refs.body.style.transition = 'transform .5s ease-in-out';
+                that.refs.body.style.transition = 'transform .4s ease-in-out';
                 that.refs.body.style.transform = 'translateY(0)';
                 return transitionEndPromise(that.refs.body);
             })
@@ -115,7 +115,7 @@ class Cookies extends React.Component {
         await requestAnimationFramePromise()
             .then(_ => requestAnimationFramePromise())
             .then(_ => {
-                that.refs.body.style.transition = 'transform 1s ease-in-out';
+                that.refs.body.style.transition = 'transform .2s ease-in-out';
                 that.refs.body.style.transform = 'translateY(100%)';
                 return transitionEndPromise(that.refs.body);
             })

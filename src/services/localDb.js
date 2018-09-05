@@ -205,7 +205,19 @@ export function saveAllToStoreMerge(data) {
         let savePromise = []; 
        
         for( let [key, val] of Object.entries(data)){
-          savePromise.push(saveToStore(key, val))
+          if(typeof val  == "string" ){
+
+            savePromise.push(saveToStore(key, val));
+            
+          }else{
+
+            loadFromStore(key).then(oldValue => {
+              savePromise.push(saveToStore(key, Object.assign( Object.assign(oldValue), val)));
+            }, _ => {
+              savePromise.push(saveToStore(key, val));
+            })
+
+          }
         }
         Promise.all(savePromise).then(_ => resolve(data));
       

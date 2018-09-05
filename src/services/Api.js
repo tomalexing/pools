@@ -79,8 +79,8 @@ function changeScoresPolls(slug ,id, {l,r}){
                 throw "Document does not exist!";
             }
             let oldCardDocData = cardDoc.data(),
-                newLeft = oldCardDocData.answers.l.quantity + l,
-                newRight = oldCardDocData.answers.r.quantity + r,
+                newLeft = Math.max(0, oldCardDocData.answers.l.quantity + l),
+                newRight = Math.max(0, oldCardDocData.answers.r.quantity + r),
                 newAnswers = Object.assign({},oldCardDocData);
                 newAnswers.answers.l.quantity = newLeft;
                 newAnswers.answers.r.quantity = newRight;

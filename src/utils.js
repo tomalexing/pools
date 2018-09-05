@@ -529,6 +529,205 @@ export const loadScript = (url, async) => {
   });
 }
 
+export const parseMustache = (tmpl, data) => {
+
+    const reservedWords = ['startIf', 'endIf'];
+
+    let reg = new RegExp(/{{[^}}]+}}/g), m, startMatch;
+    let isInclude = false;
+    let output = tmpl;
+    while ((m = reg.exec(tmpl)) !== null) {
+        // This is necessary to avoid infinite loops with zero-width matches
+        if (m.index === reg.lastIndex) {
+          reg.lastIndex++;
+        }
+        
+        // The result can be accessed through the `m`-variable.
+        m.forEach((match, groupIndex) => {
+
+          let matchData = match.replace('{{','').replace('}}','').trim();
+
+          if( reservedWords.some( w  =>  match.includes(w)) ){ // handle operator
+
+              
+              if(match.includes('startIf')){   // startIF
+                startMatch = match;
+                matchData = matchData.replace('startIf','');
+
+                isInclude =  matchData.split('and').map(equation => {
+
+
+                  if( (equation.indexOf('>=')) > 0 ){ // >= before than > 
+
+                    let [left, right] = equation.split('>=');
+
+                    if( isNaN(parseInt(left)) ){
+                      left = left.trim();
+                      if( left in data){
+                        left = data[left]
+                      }
+                    }
+
+                    if( isNaN(parseInt(right)) ){
+                      right = right.trim();
+                      if( right in data){
+                        right = data[right]
+                      }
+                    }
+
+                    if(parseInt(left) >= parseInt(right)){
+                      return true
+                    }
+
+                  }
+
+                  if( (equation.indexOf('<=')) > 0 ){ // <= before than <
+
+                    let [left, right] = equation.split('<=');
+
+                    if( isNaN(parseInt(left)) ){
+                      left = left.trim();
+                      if( left in data){
+                        left = data[left]
+                      }
+                    }
+
+                    if( isNaN(parseInt(right)) ){
+                      right = right.trim();
+                      if( right in data){
+                        right = data[right]
+                      }
+                    }
+
+                    if(parseInt(left) <= parseInt(right)){
+                      return true
+                    }
+
+                  }
+
+                  if( (equation.indexOf('>')) > 0 ){ // handle more
+
+                    let [left, right] = equation.split('>');
+
+                    if( isNaN(parseInt(left)) ){
+                      left = left.trim();
+                      if( left in data){
+                        left = data[left]
+                      }
+                    }
+
+                    if( isNaN(parseInt(right)) ){
+                      right = right.trim();
+                      if( right in data){
+                        right = data[right]
+                      }
+                    }
+
+                    if(parseInt(left) > parseInt(right)){
+                      return true
+                    }
+                    
+                  }
+
+                  if( (equation.indexOf('<')) > 0 ){ // handle less
+
+                    let [left, right] = equation.split('<');
+
+                    if( isNaN(parseInt(left)) ){
+                      left = left.trim();
+                      if( left in data){
+                        left = data[left]
+                      }
+                    }
+
+                    if( isNaN(parseInt(right)) ){
+                      right = right.trim();
+                      if( right in data){
+                        right = data[right]
+                      }
+                    }
+
+                    if(parseInt(left) < parseInt(right)){
+                      return true
+                    }
+
+                  }
+
+
+                  if( (equation.indexOf('=')) > 0 ){  // handle equal
+                    let [left, right] = equation.split('=');
+
+                    if( isNaN(parseInt(left)) ){
+                      left = left.trim();
+                      if( left in data){
+                        left = data[left]
+                      }
+                    }
+
+                    if( isNaN(parseInt(right)) ){
+                      right = right.trim();
+                      if( right in data){
+                        right = data[right]
+                      }
+                    }
+
+                    if(parseInt(left) === parseInt(right)){
+                      return true
+                    }
+                  }
+
+                  if( (equation.indexOf('%')) > 0 ){  // handle %
+                    let [left, right] = equation.split('%');
+
+                    if( isNaN(parseInt(left)) ){
+                      left = left.trim();
+                      if( left in data){
+                        left = data[left]
+                      }
+                    }
+
+                    if( isNaN(parseInt(right)) ){
+                      right = right.trim();
+                      if( right in data){
+                        right = data[right]
+                      }
+                    }
+
+                    return parseInt(left) % parseInt(right)
+                      
+                  }
+
+                  return false
+
+                }).every(t => t)
+              }
+
+              if(match.includes('endIf')){  // endIF
+
+                if(isInclude){
+                  output = output.replace(startMatch, '');
+                  output = output.replace(match, '');
+                 
+                }else{
+                  output = output.substr(0, output.indexOf(startMatch) ) + output.substr(output.indexOf(match) + match.length);
+                }
+
+                isInclude = false;
+              }
+
+          }else{ // no operator, just replace variable if posible
+          
+            if( matchData in data){
+              output = output.replace(match, data[matchData])
+            }
+          
+          } 
+        });
+    }
+
+    return output
+}
+
 util.listener = listener
 util.requestAnimationFramePromise = requestAnimationFramePromise
 util.transitionEndPromise = transitionEndPromise
@@ -549,5 +748,6 @@ util.call = call
 util.withGracefulUnmount = withGracefulUnmount
 util.ScrollRestortion = ScrollRestortion
 util.getTabTime = getTabTime
+util.parseMustache = parseMustache
 
 export default util

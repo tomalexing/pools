@@ -190,6 +190,190 @@ const polls = [{
   ];
 
 
+const polls1 = [{
+    "answers" : {
+        l: {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/01_marvel.png',
+          "value" : "Marvel"
+        },
+        r : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/01_DC.png',
+          "value" : "DC"
+        }
+      },
+      "question" : "Which comics studio do you prefer?",
+      "cardType": "poll",
+      "order" : 1,
+      "id": '31k3ZqNAAE7ObKlhyIJs',
+    },
+    {
+      "answers" : {
+        l : {
+          "quantity" : 0,
+          "srcImg" :  './assets/raters/02_Scarlett_Johansson.png',
+          "value" : "Scarlett Johansson"
+        },
+        r : {
+          "quantity" : 0,
+          "srcImg" :  './assets/raters/02_Angelina_Jolie.png',
+          "value" : "Angelina Jolie"
+        }
+      },
+      "question" : "Who is sexier?",
+      "cardType": "poll",
+      "order" : 2,
+      "id": '3KqpLnhphkl5xWftqdvv',
+    },
+    {
+      "answers" : {
+        l : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/03_Terminator.png',
+          "value" : "Terminator"
+        },
+        r : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/03_Matrix.png',
+          "value" : "Matrix"
+        }
+      },
+      "question" : "Which action movie is cooler?",
+      "cardType": "poll" ,
+      "order" : 3,
+      "id": 'XT1pdTh7956P15dMhUdu',
+    },
+    {
+      "answers" : {
+        l : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/04_Brad_Pitt.png',
+          "value" : "Brad Pitt"
+        },
+        r : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/04_Djonny_Depp.png',
+          "value" : "Djonny Depp"
+        }
+      },
+      "question" : "Who is more handsome?",
+      "cardType": "poll",
+      "order" : 4,
+      "id": '4BwrTlC4uGwWiJcfSi85'
+    },
+    {
+      "answers" : {
+        l : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/05_ R2D2.png',
+          "value" : "R2D2"
+        },
+        r : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/05_Slimer.png',
+          "value" : "Slimer"
+        }
+      },
+      "question" : "Which made-up assistant is funnier?",
+      "cardType": "poll",
+      "order" : 5,
+      "id": 'wlYiBICprh7cPrrN5GYR'
+    },
+    {
+      "answers" : {
+        l : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/06_The_Fast_and_the_Furious.png',
+          "value" : "The Fast and the Furious"
+        },
+        r : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/06_The_Transporter.png',
+          "value" : "The Transporter"
+        }
+      },
+      "question" : "Which saga is cooler?",
+       "cardType": "poll",
+       "order" : 6,
+       "id": 'Y1jjtlIFKT5Y3jyMmkl2'
+    },
+    {
+      "answers" : {
+        l : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/07_batmobile.png',
+          "value" : "Batmobile"
+        },
+        r : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/07_delorean.png',
+          "value" : "Delorean"
+        }
+      },
+      "question" : "What vehicle would you like to have?",
+       "cardType": "poll",
+       "order" : 7,
+       "id": 'crYALNH4P1ReJLQKFRob'
+    },
+    {
+      "answers" : {
+        l : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/08_Batman.png',
+          "value" : "Batman"
+        },
+        r : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/08_Superman.png',
+          "value" : "Superman"
+        }
+      },
+      "question" : "Which superhero is stronger?",
+       "cardType": "poll",
+       "order" : 8,
+       "id": '5ZNWM5hwIOQDbRUlxjEs'
+    },
+    {
+      "answers" : {
+        l : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/09_Steven_Spielberg.png',
+          "value" : "Steven Spielberg"
+        },
+        r : {
+          "quantity" : 0,
+          "srcImg" : './assets/raters/09_George_Lucas.png',
+          "value" : "George Lucas"
+        }
+      },
+      "question" : "Movies of which directors do you prefer?",
+       "cardType": "poll",
+       "order" : 9,
+       "id": 'maxVwpqlPnUhq82bSdMI'
+    },
+    {
+      "answers" : {
+        l : {
+          "quantity" : 38,
+          "srcImg" : './assets/raters/10_She\'s_All_That.png',
+          "value" : "She's All That"
+        },
+        r : {
+          "quantity" : 26,
+          "srcImg" : './assets/raters/10_Pretty_Woman.png',
+          "value" : "Pretty Woman"
+        }
+      },
+      "question" : "Which \"modern Cinderella\" is more interesting?",
+       "cardType": "poll",
+       "order" : 10,
+       "id": 'fJhE0Xnk5trn3uqb6i5a'
+    }
+];
+
+
+
 const quizzes = [
         {
           "answers" : [
@@ -659,18 +843,139 @@ const quizzes1 = [
   },
 ];
 
-let QuizzesId = '';
-let QuizzesRunned = false;
+const quizzes2 = [
+  {
+    "answers" : [
+      'I will immediately click on the link. It can be something important',
+      'I will ask several questions to make sure it\'s not a scam',    
+      'I won\'t open it at all',
+    ],
+    "question" : "You received an unexpected message by e-mail / in the messenger with an enclosed link. Your actions:",
+    "answerCorrect": 1,
+    "cardType": "quiz",
+    "order" : 1,
+    "id": 'GI7xhYRTT2D10Xeuq7bV'
+  },
+  {
+    "answers" : [
+      'I have a specially trained person that knows better than me',
+      'It’s a simulated attack on a computer system',    
+      'Are you insane? Do you think I need to know the answer?',
+    ],
+    "question" : "What is Penetration Testing?",
+    "answerCorrect": 1,
+    "cardType": "quiz",
+    "order" : 2,
+    "id": 'NUBLg0XxKtBFs27pYHGN'
+  },
+  {
+    "answers" : [
+      'Something about aggressive fishing',
+      'Type of Internet fraud, the purpose of which is to find out the login and password',
+      'Is it really not about the fishing?'
+    ],
+    "question" : "Phishing attack is:",
+    "answerCorrect": 1,
+    "cardType": "quiz",
+    "order" : 3,
+    "id": 'ofWCWSE63Sk3yhhQcUoN'
+  },
+  {
+    "answers" : [
+      'Immediately after the update is released',
+      'When I will find time for it',
+      'Once in a lifetime',
+    ],
+    "question" : "How often do I need to update the software?",
+    "answerCorrect": 0,
+    "cardType": "quiz",
+    "order" : 4,
+    "id": 'onbCWSEc6ST3yhhQcuoR'
+  },
+  {
+    "answers" : [
+      'The human factor (personnel)',
+      'The weak technical equipment',
+      'Nobody knows'
+    ],
+    "question" : "One of the biggest cyber vulnerabilities for the company is:",
+    "answerCorrect": 0,
+    "cardType": "quiz",
+    "order" : 5,
+    "id": '7QGwa16Q6KacSAqlpvXk'
+  },
+  {
+    "answers" : [
+      'essential for company survival',
+      'an unusual way to spend a day',
+      'a waste of time and money',
+    ],
+    "question" : "To invest in cybersecurity is:",
+    "answerCorrect": 0,
+    "cardType": "quiz",
+    "order" : 6,
+    "id": 'nrXgHXkxhzt5YAXdSAwc'
+  },
+  {
+    "answers" : [
+      '2nd',
+      '59th',
+      'Somewhere between Equatorial Guinea and Somalia'
+    ],
+    "question" : "By the level of cybersecurity in the world, Ukraine is:",
+    "answerCorrect": 1,
+    "cardType": "quiz",
+    "order" : 7,
+    "id": 'QhERsBnsCyEOsyenncwu'
+  },
+  {
+    "answers" : [
+      'Yes, they are also called white hackers',
+      'I don\'t think that "good" and "hacker" are two compatible words',
+      'What a twist'
+    ],
+    "question" : "Are there any \"good\" hackers?",
+    "answerCorrect": 0,
+    "cardType": "quiz",
+    "order" : 8,
+    "id": 'Zm1vTv2QgLoPDeKE7kjp'
+  },
+  {
+    "answers" : [
+      'You are probably joking',
+      'Yes, there is a possibility of data theft',
+      'No, it’s okay'
+    ],
+    "question" : "Is it dangerous to use free public Wi-Fi?",
+    "answerCorrect": 1,
+    "cardType": "quiz",
+    "order" : 9,
+    "id": 'AkZeYZXkU40UxEPx0o2y'
+  },
+  {
+    "answers" : [
+      'a Myth',
+      'The future',
+      'Useless idea'
+    ],
+    "question" : "Cyber insurance in Ukraine is:",
+    "answerCorrect": 1,
+    "cardType": "quiz",
+    "order" : 10,
+    "id": 'niH29erObCLDNCJLAvak'
+  }
+];
+
+
+
 function setQuizzes(){
     console.log("Add %s quizzes", quizzes.length)
     db.collection(`quizzes`).doc('mNrynOde7h2pec3R9rKe').get().then(function(doc) {
-      if( QuizzesRunned ) return
-      QuizzesRunned = true;
-      QuizzesId = doc.id;
+
       db.collection(`quizzes`).doc(doc.id).set({
         allCardsNumber: 20,
         dashOutput: "iqValue",
-        dashTitle: "Quiz: IQ test",
+        dashTitle: "IQ test",
         reward: 0.1,
         cat: 'Quizzes',
         title: 'Quiz',
@@ -680,6 +985,7 @@ function setQuizzes(){
         img: './assets/polls.png',
         result: 'Your IQ is {{iqValue}}.'
       });
+      
       for(let i = 0; i < quizzes.length; i++){
         console.log('quizzes ' + i)
 
@@ -697,7 +1003,7 @@ function setQuizzes1(){
     db.collection(`quizzes`).doc(doc.id).set({
       allCardsNumber: 14,
       dashOutput: "number",
-      dashTitle: "Quiz: Impleum Platform",
+      dashTitle: "Impleum Platform",
       reward: 0.1,
       cat: 'Quizzes',
       title: 'Quiz',
@@ -717,20 +1023,61 @@ function setQuizzes1(){
   })
 }
 
+async function setQuizzes2(){
+  console.log("Add %s quizzes2", quizzes2.length)
 
-let PollsId = '';
-let PollRunned = false;
+  let doc = await db.collection(`polls`).doc('cHuEIjL3dsvNTVXNXa1Z');
+
+
+  db.collection(`quizzes`).doc(doc.id).set({
+      allCardsNumber: 10,
+      dashOutput: "number",
+      dashTitle: "Cyber Resilience",
+      reward: 0.1,
+      cat: 'Quizzes',
+      title: 'Quiz',
+      linksite: 'impleum.com',
+      desc: 'Will Your Business Survive in Ukrainian Cyber Realities?',
+      img: './assets/10guards.png',
+      result: `You gave {{number}} right {{startIf  number > 1  }}answers.{{endIf}} {{startIf  number <= 1  }}answer.{{endIf}}
+      <br/> 
+      {{startIf  number > 9  }}
+        Cyber hero<br/> 
+        Oh, dear Lord, you are practically invulnerable! With such a serious approach to cybersecurity, you shouldn’t worry about anything. Relax, pour yourself a drink and enjoy the day. Why not? You deserved it. But don’t forget about cybersecurity audits. Entrust this task to specialists and sleep soundly.
+      {{endIf}}
+
+      {{startIf  number > 3 and number <= 8}}
+        Cyber student<br/> 
+        Oh, what a potential you have. You are certainly well done, but you still have a room to grow. Keep going, and not a single hacker will scam you. You better contact cybersecurity specialists.
+      {{endIf}}
+
+      {{startIf  number <= 3 }}
+        Cyber Buddhist {{ number }}<br/> 
+        You have nerves of steel! You laugh in the face of danger, believe in karma and practice meditation to the sound of broken hopes. The only thing that stands between you and the hacker is a red thread tied to a computer monitor. But for the sake of the Buddha, before it's too late, contact cybersecurity specialists.
+      {{endIf}}
+      `
+    });
+
+    for(let i = 0; i < quizzes2.length; i++){
+      console.log('quizzes ' + i)
+      db.collection(`quizzes`).doc(doc.id).collection(`v1`).doc(quizzes2[i].id).set({
+      ...quizzes2[i],
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      })
+    }
+
+}
+
+
 function setPolls(){
     console.log("Add %s polles", polls.length)
-    
+
     db.collection(`polls`).doc('TufVMx0dkDVAaOr5KSdF').get().then(function(doc) {
-      if( PollRunned ) return
-      PollRunned = true;
-      PollsId = doc.id;
+
       db.collection(`polls`).doc(doc.id).set({
         allCardsNumber: 10,
         dashOutput: 'number',
-        dashTitle: '',
+        dashTitle: 'Quizi.io\'s poll',
         reward: 0.1,
         cat: 'Polls',
         title: 'Poll',
@@ -739,16 +1086,47 @@ function setPolls(){
         img: './assets/polls.png',
         result: 'You answered {{number}} of 10 polls.'
       });
+
       for(let i = 0; i < polls.length; i++){
         console.log('polls ' + i)
         db.collection(`polls`).doc(doc.id).collection(`v1`).doc(polls[i].id).set({
-        ...polls[i],
+        ...withOutQuantity( polls[i] ),
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        })
+        }, { merge: true })
       }
     })
+}
+
+
+async function setPolls1(){
+  console.log("Add %s polles", polls1.length)
+
+  let doc =  await db.collection(`polls`).doc('ga2Y4kgp7kHOxu2IF4dl');
+
+  doc.set({
+    allCardsNumber: 10,
+    dashOutput: 'number',
+    dashTitle: 'Raters app',
+    reward: 0.1,
+    cat: 'Polls',
+    title: 'Poll',
+    linksite: 'quizi.io',
+    desc: 'Social platform where you can see what your friends are watching.',
+    img: './assets/raters.png',
+    result: 'You answered {{number}} of 10 polls.'
+  });
+
+  for(let i = 0; i < polls1.length; i++){
+    console.log('polls ' + i)
+    db.collection(`polls`).doc(doc.id).collection(`v1`).doc(polls1[i].id).set({
+    ... withOutQuantity( polls1[i] ),
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true })
+  }
 
 }
+
+
 
 function setCats(){
   console.log("Add categories.");
@@ -804,10 +1182,10 @@ function setCats(){
       reward: 0.1,
       link: `/quizzes/OMx1k83U7LcZwlvZs9Aw`,
     });
-
+    
     db.collection('cats/quizzes/cybersecurity').doc('k2JfLJQZYkFBlwrhIXHI').set({
       type: 'term',
-      title: 'Cybersecurity test',
+      title: 'Cyber Resilience',
       linksite: '10guards.com',
       desc: 'The development of technologies opens up new business opportunities, and also, new threats to your assets.',
       cardtype: 'Quiz', // todo lowercase
@@ -816,11 +1194,12 @@ function setCats(){
       slug: 'quizzes/cybersecurity',
       img: './assets/10guards.png',
       reward: 0.1,
+      link: `/quizzes/cHuEIjL3dsvNTVXNXa1Z`,
     });
 
     db.collection('cats/polls/common').doc('EhA5Mms18RSnxoJNQ1JX').set({
       type: 'term',
-      title: 'Common Polls',
+      title: 'Quizi.io\'s poll',
       linksite: 'quizi.io',
       desc: 'Discover answers to the most provocative question.',
       cardtype: 'Poll',
@@ -842,6 +1221,7 @@ function setCats(){
       btn: 'Take polls',
       slug: 'polls/movies',
       img: './assets/raters.png',
+      link: `/polls/ga2Y4kgp7kHOxu2IF4dl`,
       reward: 0.1,
     })
   }
@@ -887,10 +1267,24 @@ function setCatMenu(){
 
 
 
-// setPolls()
-// setQuizzes()
-// setQuizzes1()
+
+function withOutQuantity(obj){
+  
+  let copyObj = Object.assign(obj);
+  
+  delete copyObj.answers.l.quantity;
+  delete copyObj.answers.r.quantity;
+
+  return copyObj
+  
+}
+
+
+// setPolls();
+// setPolls1();
+// setQuizzes();
+// setQuizzes1();
+// setQuizzes2();
+// setCats();
+
 // setCatMenu();
-
-// setCats()
-
