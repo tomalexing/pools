@@ -28,14 +28,14 @@ export default class Cards {
   saveSlugsCardsInProcess = () => {
     let cards = this;
     when(() => !Auth.logging && !Auth.loadingUserData , () => {
-      loadFromStore('SlugsCardsInProcess').then(val => {
+      loadFromStore('cards').then(val => {
         let alreadyAdded = val.find(slug => slug == cards.cardSlug);
         if(!alreadyAdded){
-          val.push(cards.cardSlug);
-          saveToStore('SlugsCardsInProcess', val);
+          val.push({[cards.cardSlug]:{}});
+          saveToStore('cards', val);
         }
       }, _ => {
-        saveToStore('SlugsCardsInProcess', [cards.cardSlug]);
+        saveToStore('cards', [{[cards.cardSlug]:{}}]);
       }).catch( _ => {} );
     });
   }

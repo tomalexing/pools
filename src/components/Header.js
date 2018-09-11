@@ -12,6 +12,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
 import logo from './../assets/quiz-logo.png';
+import logo2x from './../assets/quiz-logo2x.png';
 import { NavLink } from './NavLink';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 
@@ -29,7 +30,7 @@ import Auth from "./../models/Auth";
 
 import Login from './Login';
 
-const isActive = (match, location,to) => {
+const isActive = (match, location, to) => {
     return ['/account','/history', '/dashboard'].some(str => location.pathname.includes(str) )
 }
 
@@ -240,7 +241,7 @@ class Header extends React.Component {
         <Login open={this.open} logout={this.getLogOut} close={this.closeLoginModal}/>
         <Toolbar  className={classes.header}>
             <a href="/">
-                <img className={classes.logo} src={logo} />
+                <img className={classes.logo} srcSet={`${logo2x} 2x, ${logo} 1x`} src={logo} />
             </a>
             {  /* Desktop menu */ }
 
@@ -313,7 +314,7 @@ class Header extends React.Component {
 
             
             <ul className={classes.menu}>
-                    <NavLink tabIndex='1' to={'/explore'} className={classes.menuBtnSpacings} >
+                    <NavLink tabIndex='1' to={'/categories'} className={classes.menuBtnSpacings} >
                         <MenuItem selected={false}>
                             <Typography variant="button" >
                                 Explore

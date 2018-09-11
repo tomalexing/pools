@@ -518,8 +518,8 @@ class Card extends React.Component {
                         
                     </div>
 
-                    { card.cardType == 'poll' && <Poll passRef={this.getRef} store={this.props.store} poll={card} next={this.next} prev={this.prev} finish={this.finish}/> }
-                    { card.cardType == 'quiz' && <Quiz store={this.props.store} Quiz={card} next={this.next} prev={this.prev} finish={this.finish} currentIsEnd={this.props.store.currentIsEnd} /> }
+                    { card.cardType == 'poll' && <Poll passRef={this.getRef} store={this.props.store} poll={card} next={this.next} prev={this.prev} finish={this.finish} embed={this.props.store.embed}/> }
+                    { card.cardType == 'quiz' && <Quiz store={this.props.store} Quiz={card} next={this.next} prev={this.prev} finish={this.finish} currentIsEnd={this.props.store.currentIsEnd} embed={this.props.store.embed}/> }
                 </div>
             </div>
         )

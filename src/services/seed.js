@@ -347,7 +347,7 @@ const polls1 = [{
           "value" : "George Lucas"
         }
       },
-      "question" : "Movies of which directors do you prefer?",
+      "question" : "Movies of which director do you prefer?",
        "cardType": "poll",
        "order" : 9,
        "id": 'maxVwpqlPnUhq82bSdMI'
@@ -365,7 +365,7 @@ const polls1 = [{
           "value" : "Pretty Woman"
         }
       },
-      "question" : "Which \"modern Cinderella\" is more interesting?",
+      "question" : "Which \"modern Cinderella\" story is more interesting?",
        "cardType": "poll",
        "order" : 10,
        "id": 'fJhE0Xnk5trn3uqb6i5a'
@@ -1109,11 +1109,12 @@ async function setPolls1(){
     dashTitle: 'Raters app',
     reward: 0.1,
     cat: 'Polls',
-    title: 'Poll',
-    linksite: 'quizi.io',
+    title: 'Raters App',
+    linksite: 'ratersapp.com',
     desc: 'Social platform where you can see what your friends are watching.',
     img: './assets/raters.png',
-    result: 'You answered {{number}} of 10 polls.'
+    result: 'You answered {{number}} of 10 polls.',
+    appleStore: 'https://itunes.apple.com/us/app/raters-movie-lovers-network/id1258540735?mt=8'
   });
 
   for(let i = 0; i < polls1.length; i++){
@@ -1131,7 +1132,7 @@ async function setPolls1(){
 function setCats(){
   console.log("Add categories.");
 
-    db.collection('cats').doc('polls').set({
+    db.collection('categories').doc('polls').set({
       type: 'cat',
       title: 'Poll',
       slug: 'polls',
@@ -1143,7 +1144,7 @@ function setCats(){
       collections: ['common','movies'] 
     })
     
-    db.collection('cats').doc('quizzes').set({
+    db.collection('categories').doc('quizzes').set({
       type: 'cat',
       title: 'Quizzes',
       slug: 'quizzes',
@@ -1155,7 +1156,7 @@ function setCats(){
       collections: ['iq','blockchain', 'cybersecurity']
     })
     
-    db.collection('cats/quizzes/iq').doc('WZ3b7uZkzkxopoMGKDwT').set({
+    db.collection('categories/quizzes/iq').doc('WZ3b7uZkzkxopoMGKDwT').set({
         type: 'term',
         title: 'IQ test',
         linksite: 'quizi.io',
@@ -1169,7 +1170,7 @@ function setCats(){
         reward: 0.1,
       });
     
-    db.collection('cats/quizzes/blockchain').doc('Pu7JCX43tfzoigRFJrQM').set({
+    db.collection('categories/quizzes/blockchain').doc('Pu7JCX43tfzoigRFJrQM').set({
       type: 'term',
       title: 'Impleum Platform',
       linksite: 'impleum.com',
@@ -1183,7 +1184,7 @@ function setCats(){
       link: `/quizzes/OMx1k83U7LcZwlvZs9Aw`,
     });
     
-    db.collection('cats/quizzes/cybersecurity').doc('k2JfLJQZYkFBlwrhIXHI').set({
+    db.collection('categories/quizzes/cybersecurity').doc('k2JfLJQZYkFBlwrhIXHI').set({
       type: 'term',
       title: 'Cyber Resilience',
       linksite: '10guards.com',
@@ -1197,7 +1198,7 @@ function setCats(){
       link: `/quizzes/cHuEIjL3dsvNTVXNXa1Z`,
     });
 
-    db.collection('cats/polls/common').doc('EhA5Mms18RSnxoJNQ1JX').set({
+    db.collection('categories/polls/common').doc('EhA5Mms18RSnxoJNQ1JX').set({
       type: 'term',
       title: 'Quizi.io\'s poll',
       linksite: 'quizi.io',
@@ -1211,7 +1212,7 @@ function setCats(){
       reward: 0.1,
     })
 
-    db.collection('cats/polls/movies').doc('oTFTncqMYa315ydrQUCD').set({
+    db.collection('categories/polls/movies').doc('oTFTncqMYa315ydrQUCD').set({
       type: 'term',
       title: 'Raters App',
       linksite: 'ratersapp.com',

@@ -15,6 +15,8 @@ import CardsModel from './../models/Cards'
 import Api from './../services/Api';
 import { getlocalDBBtoa, clearLocalDB } from "./../services/localDb";
 
+import googlePlay from './../assets/GooglePlay.png';
+import appleStore from './../assets/AppleStore.png';
 
 const styles = theme => ({
     header:{
@@ -206,6 +208,15 @@ const styles = theme => ({
         color: '#506980',
         paddingLeft: 15
     },
+
+    store: {
+        width: '42%',
+        display: 'block',
+        marginTop: '10px',
+        '& img':{
+            width: '100%'
+        }
+    }
 })
 
 @withStyles(styles)
@@ -224,6 +235,7 @@ class ResultCard extends React.Component {
     @action.bound
     loadFinal = () => {
         let that = this;
+
         Api.getAdditionlCardInfo(this.props.cardSlug).then(info => {
             return CardsModel.allProgress(this.props.cardSlug).then(progress => {
                 that.finalCard = {progress, info};
@@ -300,8 +312,10 @@ class ResultCard extends React.Component {
                                         {!this.props.embed && 
                                         <div>
                                             <span style={{margin:"0 20px"}}>or</span>
-                                            <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/cats'} > View more
-                                            </Link>
+                                            { this.finalCard.info.cat == 'Polls' && <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/categories/polls'} > View more polls
+                                            </Link>}
+                                            { this.finalCard.info.cat == 'Quizzes' && <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/categories/quizzes'} > View more quizzes
+                                            </Link>}
                                         </div>
                                         }
                                     </div>
@@ -316,6 +330,8 @@ class ResultCard extends React.Component {
                                     <div>
                                         <Typography variant="body1" dangerouslySetInnerHTML={{__html: parseMustache(this.finalCard.info.result, {[ this.finalCard.info.dashOutput ]: this.finalCard.progress[this.finalCard.info.dashOutput]}) }} >
                                         </Typography>
+
+                                        { this.finalCard.info.appleStore &&  <a className={classes.store} target="_blank" href={this.finalCard.info.appleStore}><img src={appleStore}/></a>}
                                     </div>
                                     <div className={classes.share}> 
                                         {!this.isLiked &&
@@ -344,13 +360,12 @@ class ResultCard extends React.Component {
                                         <Button className={classes.resBtn} variant="raised" color="secondary"  side="small" onClick={this.openLoginModal}>Withdraw
                                         </Button>
                                     </div> }
-                                    { Auth.isAuthenticated && !this.props.embed && <div className={classes.col}>
-                                       
+                                    { Auth.isAuthenticated && !this.props.embed && <div className={classes.col}> 
                                         <Link style={{textDecoration: 'none'}} to="/dashboard/account"><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Withdraw</Button></Link>
                                     </div> }
 
                                     {this.props.embed && <div className={classes.col}>
-                                        <a href={`${window.location.origin}/dashboard/account${this.backup ? `?backup=${this.backup}` : ''}`} target="_blank" style={{textDecoration: 'none'}} ><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >dashboard</Button></a>
+                                        <a href={`${window.location.origin}/dashboard/account${this.backup ? `?backup=${this.backup}` : ''}`} target="_blank" style={{textDecoration: 'none'}} ><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Dashboard</Button></a>
                                     </div> }
                                 </div>
                             </div>

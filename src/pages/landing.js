@@ -74,6 +74,7 @@ import Oval3 from './../assets/landing/Oval3.png'
 import Oval32x from './../assets/landing/Oval3@2x.png'
 
 import logo from './../assets/quiz-logo.png';
+import logo2x from './../assets/quiz-logo2x.png';
 
 import {
 FacebookIcon,
@@ -91,6 +92,8 @@ MailruIcon,
 EmailIcon,
 LivejournalIcon,
 } from 'react-share';
+
+import InstaIcon from './../assets/insta.svg'
 
 const styles = theme => ({
   
@@ -190,7 +193,7 @@ const styles = theme => ({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 10
+        zIndex: 9
     },
 
     zIndex10: {
@@ -323,6 +326,7 @@ const styles = theme => ({
     // 2 Slides
 
     exploreImg:{
+        position: 'relative',
         boxShadow: '0px 12px 120px rgba(206, 0, 0, 0.2)',
         transition: 'box-shadow 0.5s cubic-bezier(.38,-0.3,.41,1.83), transform 0.5s cubic-bezier(.38,-0.3,.41,1.83)',
         transform: 'scale(1) translateZ(0)',
@@ -332,10 +336,9 @@ const styles = theme => ({
         backfaceVisibility: 'hidden',
         width: 200,
         height: 307,
-        '-webkit-font-smoothing': 'subpixel-antialiased',
         '&:hover':{
             boxShadow: '0 12px 120px 20px rgba(206, 0, 0, .2)',
-            transform: 'scale(1.2) translateZ(0)'
+            transform: 'scale(1.5) translateZ(0)'
         },
     },
 
@@ -599,6 +602,11 @@ const styles = theme => ({
 
     footerIcon: {
         margin: 15,
+        width: '30px',
+        '& img': {
+            width: '100%',
+            verticalAlign: 'middle'
+        },
        // filter: 'grayscale(100%)'
         '& path': {
             fill:  '#474E65'
@@ -630,7 +638,8 @@ class Landing extends React.Component {
 
     componentDidMount(){
         if(window.innerWidth > 768){
-            window.Pace.on('done', this.animateOval)
+            window.Pace.once('done', this.animateOval)
+
             this.initParallax();
         }
 
@@ -649,11 +658,12 @@ class Landing extends React.Component {
 
     @action.bound
     animateOval = _  => {
+
         if(this.i > 3) return
         setTimeout(_ => {
             this[`oval${this.i++}`] = true; 
             this.animateOval()
-        } , 1500/this.i)
+        } , 1500/ this.i)
     }
 
     @action.bound
@@ -805,7 +815,7 @@ class Landing extends React.Component {
     render() {
         const { classes } = this.props;
         if(Auth.isAuthenticated){
-            return <Redirect to={'/explore'}/>
+            return <Redirect to={'/categories'}/>
         }
         
         return (
@@ -813,8 +823,8 @@ class Landing extends React.Component {
             <div className={classes.topSlide}>
 
                 <div className={classes.slideBgD}><img  className={classes.img} srcSet={`${main2x} 2x, ${main} 1x`} src={main} alt="Quizi" /></div>
-                <div className={cx(classes.slideBgP)}><img  className={classes.img} srcSet={`${mainP2x} 2x, ${mainP} 1x`} src={mainP} alt="Quizi" /></div>
-                <div className={cx(classes.slideBgM)}><img  className={classes.img} srcSet={`${mainM2x} 2x, ${mainM} 1x`} src={mainM} alt="Quizi" /></div>
+                <div className={cx(classes.slideBgP)}><img className={classes.img} srcSet={`${mainP2x} 2x, ${mainP} 1x`} src={mainP} alt="Quizi" /></div>
+                <div className={cx(classes.slideBgM)}><img className={classes.img} srcSet={`${mainM2x} 2x, ${mainM} 1x`} src={mainM} alt="Quizi" /></div>
                 <div className={classes.ovalContainer}>
                     <svg width="156px" height="300px" viewBox="0 0 156 300" version="1.1" xmlns="http://www.w3.org/2000/svg" >
 
@@ -839,7 +849,7 @@ class Landing extends React.Component {
                         <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                             <h1 className={classes.topheader}>Quizi.io</h1>
                             <p className={classes.topdescription}>Quizi is a powerful marketing tool. It is a service of convenient and informative quizzes and polls.</p>
-                            <Button variant="raised" className={classes.exploreTopBtn} href={'/explore'}>Explore</Button> 
+                            <Button variant="raised" className={classes.exploreTopBtn} href={'/categories'}>Explore</Button> 
                         </Grid>
                 
                     </Grid>
@@ -852,22 +862,96 @@ class Landing extends React.Component {
                 <div className={classes.slideInto}>
                     <div className={classes.space120} />
                     <Grid container className={classes.root} spacing={40}>
-                        <Grid item xs={12} sm={4} className={cx(classes.center, classes.toRight)}>
-                            <Link style={{textDecoration: 'none'}} to={'/cats/quizzes'}> 
+                        <Grid item xs={12} sm={4} className={cx(classes.center, classes.toRight, classes.zIndex10)}>
+                            <Link style={{textDecoration: 'none'}} to={'/categories/quizzes'}> 
                                 <div className={classes.center}>
-                                    <img  className={classes.exploreImg} srcSet={`${explorer_1_dark2x} 2x, ${explorer_1_dark2x} 1x`} src={explorer_1_dark2x} alt="explorer_1" />
+                                    <svg className={classes.exploreImg}  viewBox="0 0 300 460" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+                                        <defs>
+                                            <rect id="path-1" x="0" y="0" width="240" height="150" rx="8"></rect>
+                                            <filter x="-12.9%" y="-19.3%" width="125.8%" height="141.3%" filterUnits="objectBoundingBox" id="filter-2">
+                                                <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+                                                <feGaussianBlur stdDeviation="10" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+                                                <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+                                            </filter>
+                                        </defs>
+                                        <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+                                            <g>
+                                                <rect fill="#FFFFFF" x="0" y="0" width="300" height="460" rx="8"></rect>
+                                                <path d="M0,7.99464702 C0,3.57932539 3.57813388,0 8.0049239,0 L291.995076,0 C296.416073,0 300,3.57762838 300,7.99464702 L300,200 L0,200 L0,7.99464702 Z" id="BG-Card" fill="#FC3868"></path>
+                                                <g  transform="translate(30.000000, 25.000000)">
+                                                    <g>
+                                                        <use fill="black" fillOpacity="1" filter="url(#filter-2)" xlinkHref="#path-1"></use>
+                                                        <use fill="#FFFFFF" fillRule="evenodd" xlinkHref="#path-1"></use>
+                                                    </g>
+                                                    <rect fill="#474E65" x="20" y="20" width="200" height="12" rx="6"></rect>
+                                                    <rect fill="#474E65" x="20" y="42" width="170" height="12" rx="6"></rect>
+                                                    <rect fill="#BCC2D9" x="20" y="84" width="40" height="12" rx="6"></rect>
+                                                    <rect fill="#BCC2D9" x="20" y="107" width="40" height="12" rx="6"></rect>
+                                                    <rect fill="#34E8C0" x="120" y="84" width="40" height="12" rx="6"></rect>
+                                                    <rect fill="#BCC2D9" x="120" y="107" width="40" height="12" rx="6"></rect>
+                                                </g>
+                                                <path d="M133,272 L167,272" id="Line" stroke="#474E65" strokeWidth="2" strokeLinecap="square"></path>
+                                                <text id="Quizes" fontFamily="Montserrat-Bold, Montserrat" fontSize="22" fontWeight="bold" letterSpacing="1" fill="#474E65">
+                                                    <tspan x="109.55" y="249">Quizes</tspan>
+                                                </text>
+                                                <text id="On-this-page,-you-wi" fontFamily="OpenSans, Open Sans" fontSize="18" fontWeight="normal" fill="#474E65">
+                                                    <tspan x="42.1098633" y="312">On this page, you will find </tspan>
+                                                    <tspan x="48.5610352" y="336">different online tests for </tspan>
+                                                    <tspan x="107.794922" y="360">you to try.</tspan>
+                                                </text>
+                                                <g id="BN_Follow-Copy-18" transform="translate(88.000000, 393.000000)">
+                                                    <path d="M1,18 C1,27.3902508 8.61045613,35 18.0001623,35 L109.999838,35 C119.391021,35 127,27.3900723 127,18 C127,8.60974918 119.389544,1 109.999838,1 L18.0001623,1 C8.60897872,1 1,8.60992771 1,18 Z" id="BG" stroke="#FC3868" strokeWidth="2" fill="#FC3868"></path>
+                                                    <text id="Choose-test" fontFamily="Montserrat-Bold, Montserrat" fontSize="14" fontWeight="bold" letterSpacing="0.875" fill="#FFFFFF">
+                                                        <tspan x="16.6275" y="22">Choose test</tspan>
+                                                    </text>
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </svg>
                                 </div>
                             </Link>
                         </Grid>
                         <Grid item xs={12} sm={4} className={classes.center}>
                             <h2 className={classes.header}>Quizzes or Polls</h2>
                             <p className={cx(classes.description, classes.textCenter)}>Different online tests for you to try or discover answers to the most provocative questions.</p>
-                            <Button variant="raised" color="secondary" className={classes.btn} onClick={this.openLoginModal}>Explore</Button> 
+                            <Button variant="raised" color="secondary"  className={classes.btn} href={'/categories'}>Explore</Button> 
                         </Grid>
-                        <Grid item xs={12} sm={4} className={cx(classes.center, classes.toLeft)}>
-                            <Link style={{textDecoration: 'none'}} to={'/cats/polls'}> 
+                        <Grid item xs={12} sm={4} className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
+                            <Link style={{textDecoration: 'none'}} to={'/categories/polls'}> 
                                 <div className={classes.center}>
-                                    <img  className={classes.exploreImg} srcSet={`${explorer_2_dark2x} 2x, ${explorer_2_dark2x} 1x`} src={explorer_2_dark2x} alt="explorer_2" />
+                                <svg className={classes.exploreImg} width="300px" height="460px" viewBox="0 0 300 460" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+                                        <g  stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+                                            <g >
+                                                <rect fill="#FFFFFF" x="0" y="0" width="300" height="460" rx="8"></rect>
+                                                <path d="M0,7.99464702 C0,3.57932539 3.57813388,0 8.0049239,0 L291.995076,0 C296.416073,0 300,3.57762838 300,7.99464702 L300,200 L0,200 L0,7.99464702 Z" id="BG-Card" fill="#FC3868"></path>
+                                                <g transform="translate(30.000000, 25.000000)">
+                                                    <g>
+                                                        <use fill="black" fillOpacity="1" filter="url(#filter-2)" xlinkHref="#path-1"></use>
+                                                        <use fill="#FFFFFF" fillRule="evenodd" xlinkHref="#path-1"></use>
+                                                    </g>
+                                                    <rect id="Rectangle-7" fill="#BCC2D9" x="20" y="40" width="90" height="70" rx="8"></rect>
+                                                    <rect id="Rectangle-7-Copy" fill="#BCC2D9" x="130" y="40" width="90" height="70" rx="8"></rect>
+                                                    <rect id="Rectangle-6" fill="#474E65" x="20" y="20" width="200" height="12" rx="6"></rect>
+                                                    <rect id="Rectangle-6-Copy-4" fill="#FC3868" x="180" y="118" width="40" height="13" rx="6.5"></rect>
+                                                </g>
+                                                <path d="M133,272 L167,272" id="Line" stroke="#474E65" strokeWidth="2" strokeLinecap="square"></path>
+                                                <text id="Polls" fontFamily="Montserrat-Bold, Montserrat" fontSize="22" fontWeight="bold" letterSpacing="1" fill="#474E65">
+                                                    <tspan x="121.347" y="249">Polls</tspan>
+                                                </text>
+                                                <text fontFamily="OpenSans, Open Sans" fontSize="18" fontWeight="normal" fill="#474E65">
+                                                    <tspan x="49.8793945" y="312">Discover answers to the </tspan>
+                                                    <tspan x="77.8725586" y="336">most provocative </tspan>
+                                                    <tspan x="110.80957" y="360">question.</tspan>
+                                                </text>
+                                                <g transform="translate(88.000000, 393.000000)">
+                                                    <path d="M1,18 C1,27.3902508 8.61045613,35 18.0001623,35 L109.999838,35 C119.391021,35 127,27.3900723 127,18 C127,8.60974918 119.389544,1 109.999838,1 L18.0001623,1 C8.60897872,1 1,8.60992771 1,18 Z" id="BG" stroke="#FC3868" strokeWidth="2" fill="#FC3868"></path>
+                                                    <text id="Discover" fontFamily="Montserrat-Bold, Montserrat" fontSize="14" fontWeight="bold" letterSpacing="0.875" fill="#FFFFFF">
+                                                        <tspan x="29.7" y="22">Discover</tspan>
+                                                    </text>
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </svg>
                                 </div>
                             </Link>
                         </Grid>
@@ -906,7 +990,7 @@ class Landing extends React.Component {
                         <Grid item xs={12} sm={3}  className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
                             <h2 className={classes.header}>More than…</h2>
                             <p className={classes.description}>Solving tests and answering questionnaires  and get reward in cryptocurrency</p>
-                            <Button variant="raised" color="secondary"  className={classes.btn}  href={'/explore'}>Explore</Button> 
+                            <Button variant="raised" color="secondary"  className={classes.btn}  href={'/categories'}>Explore</Button> 
                         </Grid>
                 
                     </Grid>
@@ -923,7 +1007,7 @@ class Landing extends React.Component {
                             <div className={cx(classes.centerOnMobile)} >
                                 <h2 className={classes.header}>Easy control</h2>
                                 <p className={classes.description}>Useful dashboard allows you to control  rewards and make fast withdraw.</p>
-                                <Button variant="raised" color="secondary"  className={classes.btn}  href={'/explore'}>Explore</Button> 
+                                <Button variant="raised" color="secondary"  className={classes.btn}  href={'/categories'}>Explore</Button> 
                             </div>
                         </Grid>
                         
@@ -1091,7 +1175,7 @@ class Landing extends React.Component {
 
                         <Grid item xs={12} sm={1} className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
                             <a href="/">
-                                <img className={classes.logo} src={logo} />
+                                <img className={classes.logo} srcSet={`${logo2x} 2x, ${logo} 1x`} src={logo} />
                             </a>
                         </Grid>
 
@@ -1100,28 +1184,28 @@ class Landing extends React.Component {
                                 <NavLink tabIndex='1' to={'/term-of-use'} className={classes.footerMenuLink} >
                                     <MenuItem selected={false} className={classes.footerMenuItem}>
                                         <Typography variant="display1" >
-                                            Features
+                                            Terms of Use
                                         </Typography>
                                     </MenuItem>
                                 </NavLink>
-                                <NavLink tabIndex='1' to={'/term-of-use'} className={classes.footerMenuLink} >
+                                <NavLink tabIndex='1' to={'/privacy-policy'} className={classes.footerMenuLink} >
                                     <MenuItem selected={false} className={classes.footerMenuItem}>
                                         <Typography variant="display1" >
-                                            Tesms of services  
+                                            Privacy policy  
                                         </Typography>
                                         </MenuItem>
                                 </NavLink> 
-                                <NavLink tabIndex='1' to={'/term-of-use'} className={classes.footerMenuLink} >
+                                <NavLink tabIndex='1' to={'/create'} className={classes.footerMenuLink} >
                                     <MenuItem selected={false} className={classes.footerMenuItem}>
                                         <Typography variant="display1" >
-                                            Privacy Policy  
+                                            Create  
                                         </Typography>
                                         </MenuItem>
                                 </NavLink> 
-                                <NavLink tabIndex='1' to={'/term-of-use'} className={classes.footerMenuLink} >
+                                <NavLink tabIndex='1' to={'/contact'} className={classes.footerMenuLink} >
                                     <MenuItem selected={false} className={classes.footerMenuItem}>
                                         <Typography variant="display1" >
-                                            Contacts  
+                                            Contact us  
                                         </Typography>
                                         </MenuItem>
                                 </NavLink>  
@@ -1130,21 +1214,10 @@ class Landing extends React.Component {
 
                         <Grid item xs={12} sm={3} className={cx(classes.center, classes.toRight, classes.zIndex10)}>
                             <div className={cx(classes.footerMenu, classes.footerMenuInlineOnMobile)}> 
-                                <a target="_blank" className={cx(classes.footerIcon)} href="/"> 
-                                    <TelegramIcon
-                                    size={36}
-                                    round />
+                                <a target="_blank" className={cx(classes.footerIcon)} href="https://www.instagram.com/quizi.io/"> 
+                                    <img  src={InstaIcon} />
                                 </a>
-                                <a target="_blank" className={cx(classes.footerIcon)} href="/"> 
-                                    <TwitterIcon
-                                    size={36}
-                                    round />
-                                 </a>
-                                <a target="_blank" className={cx(classes.footerIcon)} href="/"> 
-                                    <FacebookIcon
-                                    size={36}
-                                    round />
-                                 </a>
+                                
                             </div>
                         </Grid>
                         

@@ -35,7 +35,6 @@ export default class Poll{
 
   setProgress = _ => {
     let card = this;
-
     return loadFromStore(card.id).then(_ => {}, _ => {
       loadFromStore(card.slug).then((val) => {
           val.Progress.number = val.Progress.number + 1;

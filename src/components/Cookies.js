@@ -76,8 +76,9 @@ class Cookies extends React.Component {
     
     let that = this;
     when(() => !Auth.loadingUserData , () => {
-        loadFromStore('cookies').then(_ => {
-            that.isCookiesSet = true;
+        loadFromStore('meta').then( meta => {
+            if( meta.cookies == true )
+                that.isCookiesSet = true;
         }, _ => {
             that.isCookiesSet = false;
             when(() => that.refs.body ,  async () => {
@@ -124,9 +125,16 @@ class Cookies extends React.Component {
 
   saveIt = () => {
     let that = this;
-    saveToStore('cookies', true)
+    loadFromStore('meta').then( meta => {
+        meta.cookies = true;
+        saveToStore('meta', meta)
+            .then(Api.saveUserData)
+            .then(that.close)
+    }, _ => {
+        saveToStore('meta', {cookies: true})
         .then(Api.saveUserData)
         .then(that.close)
+    });
   }
 
   render() {

@@ -205,6 +205,7 @@ const styles = theme => ({
         opacity: 0
     },
     footer:{
+        position: 'relative',
         backgroundColor: 'white',
         padding: '10px 30px 30px',
         display: 'flex',
@@ -237,7 +238,16 @@ const styles = theme => ({
     },
     leftIcon:{},
     rightIcon:{},
-    space:{}
+    space:{},
+    powered: {
+        position: 'absolute',
+        bottom: '12px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        textDecoration: 'none',
+        color: '#474e65',
+        fontSize: '12px'
+    }
     
 })
 
@@ -651,6 +661,8 @@ class Poll extends React.Component {
                         Finish 
                         <Icon className={classes.rightIcon}>done</Icon>
                     </Button>}
+
+                    {this.props.embed && <a className={classes.powered} href="https://quizi.io">Powered by Quizi.io</a>} 
             </div>]
 
         )

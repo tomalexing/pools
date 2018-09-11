@@ -302,6 +302,9 @@ class Explore extends React.Component {
     render() {
         
         let {classes} = this.props, that = this;
+
+        let locationStrip = window.location.pathname.endsWith('/') ? window.location.pathname.substring(0, window.location.pathname.length - 1) : window.location.pathname;
+
         return (
             <div className={classes.catsWraper}>
                 <aside className={cn(classes.catsMenu, {[`${classes.catsMenuOpen}`]: this.openMenu})}>
@@ -317,7 +320,7 @@ class Explore extends React.Component {
                     {this.Cards.map((card, idx) => (<div key={`cats-${idx}`} className={classes.card}>
                         <header className={classes.header}>
 
-                            { card.link && <Link style={{textDecoration: 'none'}} to={card.link.startsWith('/') ?  card.link : window.location.pathname + '/' + card.link}>   {!card.img && card.cardtype == 'Poll' && <LazyImage className={classes.image} load={'./assets/polls.png'}/>}
+                            { card.link && <Link style={{textDecoration: 'none'}} to={card.link.startsWith('/') ?  card.link : locationStrip + '/' + card.link}>   {!card.img && card.cardtype == 'Poll' && <LazyImage className={classes.image} load={'./assets/polls.png'}/>}
                                 {!card.img && card.cardtype == 'Quiz' && <LazyImage className={classes.image} load={'./assets/quiz.png'}/>}
                                 {card.img && <LazyImage className={classes.image} load={card.img}/>}
                             </Link> }
@@ -341,7 +344,7 @@ class Explore extends React.Component {
                                 {card.number && <Typography variant="display1" className={classes.number}>{card.number} cards</Typography>}
                                 {card.number && <Typography variant="display1" className={classes.reward}>up to {roundeWithDec(card.reward * card.number)} {Api.getCoinName()}</Typography>}
                             
-                               { card.link && <Link className={classes.btnlink} to={card.link.startsWith('/') ?  card.link : window.location.pathname + '/' + card.link }><Button className={classes.btn} variant="raised" color="secondary" side="small" >{card.btn}</Button></Link>}
+                               { card.link && <Link className={classes.btnlink} to={card.link.startsWith('/') ? card.link : locationStrip + '/' + card.link }><Button className={classes.btn} variant="raised" color="secondary" side="small" >{card.btn}</Button></Link>}
                                { !card.link && <div className={classes.btnlink} ><Button  to={card.link} className={classes.btn} variant="raised" disabled color="secondary" side="small" >Coming Soon</Button></div>}
                             </div>
                         </article>

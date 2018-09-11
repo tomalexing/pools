@@ -111,6 +111,18 @@ const styles = theme => ({
     divider: {
         width: 0
     },
+    poweredWrapped: {
+        display: 'flex',
+        justifyContent: 'flex-end'
+    },
+    powered: {
+        position: 'relative',
+        textAlign: 'right',
+        display: 'block',
+        textDecoration: 'none',
+        color: '#474e65',
+        fontSize: '12px'
+    }
 })
 
 @withStyles(styles)
@@ -335,6 +347,7 @@ class Quiz extends React.Component {
                         }) }
                     </RadioGroup>
                 </div>
+                {this.props.embed && <div className={classes.poweredWrapped}> <a className={classes.powered} href="https://quizi.io">Powered by Quizi.io</a></div>} 
             </div>
         </div>
         )

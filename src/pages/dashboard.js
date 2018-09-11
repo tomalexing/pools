@@ -412,32 +412,31 @@ class Common extends React.Component{
         let that = this;
         when(() => !Auth.logging && !Auth.loadingUserData , () => {
             
-            loadFromStore('SlugsCardsInProcess').then(slugs => {
+            loadFromStore('cards').then(slugs => {
             
                 Promise.all(slugs.map(slug => {
                         return CardsModel.allProgress(slug).then((progress , idx) => {
                             Object.assign(that.cardsInProcessAndFinished, {[slug]:{progress:progress}})
                         });
                     })
-                ).then(_ => {
+                ).then( _ => {
                     return Promise.all( slugs.map(slug => {
                         return Api.getAdditionlCardInfo(slug).then(info => {
-                            if(!info || !info.cat) return
-                            that.catsAvailable.add(info.cat);
+                                if(!info || !info.cat) return
 
-                            Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{info:info},{slug: slug})})
-                            
-
-                            return CardsModel.isLiked(slug);
-
+                                that.catsAvailable.add(info.cat);
+                                Object.assign(that.cardsInProcessAndFinished, {[slug]: Object.assign({},that.cardsInProcessAndFinished[slug],{info:info},{slug: slug})})
+                                
+                                return CardsModel.isLiked(slug);
                             }).then(isLiked => {
-
-                                Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{isLiked: isLiked})})
+                                Object.assign(that.cardsInProcessAndFinished, {[slug]: Object.assign({},that.cardsInProcessAndFinished[slug],{isLiked: isLiked})})
                             })
                     }))
-                }).then(_ => {
+                }).then( _ => {
+
                     that.forceUpdate();
-                    that.totalIMP = Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? Math.min(prog['progress'].number, prog['info'].allCardsNumber) * prog['info'].reward : 0,0)
+                    that.totalIMP = Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? Math.min(( prog['progress'].number ), prog['info'].allCardsNumber) * prog['info'].reward : 0,0);
+               
                 })
             }, _ => {
                 that.loaded = true;
@@ -465,8 +464,8 @@ class Common extends React.Component{
                 return <div key={`${cat}`} className={classes.catWrapper}>
                     <Typography variant="display4" className={classes.catTitle}>{cat}:</Typography>
                     <div className={classes.cardWrapper} >
-                        { Object.values(that.cardsInProcessAndFinished).filter(o => o['info'] && o['info'].cat == cat).map(({progress, info, slug, isLiked}, idx) => {
-                                return  info ? (<div key={`card-${idx}`} className={classes.card}>
+                        { that.cardsInProcessAndFinished && Object.values(that.cardsInProcessAndFinished).filter(o => o['info'] && o['info'].cat == cat).map(({progress, info, slug, isLiked}, idx) => {
+                            return  info ? (<div key={`card-${idx}`} className={classes.card}>
                                         <div ref='header' className={classes.header}>
                                             <Link style={{textDecoration: 'none'}} to={slug.replace('/v1','')} >
                                                 <Tooltip  title={info.dashTitle} placement="top">
@@ -787,7 +786,7 @@ class Account extends React.Component{
         when(() => !Auth.logging && !Auth.loadingUserData , async () => {
 
             this.calculatingProgress = true;
-            await loadFromStore('SlugsCardsInProcess').then(slugs => {
+            await loadFromStore('cards').then(slugs => {
             
                 Promise.all(slugs.map(slug => {
                         return CardsModel.allProgress(slug).then((progress, idx) => {
@@ -812,7 +811,7 @@ class Account extends React.Component{
                 .then( _ => {
                     return Api.getWithdrawn(Auth.uid)
                 }).then( amountWithdrawn => {
-                    that.totalIMP = Math.max(0, Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? Math.min(prog['progress'].number, prog['info'].allCardsNumber) * prog['info'].reward + (prog['isLiked'] ? .5000 : 0) : 0, -amountWithdrawn)) 
+                    that.totalIMP = Math.max(0, Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? Math.min(( prog['progress'].number ), prog['info'].allCardsNumber) * prog['info'].reward + (prog['isLiked'] ? .5000 : 0) : 0, -amountWithdrawn)) 
                 })
 
             }, _ => {})

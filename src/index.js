@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 import registerServiceWorker from './registerServiceWorker';
+import './intersection-observer';
 
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -311,7 +312,7 @@ render(<Router>
                     
                     <Route path={'/subscribe'} location={location} key={getUniqueKey()} component={() => <App nofooter={true} fullscreen={true} ><Subscribe /></App>}/>
 
-                    <Route path={'/cats'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><Cats match={{ params: { slug: '/' }, url: "" }} /></App>}/>
+                    <Route path={'/categories'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><Cats match={{ params: { slug: '/' }, url: "" }} /></App>}/>
 
                     <Route path={'/contact'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><Contact /></App>}/>
 
