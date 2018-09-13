@@ -119,13 +119,13 @@ class Explore extends React.Component {
     @observable explore = [{
         title: 'Quizzes',
         description: 'On this page, you will find different online tests for you to try.',
-        to:'/cats/quizzes',
+        to:'/categories/quizzes',
         btn: 'Choose test',
         img: quizzesSVG
     },{
         title: 'Polls',
         description: 'Discover answers to the most provocative question.',
-        to:'/cats/polls',
+        to:'/categories/polls',
         btn: 'Discover',
         img: pollsSVG
     }]

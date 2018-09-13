@@ -17,6 +17,7 @@ import { getlocalDBBtoa, clearLocalDB } from "./../services/localDb";
 
 import googlePlay from './../assets/GooglePlay.png';
 import appleStore from './../assets/AppleStore.png';
+import appleStore2x from './../assets/AppleStore@2x.png';
 
 const styles = theme => ({
     header:{
@@ -131,7 +132,7 @@ const styles = theme => ({
 
     btnsRow:{
         display: 'flex',
-        alignItems: 'baseline'
+        alignItems: 'center'
     },
 
     btnResultSmaller:{
@@ -140,7 +141,8 @@ const styles = theme => ({
         borderColor: '#fc3868',
         color: '#fc3868',
         fontWeight: 700,
-        textDecoration: 'none'
+        textDecoration: 'none',
+        lineHeight: 1
     },
 
 
@@ -309,14 +311,14 @@ class ResultCard extends React.Component {
                                     <div className={classes.btnsRow}>
                                         <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small" onClick={this.again} >Take again
                                         </Button>
+                                        {!this.props.embed && <Typography variant="body1" style={{margin:"0 20px"}}>or</Typography> }
                                         {!this.props.embed && 
-                                        <div>
-                                            <span style={{margin:"0 20px"}}>or</span>
-                                            { this.finalCard.info.cat == 'Polls' && <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/categories/polls'} > View more polls
-                                            </Link>}
-                                            { this.finalCard.info.cat == 'Quizzes' && <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/categories/quizzes'} > View more quizzes
-                                            </Link>}
-                                        </div>
+                                            <div>
+                                                { this.finalCard.info.cat == 'Polls' && <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/categories/polls'} > View more polls
+                                                </Link>}
+                                                { this.finalCard.info.cat == 'Quizzes' && <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/categories/quizzes'} > View more quizzes
+                                                </Link>}
+                                            </div>
                                         }
                                     </div>
                                 </div>
@@ -331,7 +333,7 @@ class ResultCard extends React.Component {
                                         <Typography variant="body1" dangerouslySetInnerHTML={{__html: parseMustache(this.finalCard.info.result, {[ this.finalCard.info.dashOutput ]: this.finalCard.progress[this.finalCard.info.dashOutput]}) }} >
                                         </Typography>
 
-                                        { this.finalCard.info.appleStore &&  <a className={classes.store} target="_blank" href={this.finalCard.info.appleStore}><img src={appleStore}/></a>}
+                                        { this.finalCard.info.appleStore &&  <a className={classes.store} target="_blank" href={this.finalCard.info.appleStore}><img srcSet={`${appleStore2x} 2x, ${appleStore} 1x`} src={appleStore}/></a>}
                                     </div>
                                     <div className={classes.share}> 
                                         {!this.isLiked &&

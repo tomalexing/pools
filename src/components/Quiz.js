@@ -253,7 +253,7 @@ class Quiz extends React.Component {
         this.picking = true;
         this.props.Quiz.selectedValue = idx;
         
-        await this.props.Quiz.setProgress();
+        await this.props.Quiz.setProgress(idx);
 
         await wait(300);
         this.props.Quiz.showCorrectAnswer = true;
@@ -347,7 +347,7 @@ class Quiz extends React.Component {
                         }) }
                     </RadioGroup>
                 </div>
-                {this.props.embed && <div className={classes.poweredWrapped}> <a className={classes.powered} href="https://quizi.io">Powered by Quizi.io</a></div>} 
+                {this.props.embed && <div className={classes.poweredWrapped}> <a target="_blank" className={classes.powered} href="https://quizi.io">Powered by Quizi.io</a></div>} 
             </div>
         </div>
         )

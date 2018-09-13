@@ -8,6 +8,7 @@ export default class Card {
     }
 
     async retrieveCard(id, number){
+    
         let card = await Api.getCard(this.slug, id); 
         if(card.cardType == 'quiz')
             this.card = new Quiz(card, number, this.slug)

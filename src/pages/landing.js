@@ -568,7 +568,10 @@ const styles = theme => ({
     },
 
     // Footer
-
+    logo:{
+        width: 'auto',
+        height: '38px'
+    },
     slideFooter:{
         position: 'relative',
         padding: '15px',

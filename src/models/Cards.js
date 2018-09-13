@@ -28,14 +28,21 @@ export default class Cards {
   saveSlugsCardsInProcess = () => {
     let cards = this;
     when(() => !Auth.logging && !Auth.loadingUserData , () => {
-      loadFromStore('cards').then(val => {
-        let alreadyAdded = val.find(slug => slug == cards.cardSlug);
-        if(!alreadyAdded){
-          val.push({[cards.cardSlug]:{}});
-          saveToStore('cards', val);
+      loadFromStore('commonSlugs').then(val => {
+        if(!val[cards.cardSlug]){
+          val[cards.cardSlug] = {
+            current: 0,
+            Progress: cards.Progress,
+            cards: {}
+          };
+          saveToStore('commonSlugs', val);
         }
       }, _ => {
-        saveToStore('cards', [{[cards.cardSlug]:{}}]);
+        saveToStore('commonSlugs', {[cards.cardSlug]: {
+          current: 0,
+          Progress: cards.Progress,
+          cards: {}
+        }});
       }).catch( _ => {} );
     });
   }
@@ -161,36 +168,35 @@ export default class Cards {
   }
 
   clearProgress(){
+
     let cards = this;
     for (let [key, card] of this.cardsModel) {
       if(this.tryAgainIsCleanPrevious){
         card.selectedValue = null;
         card.showCorrectAnswer = false;
       }
-      
     }
 
-    loadFromStore(cards.cardSlug).then(val => {
+    loadFromStore('commonSlugs').then(cardsStore => {
+      
+        let val = cardsStore[cards.cardSlug];
 
-        if(!val.Progress) return
-
-        val.Progress.final = false;
         cards.IsEnd = false;
 
-        if(this.tryAgainIsCleanPrevious)
-          val.Progress.number = 0;
-
-        saveToStore(cards.cardSlug, {
+        if(!val.Progress) return;
+        cardsStore[cards.cardSlug] =  Object.assign(val, {
             current: 0,
-            Progress: val.Progress
-          }).then( _ => Api.saveUserData())
+            Progress: Object.assign(val.Progress,{
+              number: cards.tryAgainIsCleanPrevious ? 0 : val.Progress.number,
+              final: false
+            })
+        }, cards.tryAgainIsCleanPrevious ? {
+          cards: {}
+        } : {})
+        
+        saveToStore('commonSlugs', cardsStore).then( _ => Api.saveUserData())
 
-    }, _ => {
-          saveToStore(cards.cardSlug, {
-            current: 0,
-            Progress: cards.Progress
-          }).then( _ => Api.saveUserData())
-        }).catch( _ => {} );
+    }).catch( _ => {});
   }
 
   @computed
@@ -218,23 +224,23 @@ export default class Cards {
   saveFinalCard(){
       let cards = this;
       let isEnd = cards.IsEnd;
-      loadFromStore(cards.cardSlug).then(val => {
+      loadFromStore('commonSlugs').then(cardsStore => {
+
+        let val = cardsStore[cards.cardSlug];
+
           if(!val.Progress)
             val.Progress = {};
 
           val.Progress.final = true;
           cards.Progress.final = true;
-          saveToStore(cards.cardSlug, {
+
+          cardsStore[cards.cardSlug] =  Object.assign(val, {
             current: cards.allCardsNumber - 1,
             Progress: val.Progress
-          }).then(_=> Api.saveUserData().then(_ => Promise.resolve(true)));
-        }, _ => {
-            saveToStore(cards.cardSlug, {
-              current: cards.current,
-              Progress: cards.Progress
-            }).then(_=>{
-              Api.saveUserData().then(_ => Promise.resolve(true))
-            })
+          })
+
+          saveToStore('commonSlugs', cardsStore).then( _ => Api.saveUserData().then(_ => Promise.resolve(true)))
+
         }).catch( _ => {} );
   }
 
@@ -242,43 +248,58 @@ export default class Cards {
   // actually only current saved here
   save(){
     let cards = this;
-    loadFromStore(cards.cardSlug).then(val => {
-      val.current = cards.current
-      saveToStore(cards.cardSlug, val)
-        .then(_=> Api.saveUserData().then(_ => Promise.resolve(true)))
-    }, _ => {
-        saveToStore(cards.cardSlug, {
-          current: cards.current,
-          Progress: cards.Progress
-        }).then( _ => Api.saveUserData().then(_ => Promise.resolve(true)))
-    }).catch( _ => {} );
+    loadFromStore('commonSlugs').then(cardsStore => {
+      let val = cardsStore[cards.cardSlug];
+
+      cardsStore[cards.cardSlug] =  Object.assign(val, {
+        current: cards.current,
+      })
+
+      saveToStore('commonSlugs', cardsStore).then( _ => Api.saveUserData().then(_ => Promise.resolve(true)))
+
+    }).catch( _ => {});
   }
 
   @action.bound
   load = _ => {
-    let that = this;
-    return loadFromStore(this.cardSlug).then((val) => {
+    let cards = this;
+    return loadFromStore('commonSlugs').then(cardsStore => {
+        let val = cardsStore[cards.cardSlug];
+
         let current = val.current;
-        that.current = current || 0;
-        that.next = current + 1 || 1;
-        that.Progress = val.Progress;
-        that.IsEnd = val.Progress ? val.Progress.final : false;
+        cards.current = current || 0;
+        cards.next = current + 1 || 1;
+        cards.Progress = val.Progress;
+        cards.IsEnd = val.Progress ? val.Progress.final : false;
         return current
-      }).catch( _ => {} );
+      }, _ => {
+        return 0
+      }
+    ).catch( _ => {} );
   }
 
   static saveLike(cardSlug){ // Todo: fallback
-    return loadFromStore(cardSlug).then(cardSlugData => {
+    let cards = this;
+
+    return loadFromStore('commonSlugs').then(cardsStore => {
+      let cardSlugData = cardsStore[cards.cardSlug];
+
       if(cardSlugData.liked) return Promise.resolve(true);
-      cardSlugData.liked = true;
-      return saveToStore(cardSlug, cardSlugData).then( _ => {
-        Api.saveUserData().then(_ => Promise.resolve(true))
+
+      cardsStore[cards.cardSlug] =  Object.assign(cardSlugData, {
+        liked: true,
       })
+
+      return saveToStore('commonSlugs', cardsStore).then( _ => Api.saveUserData().then(_ => Promise.resolve(true)))
     }).catch( _ => {} );
   }
 
   static isLiked(cardSlug){ // Todo: fallback
-    return loadFromStore(cardSlug).then(cardSlugData => {
+    let cards = this;
+
+    return loadFromStore('commonSlugs').then(cardsStore => {
+      let cardSlugData = cardsStore[cards.cardSlug];
+
       if(cardSlugData.liked) return Promise.resolve(true);
       else return Promise.resolve(false);
     }, ()=> {
@@ -287,7 +308,7 @@ export default class Cards {
   }
     
   static allProgress(cardSlug){
-      return loadFromStore(cardSlug).then(val => val, () => {
+      return loadFromStore('commonSlugs').then(cardsStore => cardsStore[cardSlug] , () => {
         // Api.loadUserData({forceLoad: true}).then(data => {
         //     if( ! data[cardSlug] ) return Promise.resolve({number:0, iqValue: 0});
         //     let reload = prompt('Error has happened. Reload page?', 'yes');

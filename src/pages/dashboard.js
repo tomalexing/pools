@@ -43,6 +43,7 @@ import IMP from './../assets/IMP.svg';
 
 import info from './../assets/info.svg';
 
+import Explore  from './Explore.js';
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
   (!redirect
@@ -162,10 +163,9 @@ class Dashboard extends React.Component {
 
     componentWillMount(){
         let that = this;
-
-        let open = loadFromStore('userOpenMenu').then(val => {
+        loadFromStore('meta').then(meta => {
             if(that.mounted)
-                that.setState({open: val});
+                that.setState({open: meta.userOpenMenu});
         }, _ => {})
 
     }
@@ -181,7 +181,11 @@ class Dashboard extends React.Component {
 
       
     toogle = () => {
-        this.setState({ open: !this.state.open }, _ => saveToStore('userOpenMenu', this.state.open))
+        this.setState({ open: !this.state.open }, _ =>   
+            loadFromStore('meta').then( meta => { 
+                        saveToStore('meta', Object.assign(meta, {userOpenMenu: this.state.open}))
+                    }).then(Api.saveUserData)
+                )
     };
 
     render() {
@@ -298,6 +302,68 @@ const stylesCommon = theme => ({
             marginRight: 0
         }
     },
+
+    createCard:{
+        height: '294px',
+        width: '284px',
+        zIndex: '100',
+        position: 'relative',
+        marginBottom: 40,
+        marginRight: 40,
+        marginLeft: 5,
+        borderRadius: '8px',
+        overflow: 'hidden',
+        backgroundColor: '#b1b4bd',
+        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
+        '@media (max-width: 600px)':{
+            marginRight: 0
+        }
+    },
+
+    createLink:{
+        display: 'block',
+        borderRadius: '50%',
+        overflow: 'hidden',
+        backgroundColor: '#d8d9dd',
+        height: '100px',
+        width: '100px',
+        margin: '70px auto 33px',
+        position: 'relative',
+        transition: 'boxShadow .5s',
+        '&:hover': {
+            boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.1)',
+        },
+        '&:before': {
+            content: '\'\'',
+            position: 'absolute',
+            left: '20px',
+            top: '50%',
+            width: '60px',
+            height: '5px',
+            borderRadius: '14px',
+            overflow: 'hidden',
+            backgroundColor: '#506880',   
+            transform: 'translateY(-50%)' 
+        },
+
+        '&:after':{
+            content: '\'\'',
+            position: 'absolute',
+            left: '50%',
+            top: '20px',
+            height: '60px',
+            width: '5px',
+            borderRadius: '14px',
+            overflow: 'hidden',
+            backgroundColor: '#506880',   
+            transform: 'translateX(-50%)' 
+        }
+    },
+
+    createTitle: {
+        textAlign: 'center'
+    },
+
     header:{
         color: 'white',
         background: '#FC3868',
@@ -338,6 +404,12 @@ const stylesCommon = theme => ({
             flex: '1 0 66%'
         }
     },
+
+    space:{
+        height: 40,
+        minWidth: '210px',
+    },
+
     progressBar:{
         marginTop: 20,
         marginBottom: 20,
@@ -412,15 +484,15 @@ class Common extends React.Component{
         let that = this;
         when(() => !Auth.logging && !Auth.loadingUserData , () => {
             
-            loadFromStore('cards').then(slugs => {
-            
-                Promise.all(slugs.map(slug => {
+            loadFromStore('commonSlugs').then(slugs => {
+                
+                Promise.all(Object.entries(slugs).map(([slug, _ ]) => {
                         return CardsModel.allProgress(slug).then((progress , idx) => {
                             Object.assign(that.cardsInProcessAndFinished, {[slug]:{progress:progress}})
                         });
                     })
                 ).then( _ => {
-                    return Promise.all( slugs.map(slug => {
+                    return Promise.all( Object.entries(slugs).map(([slug, _]) => {
                         return Api.getAdditionlCardInfo(slug).then(info => {
                                 if(!info || !info.cat) return
 
@@ -458,9 +530,10 @@ class Common extends React.Component{
             <div className={classes.cardWrapper} >
             {Array.from(this.catsAvailable).length == 0 && this.loaded && <div>
                 <Typography variant="display4" className={classes.catTitle}>You don't finish anything yet.</Typography>
+                <Explore/>
                 </div>}
             {Array.from(this.catsAvailable).length == 0 && !this.loaded && <CircularProgress color="secondary" />}
-            { Array.from(this.catsAvailable).map(cat => {
+            { Array.from(this.catsAvailable).map((cat, idx) => {
                 return <div key={`${cat}`} className={classes.catWrapper}>
                     <Typography variant="display4" className={classes.catTitle}>{cat}:</Typography>
                     <div className={classes.cardWrapper} >
@@ -480,13 +553,16 @@ class Common extends React.Component{
                                         </div>
                                         <div className={classes.cardBodyResult}>
                                             {info && info.allCardsNumber > 0  &&  <Typography variant="display2" className={classes.noWrap}>
-                                                {info.dashOutput === 'number' && `${Math.floor( progress[info.dashOutput] * 100/ info.allCardsNumber)}%` /* Bad Design */}
+                                                {info.cat == 'Polls' && info.dashOutput === 'number' && `${Math.floor( progress[info.dashOutput] * 100/ info.allCardsNumber)}%` /* Bad Design */ }
                 
+                                                {info.cat == 'Quizzes' && info.dashOutput === 'number' && `${progress[info.dashOutput]} / ${info.allCardsNumber}` }
+
                                                 {info.dashOutput === 'iqValue' && `${Math.floor(progress[info.dashOutput] )}`}
                                             </Typography>}
-                                            { progress && <div className={classes.progressBar}>
+                                            { info.cat == 'Polls' && progress && <div className={classes.progressBar}>
                                             <div style={{width: `${progress.number * 100/ info.allCardsNumber}%`}} className={classes.progress}></div>
                                             </div>}
+                                            { info.cat == 'Quizzes' && <div className={classes.space}></div>}
                                             <div className={classes.share}>
                                                 {!isLiked &&
                                                 <Typography variant="body1" gutterBottom className={classes.resHeader}>
@@ -501,6 +577,12 @@ class Common extends React.Component{
                                         </div>
                                     </div>) : <div key={`common-${idx}`} />
                             }) }
+                            <div key={`create-${idx}`} className={classes.createCard}>
+                                <Link className={classes.createLink} to='/contact'></Link>
+                                <Typography gutterBottom variant="body1" className={classes.createTitle}>
+                                    Create your own {cat.toLowerCase()}
+                                </Typography>
+                            </div>
                         </div>
                     </div>
                 })
@@ -786,15 +868,15 @@ class Account extends React.Component{
         when(() => !Auth.logging && !Auth.loadingUserData , async () => {
 
             this.calculatingProgress = true;
-            await loadFromStore('cards').then(slugs => {
+            await loadFromStore('commonSlugs').then(slugs => {
             
-                Promise.all(slugs.map(slug => {
+                Promise.all(Object.entries(slugs).map(([slug, _ ]) => {
                         return CardsModel.allProgress(slug).then((progress, idx) => {
                             Object.assign(that.cardsInProcessAndFinished, {[slug]:{progress:progress}})
                         });
                     })
                 ).then(_ => {
-                    return Promise.all( slugs.map(slug => {
+                    return Promise.all( Object.entries(slugs).map(([slug, _ ]) => {
                         return Api.getAdditionlCardInfo(slug).then(info => {
                             if(!info || !info.reward) return
                             Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{info:info})})
@@ -1071,7 +1153,8 @@ const stylesHistory = theme => ({
         marginRight: 40,
         borderRadius: '8px',
         overflow: 'hidden',
-        maxWidth: '690px',
+        maxWidth: '100%',
+        width: 'auto',
         height: '100%',
         boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
         '@media (max-width: 600px)':{
@@ -1087,11 +1170,12 @@ const stylesHistory = theme => ({
         height: 40,
         alignItems: 'center',
         justifyContent: 'center',
+        overflow: 'hidden',
         '& $delimeter': {
             background: 'rgba(0, 0, 0, 0.1)',
-            height: '100%',
+            height: '100px',
             width: 1,
-            marginLeft: 'auto'
+            margin: '-50px 0'
         },
         '& $impNum':{
             padding: '0 10px'
@@ -1101,7 +1185,7 @@ const stylesHistory = theme => ({
     impNum:{},
 
     cardBodyResult: {
-        padding: '23px 30px',
+        padding: '23px 0px',
         backgroundColor: 'white',
         overflow: 'hidden'
     },
@@ -1110,6 +1194,7 @@ const stylesHistory = theme => ({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'flex-start',
+        padding: '0 30px',
         '&:nth-of-type(2)': {
             marginTop: 20
         }
@@ -1122,6 +1207,7 @@ const stylesHistory = theme => ({
             flex: '1 0 66%'
         }
     },
+
     col:{
         display: 'flex',
         justifyContent: 'center',
@@ -1130,20 +1216,25 @@ const stylesHistory = theme => ({
         width: 200,
         height: 33,
     },
+
     btnResult: {
         marginTop: 30,
         borderRadius: 74
     },
+
     title: {
         padding: '0 30px',
     },
+
     column:{
         flexDirection: 'column',
         alignItems: 'center'
     },
+
     headerResult: {
         paddingBottom: '1rem'
     },
+
     noWrap:{
         whiteSpace: 'nowrap',
         textAlign: 'center'
@@ -1152,8 +1243,8 @@ const stylesHistory = theme => ({
     history:{
         display: 'flex',
         flexDirection: 'column',
-        marginBottom: 22
     },
+
     historyPic:{
         width: 80,
         height: '100%',
@@ -1165,25 +1256,30 @@ const stylesHistory = theme => ({
             height: 'auto',
         }
     },
+
     historyDetails:{
         display: 'flex',
         flexDirection: 'column',
         marginLeft: 20, 
     },
+
     historyName:{
         fontSize: 16,
         fontWeight: 600
     },
+
     historyEmail:{
         fontSize: 14,
         fontWeight: 400
     },
+
     historyImp:{
         marginLeft: 'auto',
         flexWrap: 'nowrap',
         display: 'flex',
         alignItems: 'baseline'
     },
+
     historyImpVal:{
         textTransform: 'uppercase',
         fontSize: 60,
@@ -1191,12 +1287,14 @@ const stylesHistory = theme => ({
         letterSpacing: -1,
         color: '#506980'
     },
+    
     historyImpAddon:{
         textTransform: 'uppercase',
         fontweight: 400,
         color: '#506980',
         paddingLeft: 15
     },
+
     walletSetWrapper:{
         display: 'flex',
         flexDirection: 'row',
@@ -1207,22 +1305,27 @@ const stylesHistory = theme => ({
         width: 480,
         marginBottom: 7,
         marginTop: 29
-
     },
+
     walletSet:{
         width: 'calc(100% - 65px)',
         display: 'inline-block',
     },
+    
     divider: {
+        margin: '15px 30px',
         backgroundColor: "#bbc2d8"
     },
+
     headerField:{
         margin: '20px 0 12px',
         fontSize: 16,
     },
+
     bold:{
         fontWeight: 600
     },
+
     formInput:{
         width: '100%',
         '&:after, &:hover:before': {
@@ -1272,7 +1375,7 @@ const stylesHistory = theme => ({
         verticalAlign: 'middle',
         lineHeight: '100%',
         fontSize: 30,
-        color: '#FC3868'
+        color: '#4b5168'
     }
 
 })
@@ -1304,43 +1407,39 @@ class History extends React.Component{
 
             <div className={classes.card}>
                 <div ref='header' className={classes.header}>
-                    <Typography variant="display1" className={classes.title}>
-                        History
-                    </Typography>
-                    <span className={classes.delimeter}></span>
-
+                    <div className={classes.row}>
+                        <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
+                            <Typography  align="left" variant="display1" className={classes.bold}>
+                                    Wallet
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+                        <div className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                    Amount, {Api.getCoinName()}
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+                        <div style={{width: '250px'}} className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                    Date
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+                        <div style={{width: '150px'}} className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                    Explorer
+                            </Typography>
+                        </div>
+                    </div>
                 </div>
                 <div className={classes.cardBodyResult}>
                     <div className={classes.history}>
-                        <div className={classes.row}>
-                            <div className={classes.col}>
-                                <Typography  variant="body1" className={classes.bold} gutterBottom>
-                                        Wallet
-                                </Typography>
-                            </div>
-                            <div className={classes.col}>
-                                <Typography variant="body1" className={classes.bold} gutterBottom>
-                                        Amount, {Api.getCoinName()}
-                                </Typography>
-                            </div>
-                            <div className={classes.col}>
-                                <Typography variant="body1" className={classes.bold} gutterBottom>
-                                        Date
-                                </Typography>
-                            </div>
-                            <div style={{width: '50px'}} className={classes.col}>
-                                <Typography variant="body1" className={classes.bold} gutterBottom>
-                                        Explorer
-                                </Typography>
-                            </div>
-                            </div>
-                            
-                            <Divider className={classes.divider} />
+                        
+                            {this.histories.map((history, idx, histories) => {
+                                return [<div key={`history-${idx}`} className={classes.row}>
 
-                            {this.histories.map((history, idx) => (
-                                <div key={`history-${idx}`} className={classes.row}>
-
-                                    <div className={classes.col}>
+                                    <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
                                         <Tooltip  title={history.wallet} placement="top">
                                             <Typography className={classes.short} variant="body1" gutterBottom>
                                                     {history.wallet}
@@ -1354,21 +1453,23 @@ class History extends React.Component{
                                         </Typography>
                                     </div>
 
-                                    <div className={classes.col}>
+                                    <div style={{width: '250px'}} className={classes.col}>
                                         <Typography variant="body1" gutterBottom>
                                                 {(new Date(history.date)).getDate()} {getMonthName((new Date(history.date)).getMonth())}, {(new Date(history.date)).getFullYear()}, {(new Date(history.date)).getHours()}: {(new Date(history.date)).getMinutes()}
                                         </Typography>
                                     </div>
 
-                                    <div style={{width: '50px'}} className={classes.col}>
+                                    <div style={{width: '150px'}} className={classes.col}>
                                         <Typography variant="body1" gutterBottom>
                                             { history.responce && <a href={`https://explorer.impleum.com/tx/${history.responce.transactionId}`}
                                                 target="_blank" className={classes.explorer}><Icon>link</Icon>
                                             </a>}
                                         </Typography>
                                     </div>
-                                </div>
-                            ))}
+                                </div>,
+                                histories.length - 1 !=  idx ? <Divider className={classes.divider} /> : <div key={`historydiv-${idx}`}/> ]
+                                }
+                            )}
                     </div>
 
                 </div>

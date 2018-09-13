@@ -33,16 +33,54 @@ export default class Poll{
      return 100 - this.leftPercentage;
   }
 
-  setProgress = _ => {
+  setProgress = async _ => {
     let card = this;
-    return loadFromStore(card.id).then(_ => {}, _ => {
-      loadFromStore(card.slug).then((val) => {
-          val.Progress.number = val.Progress.number + 1;
-          saveToStore(card.slug, val ).then(_ => Api.saveUserData() )
-        }, _ => {
-          saveToStore(card.slug, {current: card.number -1 , Progress:{number:1}}).then(_ => Api.saveUserData() )
-        }).catch( _ => {} );
+    return loadFromStore('commonSlugs').then(cardsStore => {
+
+        let val = cardsStore[card.slug];
+        
+        if(val.Progress){
+
+          cardsStore[card.slug] =  Object.assign(val, {
+            current: card.number - 1,
+            Progress: Object.assign(val.Progress, {number: val.cards[card.id] ? Object.values(val.cards).length : Object.values(val.cards).length + 1})
+          })
+          //return saveToStore('commonSlugs', cardsStore).then( _ => Api.saveUserData().then(_ => Promise.resolve(true)))
+          return cardsStore
+           
+
+        }else{
+
+          cardsStore[card.slug] =  Object.assign(val, {
+            current: card.number - 1,
+            Progress: {number: 1, final: false}
+          })
+          //return saveToStore('commonSlugs', cardsStore).then( _ => Api.saveUserData().then(_ => Promise.resolve(true)))
+          return cardsStore
+
+        }
     }).catch( _ => {} );
+
+  }
+
+  async saveUserVote(cardSlideId, side, cardsStore = null){
+    let card = this;
+
+    if(cardsStore) {
+      let val = cardsStore[card.slug];
+      cardsStore[card.slug] =  Object.assign(val, {
+        cards: Object.assign(val.cards || {}, {[cardSlideId]: side})
+      })
+      return saveToStore('commonSlugs', cardsStore).then( _ => Api.saveUserData().then(_ => Promise.resolve(true)))
+    }
+
+    return loadFromStore('commonSlugs').then(cardsStore => {
+      let val = cardsStore[card.slug];
+      cardsStore[card.slug] =  Object.assign(val, {
+        cards: Object.assign(val.cards || {}, {[cardSlideId]: side})
+      })
+      return saveToStore('commonSlugs', cardsStore).then( _ => Api.saveUserData().then(_ => Promise.resolve(true)))
+     })
 
   }
 
@@ -53,17 +91,17 @@ export default class Poll{
     this.answers.l.quantity = Math.max(0, this.answers.l.quantity);
     this.answers.r.quantity = Math.max(0, this.answers.r.quantity);
 
-    await this.setProgress().catch(_ => {});
+    let cardsStore = await this.setProgress().catch(_ => {});
 
     if(l > 0){
-      await saveToStore(this.id, 'left');
+      await this.saveUserVote(this.id, 'left', cardsStore)
     }
 
     if(r > 0){
-      await saveToStore(this.id, 'right');
+      await this.saveUserVote(this.id, 'right', cardsStore);
     }
-
-    await Api.changeScoresPolls(this.slug ,this.id, {l, r}).catch(_ => {});
+    // maybe await 
+    Api.changeScoresPolls(this.slug ,this.id, {l, r}).catch(_ => {});
 
     this.updating = false; 
     
@@ -78,9 +116,12 @@ export default class Poll{
   }
 
   getUserVote(){
-    return loadFromStore(this.id).then(
-      choosen => choosen, _ => this.vote = null
-    ).catch( _ => {} );
+    let card = this;
+
+    return loadFromStore('commonSlugs').then(cardsStore => {
+      let val = cardsStore[card.slug];
+      return val.cards ? val.cards[card.id] : this.vote = null
+     }).catch( _ => {});
   }
 
   @action

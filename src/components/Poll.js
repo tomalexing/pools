@@ -23,7 +23,7 @@ const styles = theme => ({
         overflow: 'hidden',
         '-webkit-overflow-scrolling': 'touch',
         '@media (max-width: 600px)':{
-            height: 'calc(100% - 55px)',
+            height: 'auto',
         }
   
     },
@@ -70,7 +70,7 @@ const styles = theme => ({
         },
         '@media (max-width: 600px)':{
                 width: '100%',
-                height: 150
+                height: 100,
         }
     },
     answerText: {
@@ -156,7 +156,10 @@ const styles = theme => ({
         width: '80%',
         height: '2px',
         margin: '12px auto 0',
-        background: 'hsla(0,0%,100%,.3)'
+        background: 'hsla(0,0%,100%,.3)',
+        '@media (max-width: 600px)':{
+            display: 'none'
+        }
     },
     progressBar:{
         position: 'absolute',
@@ -164,7 +167,8 @@ const styles = theme => ({
         top: '0',
         height: '2px',
         appearance: 'none',
-        background: 'hsla(0,0%,100%,.7)'
+        background: 'hsla(0,0%,100%,.7)',
+       
     },
     result:{
         textAlign: 'center',
@@ -172,20 +176,23 @@ const styles = theme => ({
         marginTop: '18px',
         fontSize: '18px',
         '@media (max-width: 600px)':{
-            marginTop: '10px'
+            position: 'absolute',
+            top: '-8px',
+            right: '30px',
+
         }
     },
     resultNum:{
         display: 'inline-block',
         font: 'normal 100 120px/.8 Montserrat',
         '@media (max-width: 600px)':{
-            fontSize: 42
+            font: 'normal 300 18px/.8 Montserrat'
         }
     },
     resultAddon:{
         font: 'normal 200 60px/.8 Montserrat',
         '@media (max-width: 600px)':{
-            fontSize: 34
+            font: 'normal 300 16px/.8 Montserrat'
         }
     },
     divider: {
@@ -217,11 +224,11 @@ const styles = theme => ({
             width: 30
         },
         '@media (max-width: 600px)':{
-            padding: '0px 30px 23px',
-            background: 'transparent',
-            position: 'absolute',
-            width: '100%',
-            bottom: 0
+            padding: '30px 30px 30px',
+            // background: 'transparent',
+            // position: 'absolute',
+            // width: '100%',
+            // bottom: 0
         }
     },
     footerBtn:{
@@ -403,6 +410,7 @@ class Poll extends React.Component {
             }
         }
 
+        this.props.store.currentCard.updating = true;
         this.picking = true;
         e.stopImmediatePropagation();
 
@@ -418,16 +426,15 @@ class Poll extends React.Component {
         this.refs[thisCard].style.left = `${eClientX - left}px`;
         
 
-         await requestAnimationFramePromise()
+        await requestAnimationFramePromise()
             .then(_ => requestAnimationFramePromise())
             .then(_ => {
                 that.refs[thisCard].style.transition = 'transform 1s ease-in-out';
                 that.refs[thisCard].style.transform = 'scale(300)';
+                that.props.poll.isInfoVisible = false;
                 return transitionEndPromise(that.refs[thisCard]);
             })
             .then(_ => that.updateScore(thisCardNumber))
-            .then(_ => requestAnimationFramePromise())
-            .then(_ => requestAnimationFramePromise())
             .then(_ => {
 
                 that.props.poll.isInfoVisible = true;
@@ -498,18 +505,22 @@ class Poll extends React.Component {
                     })
 
             })
+
+            this.props.store.currentCard.updating = false;
             this._dragging = false;
             this.picking = false;
 
        
     }
-
+    
+    @action.bound
     prev = e => { 
         this.refs.body.scrollTop = 0; 
         if(!this.props.store.currentCard.updating)
             this.props.prev(e) 
     }
-    
+
+    @action.bound
     next = e => { 
         this.refs.body.scrollTop = 0; 
         if(!this.props.store.currentCard.updating)
@@ -519,13 +530,12 @@ class Poll extends React.Component {
     finish = e => { this.props.finish(e) }
 
     @action.bound
-    updateScore(thisCardNumber){
+    async updateScore(thisCardNumber){
 
-        this.props.store.currentCard.updating = true;
 
         if(thisCardNumber == 1 && !this.props.store.currentCard.voteSetted){
             
-            this.props.store.currentCard.setUserVote({
+            await this.props.store.currentCard.setUserVote({
                 l: 1,
                 r: 0
             })
@@ -536,7 +546,7 @@ class Poll extends React.Component {
 
         if(thisCardNumber == 2 &&  !this.props.store.currentCard.voteSetted){
 
-            this.props.store.currentCard.setUserVote({
+            await this.props.store.currentCard.setUserVote({
                 l: 0,
                 r: 1               
            })
@@ -546,7 +556,7 @@ class Poll extends React.Component {
 
         if(thisCardNumber == 1 && this.props.store.currentCard.voteSetted == 'right'){
 
-            this.props.store.currentCard.setUserVote({
+            await this.props.store.currentCard.setUserVote({
                 l:  1,
                 r: -1 
             });
@@ -557,7 +567,7 @@ class Poll extends React.Component {
         
         if(thisCardNumber == 2 &&  this.props.store.currentCard.voteSetted == 'left'){
 
-            this.props.store.currentCard.setUserVote({
+            await this.props.store.currentCard.setUserVote({
                 l: -1,
                 r:  1,
             });
@@ -662,7 +672,7 @@ class Poll extends React.Component {
                         <Icon className={classes.rightIcon}>done</Icon>
                     </Button>}
 
-                    {this.props.embed && <a className={classes.powered} href="https://quizi.io">Powered by Quizi.io</a>} 
+                    {this.props.embed && <a target="_blank" className={classes.powered} href="https://quizi.io">Powered by Quizi.io</a>} 
             </div>]
 
         )

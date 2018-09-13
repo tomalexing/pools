@@ -42,6 +42,7 @@ class CardWrapper extends React.Component {
         }
         when(() => !Auth.logging && !Auth.loadingUserData , () => {
             this.props.store && this.props.store.load().then(current => {
+                
                 that.current = current + 1;
                 that.next = current + 2;
             })
@@ -68,7 +69,6 @@ class CardWrapper extends React.Component {
         if(!this.props.store || this.props.store.allCardsNumber == 0 ){
              return(<div/>)
         }
-
         return (
             <div className={classes.cardWrapper}>
                 <Card startCard={this.current} cardPlace='currentCard' store={this.props.store}/>

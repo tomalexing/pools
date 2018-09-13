@@ -216,7 +216,7 @@ class Card extends React.Component {
 
     @action.bound
     adjustStyle = () => {
-
+        
        let that = this;
        if(this.props.cardPlace == 'currentCard' && that.props.store.isStack){
            

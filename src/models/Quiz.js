@@ -28,22 +28,44 @@ export default class Quiz {
     this.ImageLoaded = true;
   }
 
-  setProgress(){
+  async setProgress(idx){
     let Quiz = this;
-    return loadFromStore(Quiz.slug).then((val) => {
-          if(Quiz.isCorrect)
-            val.Progress.number = val.Progress.number + 1;
-          // we need next card here current = (Quiz.number - 1) + 1
+    return loadFromStore('commonSlugs').then(cardsStore => {
 
-          saveToStore(Quiz.slug, val ).then(_ => Api.saveUserData());
-        }, _ => { 
+        let val = cardsStore[Quiz.slug];
+
+        if(val){
+
+            // we need next card here current = (Quiz.number - 1) + 1
+            cardsStore[Quiz.slug] =  Object.assign(val, {
+              Progress: Object.assign(val.Progress, { number: Quiz.isCorrect ? Object.values(val.cards).filter(v=>!!v.isCorrect).length + 1 : Object.values(val.cards).filter(v=>!!v.isCorrect).length }),
+              cards: Object.assign({}, val.cards, {[Quiz.id]: {isCorrect: Quiz.isCorrect, givenAnswer: idx + 1}}) 
+            })
+            
+            return saveToStore('commonSlugs', cardsStore).then( _ => Api.saveUserData())
+            
+        }else{
 
           if(Quiz.isCorrect){
-            saveToStore(Quiz.slug, {current:Quiz.number, Progress:{number:1}}).then(_ => Api.saveUserData());
+
+            cardsStore[Quiz.slug] =  Object.assign(val, {
+              current: Quiz.number,
+              Progress: Object.assign(val.Progress, {number: 1})
+            })
+            saveToStore('commonSlugs', cardsStore).then(_ => Api.saveUserData());
+
           }else{
-            saveToStore(Quiz.slug, {current:Quiz.number, Progress:{number:0}}).then(_ => Api.saveUserData());
+
+            cardsStore[Quiz.slug] =  Object.assign(val, {
+              current: Quiz.number,
+              Progress: Object.assign(val.Progress, {number: 0})
+            })
+
+            saveToStore('commonSlugs', cardsStore).then(_ => Api.saveUserData());
           }
-        }).catch( _ => {} );
+        }
+
+      }).catch( _ => {});
 
   }
 
