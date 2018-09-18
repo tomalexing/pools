@@ -224,6 +224,7 @@ const styles = theme => ({
     
 })
 
+
 Auth.init();
 
 @withRouter
@@ -320,7 +321,7 @@ render(<Router>
                     
                     <Route path={'/'} exact  key={getUniqueKey()} component={() =>  <App nofooter={true}  fullscreen={true}  landingscreen={true} ><Landing /></App>}/>
                     
-                    <PrivateRoute role={['user']} path={'/dashboard'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} nofooter={true}><Dashboard /></App>} />
+                    <PrivateRoute role={['user', 'admin', 'business']} path={'/dashboard'} location={location} key={getUniqueKey()} component={() => <App fullscreen={true} nofooter={true}><Dashboard /></App>} />
                     
                     <Route path={'*'}  key={getUniqueKey()} component={() => <App nofooter={true} fullscreen={true} ><NotFound/></App>}/>
                     </Switch>

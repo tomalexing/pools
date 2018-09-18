@@ -115,7 +115,7 @@ const styles = theme => ({
         },
 
         zIndex: 15,
-        background: 'rgba(252,56,104,.7)',
+        background: 'rgba(252,56,104,.9)',
         opacity: 1
     },
     infoVisible:{},
@@ -123,7 +123,7 @@ const styles = theme => ({
         display: 'block',
         position: 'absolute',
         zIndex: 10,
-        background: 'rgba(252, 56, 104, 0.7)',
+        background: 'rgba(252, 56, 104, 0.9)',
         transform: 'scale(0)',
         borderRadius: '100%',
         height: 2,
@@ -139,7 +139,7 @@ const styles = theme => ({
         top: '20px',
         left: '30px',
         '@media (max-width: 600px)':{
-            top: '6px',
+            top: '14px',
         }
     },
     votes:{
@@ -148,7 +148,7 @@ const styles = theme => ({
         font: 'normal 300 18px/1 Montserrat',
         margin: '20px 0 20px',
         '@media (max-width: 600px)':{
-            margin: '8px 0 8px',
+            margin: '18px 0 8px',
         }
     },
     progress:{
@@ -177,7 +177,7 @@ const styles = theme => ({
         fontSize: '18px',
         '@media (max-width: 600px)':{
             position: 'absolute',
-            top: '-8px',
+            top: '0px',
             right: '30px',
 
         }
@@ -199,7 +199,7 @@ const styles = theme => ({
         display: 'flex',
         flex: 1,
         width: 30,
-        height: 30
+        height: 20
     },
     questionsInner: {
         display: 'block',
@@ -224,7 +224,7 @@ const styles = theme => ({
             width: 30
         },
         '@media (max-width: 600px)':{
-            padding: '30px 30px 30px',
+            padding: '0px 30px 30px',
             // background: 'transparent',
             // position: 'absolute',
             // width: '100%',
@@ -339,7 +339,8 @@ class Poll extends React.Component {
         when(() => !this.props.store.currentCard.updating && !Auth.loadingUserData, () => {
 
             this.props.poll.getUserVote().then(choosen => {
-                if(choosen === 'right'){
+                
+                if(choosen && choosen.position  ? choosen.position === 'right' : choosen === 'right'){
                     that.props.poll.isInfoVisible = true;
                     when(() => that.getRefs, () => { // may cause flick when switch between pollzes/polls 
                         that.refs.check1.style.display = 'none';
@@ -350,7 +351,7 @@ class Poll extends React.Component {
                     that.props.poll.voteSetted = 'right';
 
                 }
-                if(choosen === 'left'){
+                if(choosen && choosen.position  ? choosen.position === 'left' : choosen === 'left'){
                     that.props.poll.isInfoVisible = true;
                     when(() => that.getRefs, () => {
                         that.refs.check1.style.display = 'none';

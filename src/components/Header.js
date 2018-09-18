@@ -299,7 +299,7 @@ class Header extends React.Component {
                     <NavLink tabIndex='1' to={'/contact'} className={classes.menuMobileLinkSpacings} >
                         <MenuItem selected={false} className={cx(classes.menuMobileItemSpacings, { [classes.removeBorder]: !Auth.isAuthenticated})} onClick={this.handleClose}>
                             <Typography variant="subheading" >
-                                Contant us
+                                Contact us
                             </Typography>
                             </MenuItem>
                     </NavLink>

@@ -306,7 +306,7 @@ class ResultCard extends React.Component {
                                 </div> 
                                 <div className={classes.col2}>
                                     <Typography variant="title" className={classes.resTitle}>{this.finalCard.info.title}</Typography>
-                                    <a className={classes.linksite} href={`http://${this.finalCard.info.linksite}`} target="_blank" ><Typography variant="display1" className={classes.linksite}>{this.finalCard.info.linksite}</Typography></a>
+                                    <a className={classes.linksite} onClick={Api.saveReferral('congratulations', this.props.cardSlug.substr(1), this.finalCard.info.id)} href={`http://${this.finalCard.info.linksite}`} target="_blank" ><Typography variant="display1" className={classes.linksite}>{this.finalCard.info.linksite}</Typography></a>
                                     <Typography variant="body1" className={classes.description}>{this.finalCard.info.desc}</Typography>
                                     <div className={classes.btnsRow}>
                                         <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small" onClick={this.again} >Take again
@@ -333,7 +333,7 @@ class ResultCard extends React.Component {
                                         <Typography variant="body1" dangerouslySetInnerHTML={{__html: parseMustache(this.finalCard.info.result, {[ this.finalCard.info.dashOutput ]: this.finalCard.progress[this.finalCard.info.dashOutput]}) }} >
                                         </Typography>
 
-                                        { this.finalCard.info.appleStore &&  <a className={classes.store} target="_blank" href={this.finalCard.info.appleStore}><img srcSet={`${appleStore2x} 2x, ${appleStore} 1x`} src={appleStore}/></a>}
+                                        { this.finalCard.info.appleStore &&  <a onClick={Api.saveReferral('appleStore', this.props.cardSlug.substr(1), this.finalCard.info.id)} className={classes.store} target="_blank" href={this.finalCard.info.appleStore}><img srcSet={`${appleStore2x} 2x, ${appleStore} 1x`} src={appleStore}/></a>}
                                     </div>
                                     <div className={classes.share}> 
                                         {!this.isLiked &&

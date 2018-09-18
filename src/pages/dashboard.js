@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {observable, action, when} from 'mobx';
 import { observer }  from 'mobx-react';
+import cx from 'classnames';
 
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuList from '@material-ui/core/MenuList';
@@ -158,25 +159,28 @@ class Dashboard extends React.Component {
 
 
     state= {
-        open: window.innerWidth > 600 
+        open: window.innerWidth > 600,
+        analytics: false
     }
 
-    componentWillMount(){
+    componentDidMount(){
+        this.mounted = true;
         let that = this;
+
         loadFromStore('meta').then(meta => {
             if(that.mounted)
                 that.setState({open: meta.userOpenMenu});
         }, _ => {})
 
-    }
-
-    componentDidMount(){
-        this.mounted = true
+        when(() => ['business', 'admin'].includes(Auth.role) , _ => {
+            if(that.mounted)
+                that.setState({analytics: true});
+        })
 
     }
 
     componentWillUnmount(){
-        this.mounted = false
+        this.mounted = false;
     }
 
       
@@ -191,6 +195,8 @@ class Dashboard extends React.Component {
     render() {
         
         let {classes} = this.props;
+
+        let {analytics} = this.state;
 
         return (
             <div className={classes.cardWrapper}>
@@ -214,20 +220,20 @@ class Dashboard extends React.Component {
                             </Typography>
                         </MenuItem>
                     </NavLink>
-                    <NavLink tabIndex='1' to={'/dashboard/account'} className={classes.link} >
-                        <MenuItem selected={/dashboard\/account/.test(this.props.location.pathname)} onClick={this.handleClose}>
+                    <NavLink tabIndex='1' to={'/dashboard/profile'} className={classes.link} >
+                        <MenuItem selected={/dashboard\/profile/.test(this.props.location.pathname)} onClick={this.handleClose}>
                             <ListItemIcon className={classes.icon}>
                                 <Icon  className={classes.mainMenuIcon} >account_box</Icon>
                             </ListItemIcon>
                             <Typography variant="display1" >
-                                Account
+                                Profile
                             </Typography>
                         </MenuItem>
                     </NavLink>
                     <NavLink tabIndex='1' to={'/dashboard/history'} className={classes.link} >
                         <MenuItem selected={/dashboard\/history/.test(this.props.location.pathname)} onClick={this.handleClose}>
                             <ListItemIcon className={classes.icon}>
-                                <Icon   className={classes.mainMenuIcon} >access_time</Icon>
+                                <Icon className={classes.mainMenuIcon} >access_time</Icon>
                             </ListItemIcon>
                             <Typography variant="display1" >
                                 History
@@ -235,6 +241,18 @@ class Dashboard extends React.Component {
                             
                         </MenuItem>
                     </NavLink>
+                    { analytics &&
+                        <NavLink tabIndex='1' to={'/dashboard/analytics'} className={classes.link} >
+                            <MenuItem selected={/dashboard\/analytics/.test(this.props.location.pathname)} onClick={this.handleClose}>
+                                <ListItemIcon className={classes.icon}>
+                                    <Icon className={classes.mainMenuIcon} >trending_up</Icon>
+                                </ListItemIcon>
+                                <Typography variant="display1" >
+                                    Analytics
+                                </Typography>
+                                
+                            </MenuItem>
+                        </NavLink>}
                 </MenuList>
                 <div className={classes.footer}>
 
@@ -261,9 +279,10 @@ class Dashboard extends React.Component {
             
             <div className={classes.mainArea}>
                 <Switch>
-                    <PrivateRoute role={['user']} exact path="/dashboard" component={Common} /> 
-                    <PrivateRoute role={['user']} path="/dashboard/account" component={Account} /> 
-                    <PrivateRoute role={['user']} path="/dashboard/history" component={History} />
+                    <PrivateRoute role={['user', 'business', 'admin']} exact path="/dashboard" component={Common} /> 
+                    <PrivateRoute role={['user', 'business', 'admin']} path="/dashboard/profile" component={Profile} /> 
+                    <PrivateRoute role={['user', 'business', 'admin']} path="/dashboard/history" component={History} />
+                    <PrivateRoute role={['business', 'admin']} path="/dashboard/analytics" component={Analytics} />
                 </Switch>
             </div>
             </div>
@@ -284,8 +303,26 @@ const stylesCommon = theme => ({
     catTitle: {
         fontWeight: 700,
         letterSpacing: 1,
-        paddingBottom: '20px'
+        opacity: .6,
+        transition: 'opacity .5s',        
+        '&.activeTab':{
+            opacity: 1,
+        },
+        '&:hover':{
+            opacity: .9
+        }
     },
+
+    catTitleBtn: {
+        padding: '10px 0px 30px 0 !important',
+        marginRight: '30px !important',
+        '& > span': {
+            display: 'flex',
+            justifyContent: 'flex-start'
+        } 
+    },
+
+    activeTab: {},
 
     card:{
         maxHeight: '100%',
@@ -475,6 +512,8 @@ class Common extends React.Component{
     @observable loaded = false;
     catsAvailable = new Set();
 
+    state = {'showTab-0': true};
+
     componentWillMount(){
         this.getProgress();
     }
@@ -521,6 +560,14 @@ class Common extends React.Component{
             })
         });
     }
+        
+    @action
+    changeTab = indexTab => _ => {
+
+        Object.keys(this.state).forEach(k => this.setState({[k]: false}))
+
+        this.setState({[`showTab-${indexTab}`]: true});
+    } 
 
     render(){
         let {classes} = this.props;
@@ -533,10 +580,15 @@ class Common extends React.Component{
                 <Explore/>
                 </div>}
             {Array.from(this.catsAvailable).length == 0 && !this.loaded && <CircularProgress color="secondary" />}
+
+            { Array.from(this.catsAvailable).map((cat, idx) => {
+                return <Button className={classes.catTitleBtn} color="primary" key={`${cat}Title`} onClick={that.changeTab(idx)} ><Typography variant="display4" className={cx(classes.catTitle, {'activeTab' :that.state[`showTab-${idx}`]})} >{cat}</Typography></Button>
+            })}
+
             { Array.from(this.catsAvailable).map((cat, idx) => {
                 return <div key={`${cat}`} className={classes.catWrapper}>
-                    <Typography variant="display4" className={classes.catTitle}>{cat}:</Typography>
-                    <div className={classes.cardWrapper} >
+                    { that.state[`showTab-${idx}`] &&
+                        <div className={classes.cardWrapper} >
                         { that.cardsInProcessAndFinished && Object.values(that.cardsInProcessAndFinished).filter(o => o['info'] && o['info'].cat == cat).map(({progress, info, slug, isLiked}, idx) => {
                             return  info ? (<div key={`card-${idx}`} className={classes.card}>
                                         <div ref='header' className={classes.header}>
@@ -583,15 +635,16 @@ class Common extends React.Component{
                                     Create your own {cat.toLowerCase()}
                                 </Typography>
                             </div>
-                        </div>
-                    </div>
+                        </div> 
+                    }
+                    </div> 
                 })
             }
             </div>
             )
     }
 }
-const stylesAccount = theme => ({
+const stylesProfile = theme => ({
 
     cardWrapper:{
         display: 'flex',
@@ -829,10 +882,10 @@ const stylesAccount = theme => ({
 
 })
 
-// Account
-@withStyles(stylesAccount)
+// Profile
+@withStyles(stylesProfile)
 @observer
-class Account extends React.Component{
+class Profile extends React.Component{
 
     constructor(props){
         super(props);
@@ -1097,7 +1150,7 @@ class Account extends React.Component{
                     {this.paying && <CircularProgress size={30} color="secondary"/>}
 
                     { this.enteder && <Button variant="raised" disabled={this.totalIMP <= 0} color="secondary" className={classes.submitBtn} onClick={this.payoff}>
-                        <Typography variant="button" >Payoff</Typography>
+                        <Typography variant="button" >Payout</Typography>
                     </Button>}
 
                     <a href="https://impleum.com/wallet/" target="_blank" className={classes.getIMP}>
@@ -1391,6 +1444,342 @@ class History extends React.Component{
     }
 
 
+
+    @observable histories = [];
+
+    @action.bound
+    getHistory = _ => {
+        Api.getHistory(Auth.uid, this.histories)
+    }
+
+    render(){
+        let {classes} = this.props;
+
+        return( 
+            <div className={classes.cardWrapper} >
+
+            <div className={classes.card}>
+                <div ref='header' className={classes.header}>
+                    <div className={classes.row}>
+                        <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
+                            <Typography  align="left" variant="display1" className={classes.bold}>
+                                    Wallet
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+                        <div className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                    Amount, {Api.getCoinName()}
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+                        <div style={{width: '250px'}} className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                    Date
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+                        <div style={{width: '150px'}} className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                    Explorer
+                            </Typography>
+                        </div>
+                    </div>
+                </div>
+                <div className={classes.cardBodyResult}>
+                    <div className={classes.history}>
+                        
+                            {this.histories.map((history, idx, histories) => {
+                                return [<div key={`history-${idx}`} className={classes.row}>
+
+                                    <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
+                                        <Tooltip  title={history.wallet} placement="top">
+                                            <Typography className={classes.short} variant="body1" gutterBottom>
+                                                    {history.wallet}
+                                            </Typography>
+                                        </Tooltip>
+                                    </div>
+
+                                    <div className={classes.col}>
+                                        <Typography variant="body1" gutterBottom>
+                                                {roundeWithDec(history.amount)}
+                                        </Typography>
+                                    </div>
+
+                                    <div style={{width: '250px'}} className={classes.col}>
+                                        <Typography variant="body1" gutterBottom>
+                                                {(new Date(history.date)).getDate()} {getMonthName((new Date(history.date)).getMonth())}, {(new Date(history.date)).getFullYear()}, {(new Date(history.date)).getHours()}: {(new Date(history.date)).getMinutes()}
+                                        </Typography>
+                                    </div>
+
+                                    <div style={{width: '150px'}} className={classes.col}>
+                                        <Typography variant="body1" gutterBottom>
+                                            { history.responce && <a href={`https://explorer.impleum.com/tx/${history.responce.transactionId}`}
+                                                target="_blank" className={classes.explorer}><Icon>link</Icon>
+                                            </a>}
+                                        </Typography>
+                                    </div>
+                                </div>,
+                                histories.length - 1 !=  idx ? <Divider className={classes.divider} /> : <div key={`historydiv-${idx}`}/> ]
+                                }
+                            )}
+                    </div>
+
+                </div>
+            </div>
+        </div>)
+    }
+}
+const stylesAnalytics = theme => ({
+
+    cardWrapper:{
+        display: 'flex',
+        flexWrap: 'wrap'
+    },
+    card:{
+        maxHeight: '100%',
+        zIndex: '100',
+        position: 'relative',
+        marginBottom: 40,
+        marginRight: 40,
+        borderRadius: '8px',
+        overflow: 'hidden',
+        maxWidth: '100%',
+        width: 'auto',
+        height: '100%',
+        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
+        '@media (max-width: 600px)':{
+            marginRight: 0,
+            minWidth: 690
+        }
+    },
+    header:{
+        color: 'white',
+        background: '#FC3868',
+        fontWeight: 100,
+        display: 'flex',
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        '& $delimeter': {
+            background: 'rgba(0, 0, 0, 0.1)',
+            height: '100px',
+            width: 1,
+            margin: '-50px 0'
+        },
+        '& $impNum':{
+            padding: '0 10px'
+        }
+    },
+    delimeter:{},
+    impNum:{},
+
+    cardBodyResult: {
+        padding: '23px 0px',
+        backgroundColor: 'white',
+        overflow: 'hidden'
+    },
+
+    row: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        padding: '0 30px',
+        '&:nth-of-type(2)': {
+            marginTop: 20
+        }
+    },
+
+    responseRow:{
+        '@media (max-width: 600px)':{
+            flexDirection: 'column',
+            alignItems: 'center',
+            flex: '1 0 66%'
+        }
+    },
+
+    col:{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        width: 200,
+        height: 33,
+    },
+
+    btnResult: {
+        marginTop: 30,
+        borderRadius: 74
+    },
+
+    title: {
+        padding: '0 30px',
+    },
+
+    column:{
+        flexDirection: 'column',
+        alignItems: 'center'
+    },
+
+    headerResult: {
+        paddingBottom: '1rem'
+    },
+
+    noWrap:{
+        whiteSpace: 'nowrap',
+        textAlign: 'center'
+    },
+
+    history:{
+        display: 'flex',
+        flexDirection: 'column',
+    },
+
+    historyPic:{
+        width: 80,
+        height: '100%',
+        objectFit: 'cover',
+        borderRadius: '50%',
+        overflow: 'hidden',
+        '& img': {
+            width: '100%',
+            height: 'auto',
+        }
+    },
+
+    historyDetails:{
+        display: 'flex',
+        flexDirection: 'column',
+        marginLeft: 20, 
+    },
+
+    historyName:{
+        fontSize: 16,
+        fontWeight: 600
+    },
+
+    historyEmail:{
+        fontSize: 14,
+        fontWeight: 400
+    },
+
+    historyImp:{
+        marginLeft: 'auto',
+        flexWrap: 'nowrap',
+        display: 'flex',
+        alignItems: 'baseline'
+    },
+
+    historyImpVal:{
+        textTransform: 'uppercase',
+        fontSize: 60,
+        fontWeight: 200,
+        letterSpacing: -1,
+        color: '#506980'
+    },
+    
+    historyImpAddon:{
+        textTransform: 'uppercase',
+        fontweight: 400,
+        color: '#506980',
+        paddingLeft: 15
+    },
+
+    walletSetWrapper:{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: '100%',
+        overflow: 'hidden',
+        width: 480,
+        marginBottom: 7,
+        marginTop: 29
+    },
+
+    walletSet:{
+        width: 'calc(100% - 65px)',
+        display: 'inline-block',
+    },
+    
+    divider: {
+        margin: '15px 30px',
+        backgroundColor: "#bbc2d8"
+    },
+
+    headerField:{
+        margin: '20px 0 12px',
+        fontSize: 16,
+    },
+
+    bold:{
+        fontWeight: 600
+    },
+
+    formInput:{
+        width: '100%',
+        '&:after, &:hover:before': {
+            borderBottomColor: '#FC3868 !important'
+        },
+    },
+
+    formField:{
+        display: 'block',
+        width: 480,
+        '&:after': {
+            borderBottomColor: '#FC3868',
+        },
+    },
+
+    submitBtn:{
+        float: 'right',
+        marginTop: 20,
+        marginBottom: 5,
+        borderRadius: 74,
+    },
+
+    editBtn:{
+        float: 'right',
+        borderRadius: 74,
+    },
+
+    editBtnTypo:{
+        fontSize: 14,
+        fontWeight: 700
+    },
+
+    short:{
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        display: 'inline-block',
+        width: '100%'
+    },
+    
+    delBtn:{
+        marginTop: 20,
+        marginBottom: 5,
+        borderRadius: 74,
+    },
+
+    explorer: {
+        verticalAlign: 'middle',
+        lineHeight: '100%',
+        fontSize: 30,
+        color: '#4b5168'
+    }
+
+})
+
+// History
+@withStyles(stylesAnalytics)
+@observer
+class Analytics extends React.Component{
+
+    constructor(props){
+        super(props);
+        this.getHistory();
+    }
 
     @observable histories = [];
 

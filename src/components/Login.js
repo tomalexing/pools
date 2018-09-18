@@ -346,7 +346,7 @@ class Login extends React.Component {
 
                         />
                         <Typography variant="body1" className={classes.font12  + ' ' + classes.paddingTop1}>
-                            I agree to Quizi’s <Link style={{color: '#FC3868', textDecoration: 'none'}} to={'/terms-of-use'} >Terms of Use</Link> and <Link style={{color: '#FC3868', textDecoration: 'none'}} to={'/privacy-policy'} >Privacy Policy</Link>
+                            I agree to Quizi’s <Link style={{color: '#FC3868', textDecoration: 'none'}} to={'/term-of-use'} >Terms of Use</Link> and <Link style={{color: '#FC3868', textDecoration: 'none'}} to={'/privacy-policy'} >Privacy Policy</Link>
                         </Typography>
 
                     </div>

@@ -69,7 +69,7 @@ export default class Poll{
     if(cardsStore) {
       let val = cardsStore[card.slug];
       cardsStore[card.slug] =  Object.assign(val, {
-        cards: Object.assign(val.cards || {}, {[cardSlideId]: side})
+        cards: Object.assign(val.cards || {}, {[cardSlideId]: {position: side, time: (new Date).toISOString()}})
       })
       return saveToStore('commonSlugs', cardsStore).then( _ => Api.saveUserData().then(_ => Promise.resolve(true)))
     }
@@ -100,7 +100,7 @@ export default class Poll{
     if(r > 0){
       await this.saveUserVote(this.id, 'right', cardsStore);
     }
-    // maybe await 
+    // maybe await
     Api.changeScoresPolls(this.slug ,this.id, {l, r}).catch(_ => {});
 
     this.updating = false; 

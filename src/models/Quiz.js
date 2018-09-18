@@ -39,7 +39,7 @@ export default class Quiz {
             // we need next card here current = (Quiz.number - 1) + 1
             cardsStore[Quiz.slug] =  Object.assign(val, {
               Progress: Object.assign(val.Progress, { number: Quiz.isCorrect ? Object.values(val.cards).filter(v=>!!v.isCorrect).length + 1 : Object.values(val.cards).filter(v=>!!v.isCorrect).length }),
-              cards: Object.assign({}, val.cards, {[Quiz.id]: {isCorrect: Quiz.isCorrect, givenAnswer: idx + 1}}) 
+              cards: Object.assign({}, val.cards, {[Quiz.id]: {isCorrect: Quiz.isCorrect, givenAnswer: idx + 1, time: (new Date).toISOString()}}) 
             })
             
             return saveToStore('commonSlugs', cardsStore).then( _ => Api.saveUserData())
@@ -58,7 +58,7 @@ export default class Quiz {
 
             cardsStore[Quiz.slug] =  Object.assign(val, {
               current: Quiz.number,
-              Progress: Object.assign(val.Progress, {number: 0})
+              Progress: Object.assign(val.Progress, {number: 0 })
             })
 
             saveToStore('commonSlugs', cardsStore).then(_ => Api.saveUserData());

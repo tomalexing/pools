@@ -250,7 +250,7 @@ class Explore extends React.Component {
         Api.getCatsMenu().then(menu =>  this.Menu = menu)
         Api.getCatsCards(this.slug).then(cards =>  {
 
-            this.Cards = showCats 
+            that.Cards = showCats 
                 ?  cards
                 :  cards.filter(card => card.type === 'term');
         })
@@ -326,18 +326,18 @@ class Explore extends React.Component {
                             </Link> }
 
                             { !card.link && !card.img && card.cardtype == 'Poll' && <LazyImage className={classes.image} load={'./assets/polls.png'}/>}
-                            {!card.link &&!card.img && card.cardtype == 'Quiz' && <LazyImage className={classes.image} load={'./assets/quiz.png'}/>}
+                            { !card.link && !card.img && card.cardtype == 'Quiz' && <LazyImage className={classes.image} load={'./assets/quiz.png'}/>}
                             { !card.link && card.img && <LazyImage className={classes.image} load={card.img}/>}
 
                         </header>
                         <article className={classes.article}>
 
-                            { card.link && <Link style={{textDecoration: 'none'}} to={card.link}><Typography variant="title" className={classes.title}>{card.title}</Typography></Link> }
+                            { card.link && <Link style={{textDecoration: 'none'}}  to={card.link}><Typography variant="title" className={classes.title}>{card.title}</Typography></Link> }
 
                             { !card.link && <Typography variant="title" className={classes.title}>{card.title}</Typography> }
 
 
-                            <a style={{textDecoration: 'none'}} href={`http://${card.linksite}`} target="_blank" ><Typography variant="display1" className={classes.link}>{card.linksite}</Typography></a>
+                            <a style={{textDecoration: 'none'}} onClick={Api.saveReferral('catalog',card.slug,card.id)} href={`http://${card.linksite}`} target="_blank" ><Typography variant="display1" className={classes.link}>{card.linksite}</Typography></a>
 
                             <Typography variant="body1" className={classes.description}>{card.desc}</Typography>
                             <div className={classes.footer}>

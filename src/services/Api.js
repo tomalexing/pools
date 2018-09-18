@@ -9,6 +9,8 @@ const settings = { timestampsInSnapshots: true};
 let db = fire.firestore();
 db.settings(settings)
 
+let userPoint = 'newUserStore';
+
 var getAdditionlCardInfo = (slug) => {
 
     let [empty, query, doc] = slug.replace('/v1','').split('/');
@@ -115,8 +117,8 @@ var getQuizzesIds = (query) => (models) => {
 
 
 function getUserById(id){
-    if(!id) return db.collection('users').doc
-    return db.collection('users').doc(id);
+    if(!id) return db.collection(userPoint).doc
+    return db.collection(userPoint).doc(id);
 }
 
 function auth(){
@@ -183,7 +185,7 @@ function withdraw(id, amount, wallet, idTocken, resp){
     return new Promise(resolve => {
 
         Api.getWithdrawn(id).then( amountWithdrawn  => {
-            let userRef = db.collection('users').doc(id);
+            let userRef = db.collection(userPoint).doc(id);
             batch.set(userRef, {
                 withdraw: {[(new Date).toISOString()]:{amount, wallet, responce: JSON.parse(resp)}}
             }, { merge: true });
@@ -200,7 +202,7 @@ function withdraw(id, amount, wallet, idTocken, resp){
 function getWithdrawn(id){
     if(!id) return Promise.resolve();
     return new Promise(resolve => {
-        let userRef = db.collection('users').doc(id);
+        let userRef = db.collection(userPoint).doc(id);
         var setWithMerge = userRef.get().then(doc => {
             if(doc.exists){
                 let docDate = doc.data()
@@ -218,7 +220,7 @@ function getWithdrawn(id){
 function saveWallet(id, wallet){
     if(!id || !wallet) return Promise.resolve();
     return new Promise(resolve => {
-        let userRef = db.collection('users').doc(id);
+        let userRef = db.collection(userPoint).doc(id);
         var setWithMerge = userRef.set({
             wallet: wallet
         }, { merge: true });
@@ -229,7 +231,7 @@ function saveWallet(id, wallet){
 function getWallet(id){
     if(!id) return Promise.resolve();
     return new Promise(resolve => {
-        let userRef = db.collection('users').doc(id);
+        let userRef = db.collection(userPoint).doc(id);
         userRef.get().then(doc => {
             if(doc.exists){
                 let docDate = doc.data()
@@ -243,18 +245,64 @@ function getWallet(id){
     })
 }
 
+function getRole(id){
+    if(!id) return Promise.resolve();
+    return new Promise(resolve => {
+        let userRef = db.collection(userPoint).doc(id);
+        userRef.get().then(doc => {
+            if(doc.exists){
+                let docDate = doc.data()
+                if('role' in docDate){
+                    resolve(docDate.role)
+                }else{
+                    resolve(9)
+                }
+            }
+        });
+    })
+}
+
 function saveUserData(id){
 
     if(!id && !Auth.uid) return Promise.resolve();
 
     id = id || Auth.uid;
     return loadAllFromStore().then( UserData => {
-        let userRef = db.collection('users').doc(id);
+        let userRef = db.collection(userPoint).doc(id);
         var setWithMerge = userRef.set({
             UserData: UserData
         }, { merge: true });
         return setWithMerge
     })
+}
+
+
+function saveReferral(place, slug, id){
+    return async function() {
+        let cardsRef = db.collection( slug.substr(0, slug.indexOf('/')) ).doc(`${id}`);        
+
+        return db.runTransaction(function(transaction) {
+            // This code may get re-run multiple times if there are conflicts.
+            return transaction.get(cardsRef).then(function(cardDoc) {
+                if (!cardDoc.exists) {
+                    throw "Document does not exist!";
+                }
+
+                let cardsDocData = cardDoc.data();
+
+                if(cardsDocData.referral){
+                    Object.assign(cardsDocData.referral, {[place]: place in cardsDocData.referral ? ++cardsDocData.referral[place] : 1});
+                }else{
+                    cardsDocData.referral = {[place]: 1};
+                }
+            
+                transaction.update(cardsRef, cardsDocData);
+            });
+        }).then(function() {
+        // console.log("Transaction successfully committed!");
+        })
+    }
+
 }
 
 
@@ -264,7 +312,7 @@ function deleteUserData(id){
 
     id = id || Auth.uid;
 
-    let userRef = db.collection('users').doc(id);
+    let userRef = db.collection(userPoint).doc(id);
     return new Promise(resolve => {
         
         userRef.get().then(doc => {
@@ -288,7 +336,7 @@ function loadUserData({id, forceLoad } = {id: null, forceLoad : false}){
     if(!id && !Auth.uid) return Promise.resolve();
     id = id || Auth.uid;
     return new Promise(resolve => {
-        let userRef = db.collection('users').doc(id);
+        let userRef = db.collection(userPoint).doc(id);
         userRef.get().then(doc => {
             if(doc.exists){
                 let docDate = doc.data()
@@ -308,7 +356,7 @@ function getHistory(id, out){
     if(!id) return Promise.resolve();
     if(out instanceof Array){
 
-        let userRef = db.collection('users').doc(id);
+        let userRef = db.collection(userPoint).doc(id);
         userRef.onSnapshot(doc => {
             if(doc.exists){
                 let docDate = doc.data();
@@ -324,7 +372,7 @@ function getHistory(id, out){
     }else{
 
         return new Promise(resolve => {
-            let userRef = db.collection('users').doc(id);
+            let userRef = db.collection(userPoint).doc(id);
             userRef.get().then(doc => {
                 if(doc.exists){
                     let docDate = doc.data()
@@ -442,6 +490,8 @@ const Api = {
     getCoinName,
     deleteUserData,
     create,
-    checkCaptcha
+    checkCaptcha,
+    getRole,
+    saveReferral
 }
 export default Api;

@@ -11,12 +11,12 @@ const polls = [{
         "answers" : {
             l: {
               "quantity" : 61,
-              "srcImg" : './assets/simpsons.jpg',
+              "srcImg" : './assets/common/simpsons.jpg',
               "value" : "Simpsons"
             },
             r : {
               "quantity" : 52,
-              "srcImg" : './assets/southPark.jpg',
+              "srcImg" : './assets/common/southPark.jpg',
               "value" : "South Park"
             }
           },
@@ -29,12 +29,12 @@ const polls = [{
           "answers" : {
             l : {
               "quantity" : 47,
-              "srcImg" :  './assets/beach.jpg',
+              "srcImg" :  './assets/common/beach.jpg',
               "value" : "Beach"
             },
             r : {
               "quantity" : 42,
-              "srcImg" :  './assets/mountian.jpg',
+              "srcImg" :  './assets/common/mountian.jpg',
               "value" : "Mountian"
             }
           },
@@ -47,12 +47,12 @@ const polls = [{
           "answers" : {
             l : {
               "quantity" : 40,
-              "srcImg" : './assets/starTrek.jpg',
+              "srcImg" : './assets/common/starTrek.jpg',
               "value" : "Star Trek"
             },
             r : {
               "quantity" : 54,
-              "srcImg" : './assets/starWars.jpg',
+              "srcImg" : './assets/common/starWars.jpg',
               "value" : "Star Wars"
             }
           },
@@ -65,12 +65,12 @@ const polls = [{
           "answers" : {
             l : {
               "quantity" : 26,
-              "srcImg" : './assets/nike.jpg',
+              "srcImg" : './assets/common/nike.jpg',
               "value" : "Nike"
             },
             r : {
               "quantity" : 29,
-              "srcImg" : './assets/adidas.jpg',
+              "srcImg" : './assets/common/adidas.jpg',
               "value" : "Adidas"
             }
           },
@@ -83,12 +83,12 @@ const polls = [{
           "answers" : {
             l : {
               "quantity" : 38,
-              "srcImg" : './assets/skis.jpg',
+              "srcImg" : './assets/common/skis.jpg',
               "value" : "Skis"
             },
             r : {
               "quantity" : 34,
-              "srcImg" : './assets/snowboard.jpg',
+              "srcImg" : './assets/common/snowboard.jpg',
               "value" : "Snowboard"
             }
           },
@@ -101,12 +101,12 @@ const polls = [{
           "answers" : {
             l : {
               "quantity" : 30,
-              "srcImg" : './assets/pepsi.jpg',
+              "srcImg" : './assets/common/pepsi.jpg',
               "value" : "Coca-cola"
             },
             r : {
               "quantity" : 36,
-              "srcImg" : './assets/cocaCola.jpg',
+              "srcImg" : './assets/common/cocaCola.jpg',
               "value" : "Pepsi"
             }
           },
@@ -119,12 +119,12 @@ const polls = [{
           "answers" : {
             l : {
               "quantity" : 36,
-              "srcImg" : './assets/ios.jpg',
+              "srcImg" : './assets/common/ios.jpg',
               "value" : "iOS"
             },
             r : {
               "quantity" : 36,
-              "srcImg" : './assets/android.jpg',
+              "srcImg" : './assets/common/android.jpg',
               "value" : "Android"
             }
           },
@@ -137,12 +137,12 @@ const polls = [{
           "answers" : {
             l : {
               "quantity" : 47,
-              "srcImg" : './assets/ford.jpg',
+              "srcImg" : './assets/common/ford.jpg',
               "value" : "Ford Mustang"
             },
             r : {
               "quantity" : 19,
-              "srcImg" : './assets/chevrolet.jpg',
+              "srcImg" : './assets/common/chevrolet.jpg',
               "value" : "Chevrolet Camaro"
             }
           },
@@ -155,12 +155,12 @@ const polls = [{
           "answers" : {
             l : {
               "quantity" : 25,
-              "srcImg" : './assets/automatic.jpg',
+              "srcImg" : './assets/common/automatic.jpg',
               "value" : "Automatic"
             },
             r : {
               "quantity" : 37,
-              "srcImg" : './assets/mechanic.jpg',
+              "srcImg" : './assets/common/mechanic.jpg',
               "value" : "Mechanical"
             }
           },
@@ -173,12 +173,12 @@ const polls = [{
           "answers" : {
             l : {
               "quantity" : 38,
-              "srcImg" : './assets/metallica.jpg',
+              "srcImg" : './assets/common/metallica.jpg',
               "value" : "Nirvana"
             },
             r : {
               "quantity" : 26,
-              "srcImg" : './assets/nirvana.jpg',
+              "srcImg" : './assets/common/nirvana.jpg',
               "value" : "Metallica"
             }
           },
@@ -205,7 +205,7 @@ const polls1 = [{
       },
       "question" : "Which comics studio do you prefer?",
       "cardType": "poll",
-      "order" : 1,
+      "order" : 9,
       "id": '31k3ZqNAAE7ObKlhyIJs',
     },
     {
@@ -266,7 +266,7 @@ const polls1 = [{
       "answers" : {
         l : {
           "quantity" : 0,
-          "srcImg" : './assets/raters/05_ R2D2.png',
+          "srcImg" : './assets/raters/05_R2D2.png',
           "value" : "R2D2"
         },
         r : {
@@ -349,18 +349,18 @@ const polls1 = [{
       },
       "question" : "Movies of which director do you prefer?",
        "cardType": "poll",
-       "order" : 9,
+       "order" : 1,
        "id": 'maxVwpqlPnUhq82bSdMI'
     },
     {
       "answers" : {
         l : {
-          "quantity" : 38,
+          "quantity" : 0,
           "srcImg" : './assets/raters/10_She\'s_All_That.png',
           "value" : "She's All That"
         },
         r : {
-          "quantity" : 26,
+          "quantity" : 0,
           "srcImg" : './assets/raters/10_Pretty_Woman.png',
           "value" : "Pretty Woman"
         }
@@ -372,7 +372,187 @@ const polls1 = [{
     }
 ];
 
-
+const polls2 = [{
+  "answers" : {
+      l: {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/01_marvel.png',
+        "value" : "Marvel"
+      },
+      r : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/01_DC.png',
+        "value" : "DC"
+      }
+    },
+    "question" : "Which comics studio do you prefer?",
+    "cardType": "poll",
+    "order" : 1,
+    "id": 'EzIKn4a7O56quBaDMkQV',
+  },
+  {
+    "answers" : {
+      l : {
+        "quantity" : 0,
+        "srcImg" :  './assets/ratersComics/Avengers.jpg',
+        "value" : "Avengers"
+      },
+      r : {
+        "quantity" : 0,
+        "srcImg" :  './assets/ratersComics/JL.jpg',
+        "value" : "Justice League"
+      }
+    },
+    "question" : "Avengers or Justice League",
+    "cardType": "poll",
+    "order" : 2,
+    "id": 'lVoac9NEoEhV52ok8r98',
+  },
+  {
+    "answers" : {
+      l : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/Batman.png',
+        "value" : "Batman"
+      },
+      r : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/Superman.png',
+        "value" : "Superman"
+      }
+    },
+    "question" : "Batman or Superman",
+    "cardType": "poll" ,
+    "order" : 3,
+    "id": 'GovpNjkgWrJD4EWl6IXk',
+  },
+  {
+    "answers" : {
+      l : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/Professor.jpeg',
+        "value" : "Professor X"
+      },
+      r : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/Magneto.jpg',
+        "value" : "Magneto"
+      }
+    },
+    "question" : "Professor X or Magneto",
+    "cardType": "poll",
+    "order" : 4,
+    "id": 'trLoZyY7Zofez79PAnVp'
+  },
+  {
+    "answers" : {
+      l : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/TeamIron.jpg',
+        "value" : "Team Iron Man"
+      },
+      r : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/TeamCap.jpg',
+        "value" : "Team Cap"
+      }
+    },
+    "question" : "Team Iron Man or Team Cap",
+    "cardType": "poll",
+    "order" : 5,
+    "id": 'tPnAr82m2ZmkWTVMCi2o'
+  },
+  {
+    "answers" : {
+      l : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/Joker.jpeg',
+        "value" : "Joker"
+      },
+      r : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/Bane.jpg',
+        "value" : "Bane"
+      }
+    },
+    "question" : "Joker or Bane",
+     "cardType": "poll",
+     "order" : 6,
+     "id": 'weMHFSSnyGXCQFbQjAjk'
+  },
+  {
+    "answers" : {
+      l : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/Thor.jpg',
+        "value" : "Thor"
+      },
+      r : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/Loki.jpeg',
+        "value" : "Loki"
+      }
+    },
+    "question" : "Thor or Loki",
+     "cardType": "poll",
+     "order" : 7,
+     "id": 'J6OXJASWhBy5gaVbiPTr'
+  },
+  {
+    "answers" : {
+      l : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/Flash.jpg',
+        "value" : "Flash"
+      },
+      r : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/Quicksilver.jpg',
+        "value" : "Quicksilver"
+      }
+    },
+    "question" : "Flash or Quicksilver",
+     "cardType": "poll",
+     "order" : 8,
+     "id": 'ltonywo7NGIoeoXuiNb8'
+  },
+  {
+    "answers" : {
+      l : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/Wolverine.jpg',
+        "value" : "Wolverine"
+      },
+      r : {
+        "quantity" : 0,
+        "srcImg" : './assets/ratersComics/Deadpool.jpg',
+        "value" : "Deadpool"
+      }
+    },
+    "question" : "Wolverine or Deadpool",
+    "cardType": "poll",
+    "order" : 9,
+    "id": 'Hpe3hYUKUFpMUVQLh9AF'
+  },
+  {
+    "answers" : {
+      l : {
+        "quantity" : 38,
+        "srcImg" : './assets/ratersComics/Captain.jpg',
+        "value" : "Captain America"
+      },
+      r : {
+        "quantity" : 26,
+        "srcImg" : './assets/ratersComics/Torch.jpg',
+        "value" : "Human Torch"
+      }
+    },
+    "question" : "Chris Evans as Captain America or Chris Evans as Human Torch",
+     "cardType": "poll",
+     "order" : 10,
+     "id": 'cakUXy6t0wJ9gQaSrYVL'
+  }
+];
 
 const quizzes = [
         {
@@ -452,7 +632,7 @@ const quizzes = [
             '3',    
             '4',   
           ],
-          "questionSrcImg": './assets/q5.png',
+          "questionSrcImg": './assets/iqtest/q5.png',
           "question" : "Which larger shape would be made if the two sections are fitted together?",
           "answerCorrect": 2,
           "cardType": "quiz",
@@ -508,7 +688,7 @@ const quizzes = [
             '3',    
             '4',   
           ],
-          "questionSrcImg": './assets/q19.png',
+          "questionSrcImg": './assets/iqtest/q19.png',
           "question" : "Which of the figures below the line of drawings best completes the series?",
           "answerCorrect": 2,
           "cardType": "quiz",
@@ -604,7 +784,7 @@ const quizzes = [
             '25',    
             '28'
           ],
-          "questionSrcImg": './assets/q16.png',
+          "questionSrcImg": './assets/iqtest/q16.png',
           "question" : "How many four-sided figures appear in the diagram below?",
           "answerCorrect": 3,
           "cardType": "quiz",
@@ -647,7 +827,7 @@ const quizzes = [
             '4',    
             '5'
           ],
-          "questionSrcImg": './assets/q20.png',
+          "questionSrcImg": './assets/iqtest/q20.png',
           "question" : "Which of the figures below the line of drawings best completes the series?",
           "answerCorrect": 4,
           "cardType": "quiz",
@@ -973,6 +1153,7 @@ function setQuizzes(){
     db.collection(`quizzes`).doc('mNrynOde7h2pec3R9rKe').get().then(function(doc) {
 
       db.collection(`quizzes`).doc(doc.id).set({
+        id: 'mNrynOde7h2pec3R9rKe',
         allCardsNumber: 20,
         dashOutput: "iqValue",
         dashTitle: "IQ test",
@@ -984,7 +1165,7 @@ function setQuizzes(){
         desc: 'Discover answers to the most provocative question.',
         img: './assets/polls.png',
         result: 'Your IQ is {{iqValue}}.'
-      });
+      }, { merge: true });
       
       for(let i = 0; i < quizzes.length; i++){
         console.log('quizzes ' + i)
@@ -1001,6 +1182,7 @@ function setQuizzes1(){
   console.log("Add %s quizzes1", quizzes1.length)
   db.collection(`quizzes`).doc('OMx1k83U7LcZwlvZs9Aw').get().then(function(doc) {
     db.collection(`quizzes`).doc(doc.id).set({
+      id: 'OMx1k83U7LcZwlvZs9Aw',
       allCardsNumber: 14,
       dashOutput: "number",
       dashTitle: "Impleum Platform",
@@ -1011,7 +1193,7 @@ function setQuizzes1(){
       desc: 'Impleum is a powerful and scalable path to develop DApps.',
       img: './assets/impleum.png',
       result: 'You gave {{number}} right answers.'
-    });
+    }, { merge: true });
 
     for(let i = 0; i < quizzes1.length; i++){
       console.log('quizzes ' + i)
@@ -1030,6 +1212,7 @@ async function setQuizzes2(){
 
 
   db.collection(`quizzes`).doc(doc.id).set({
+      id: 'cHuEIjL3dsvNTVXNXa1Z',
       allCardsNumber: 10,
       dashOutput: "number",
       dashTitle: "Cyber Resilience",
@@ -1056,7 +1239,7 @@ async function setQuizzes2(){
         You have nerves of steel! You laugh in the face of danger, believe in karma and practice meditation to the sound of broken hopes. The only thing that stands between you and the hacker is a red thread tied to a computer monitor. But for the sake of the Buddha, before it's too late, contact cybersecurity specialists.
       {{endIf}}
       `
-    });
+    }, { merge: true });
 
     for(let i = 0; i < quizzes2.length; i++){
       console.log('quizzes ' + i)
@@ -1075,6 +1258,7 @@ function setPolls(){
     db.collection(`polls`).doc('TufVMx0dkDVAaOr5KSdF').get().then(function(doc) {
 
       db.collection(`polls`).doc(doc.id).set({
+        id: 'TufVMx0dkDVAaOr5KSdF',
         allCardsNumber: 10,
         dashOutput: 'number',
         dashTitle: 'Quizi.io\'s poll',
@@ -1085,7 +1269,7 @@ function setPolls(){
         desc: 'Discover answers to the most provocative question.',
         img: './assets/polls.png',
         result: 'You answered {{number}} of 10 polls.'
-      });
+      }, { merge: true });
 
       for(let i = 0; i < polls.length; i++){
         console.log('polls ' + i)
@@ -1104,23 +1288,54 @@ async function setPolls1(){
   let doc =  await db.collection(`polls`).doc('ga2Y4kgp7kHOxu2IF4dl');
 
   doc.set({
+    id: 'ga2Y4kgp7kHOxu2IF4dl',
     allCardsNumber: 10,
     dashOutput: 'number',
-    dashTitle: 'Raters app',
+    dashTitle: 'Raters Movie',
     reward: 0.1,
     cat: 'Polls',
-    title: 'Raters App',
+    title: 'Raters Movie',
     linksite: 'ratersapp.com',
-    desc: 'Social platform where you can see what your friends are watching.',
+    desc: 'Join Raters and discover great movies based on reviews from your friends.',
     img: './assets/raters.png',
     result: 'You answered {{number}} of 10 polls.',
     appleStore: 'https://itunes.apple.com/us/app/raters-movie-lovers-network/id1258540735?mt=8'
-  });
+  }, { merge: true });
 
   for(let i = 0; i < polls1.length; i++){
     console.log('polls ' + i)
     db.collection(`polls`).doc(doc.id).collection(`v1`).doc(polls1[i].id).set({
     ... withOutQuantity( polls1[i] ),
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true })
+  }
+
+}
+
+async function setPolls2(){
+  console.log("Add %s polles", polls2.length)
+
+  let doc =  await db.collection(`polls`).doc('jUxerqRUfMblYzRbGRY4');
+
+  doc.set({
+    id: 'jUxerqRUfMblYzRbGRY4',
+    allCardsNumber: 10,
+    dashOutput: 'number',
+    dashTitle: 'Raters Comics',
+    reward: 0.1,
+    cat: 'Polls',
+    title: 'Raters Comics',
+    linksite: 'ratersapp.com',
+    desc: 'Join Raters and discover great movies based on reviews from your friends.',
+    img: './assets/ratersComics.png',
+    result: 'You answered {{number}} of 10 polls.',
+    appleStore: 'https://itunes.apple.com/us/app/raters-movie-lovers-network/id1258540735?mt=8'
+  }, { merge: true });
+
+  for(let i = 0; i < polls2.length; i++){
+    console.log('polls ' + i)
+    db.collection(`polls`).doc(doc.id).collection(`v1`).doc(polls2[i].id).set({
+    ... polls2[i] ,
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true })
   }
@@ -1157,6 +1372,7 @@ function setCats(){
     })
     
     db.collection('categories/quizzes/iq').doc('WZ3b7uZkzkxopoMGKDwT').set({
+        id: 'mNrynOde7h2pec3R9rKe',
         type: 'term',
         title: 'IQ test',
         linksite: 'quizi.io',
@@ -1165,12 +1381,13 @@ function setCats(){
         number: 20,
         btn: 'Take quiz',
         slug: 'quizzes/iq',
-        img: null,
+        img: './assets/IQ.png',
         link: `/quizzes/mNrynOde7h2pec3R9rKe`,
         reward: 0.1,
       });
     
     db.collection('categories/quizzes/blockchain').doc('Pu7JCX43tfzoigRFJrQM').set({
+      id: 'OMx1k83U7LcZwlvZs9Aw',
       type: 'term',
       title: 'Impleum Platform',
       linksite: 'impleum.com',
@@ -1185,6 +1402,7 @@ function setCats(){
     });
     
     db.collection('categories/quizzes/cybersecurity').doc('k2JfLJQZYkFBlwrhIXHI').set({
+      id: 'cHuEIjL3dsvNTVXNXa1Z',
       type: 'term',
       title: 'Cyber Resilience',
       linksite: '10guards.com',
@@ -1193,12 +1411,13 @@ function setCats(){
       number: 10,
       btn: 'Take quiz',
       slug: 'quizzes/cybersecurity',
-      img: './assets/10guards.png',
+      img: './assets/10guards.png', 
       reward: 0.1,
       link: `/quizzes/cHuEIjL3dsvNTVXNXa1Z`,
     });
 
     db.collection('categories/polls/common').doc('EhA5Mms18RSnxoJNQ1JX').set({
+      id: 'TufVMx0dkDVAaOr5KSdF',
       type: 'term',
       title: 'Quizi.io\'s poll',
       linksite: 'quizi.io',
@@ -1207,22 +1426,38 @@ function setCats(){
       number: 10,
       btn: 'Take polls',
       slug: 'polls/common',
-      img: './assets/polls.png',
+      img: './assets/Common.png',
       link: `/polls/TufVMx0dkDVAaOr5KSdF`,
       reward: 0.1,
     })
 
     db.collection('categories/polls/movies').doc('oTFTncqMYa315ydrQUCD').set({
+      id: 'ga2Y4kgp7kHOxu2IF4dl',
       type: 'term',
-      title: 'Raters App',
+      title: 'Raters Movie',
       linksite: 'ratersapp.com',
-      desc: 'Social platform where you can see what your friends are watching.',
+      desc: 'Join Raters and discover great movies based on reviews from your friends.',
       cardtype: 'Poll',
       number: 10,
       btn: 'Take polls',
       slug: 'polls/movies',
       img: './assets/raters.png',
       link: `/polls/ga2Y4kgp7kHOxu2IF4dl`,
+      reward: 0.1,
+    })
+
+    db.collection('categories/polls/movies').doc('Q8G2L4BfcNvbMZbwzzVV').set({
+      id: 'jUxerqRUfMblYzRbGRY4',
+      type: 'term',
+      title: 'Raters Comics',
+      linksite: 'ratersapp.com',
+      desc: 'Join Raters and discover great movies based on reviews from your friends.',
+      cardtype: 'Poll',
+      number: 10,
+      btn: 'Take polls',
+      slug: 'polls/movies',
+      img: './assets/ratersComics.png',
+      link: `/polls/jUxerqRUfMblYzRbGRY4`,
       reward: 0.1,
     })
   }
@@ -1283,6 +1518,7 @@ function withOutQuantity(obj){
 
 // setPolls();
 // setPolls1();
+// setPolls2();
 // setQuizzes();
 // setQuizzes1();
 // setQuizzes2();
