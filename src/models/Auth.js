@@ -67,7 +67,7 @@ class Auth {
 
       _self.loadSession = window.localStorage.getItem('uid') === JSON.stringify(_self.uid);
       
-      if(typeof window === 'undefined') return reject();
+      if(typeof window.localStorage === 'undefined') return reject();
 
       window.localStorage.setItem('accessToken', _self.accessToken);
       window.localStorage.setItem('photoURL', _self.photoURL);
@@ -83,14 +83,14 @@ class Auth {
   }
   
   setUnauthenticated = () => {
-    if( typeof window === 'undefined' ) return 
+    if( typeof window.localStorage === 'undefined' ) return 
       window.localStorage.setItem('accessToken', false);
     this.isAuthenticated = false;
   }
 
   @action
   init = () => {
-    if( typeof window === 'undefined' ) return 
+    if( typeof window.localStorage === 'undefined' ) return 
     this.isAuthenticated = !!window.localStorage.getItem('accessToken');
     this.accessToken = window.localStorage.getItem('accessToken');;
     this.photoURL = window.localStorage.getItem('photoURL');
@@ -117,7 +117,7 @@ class Auth {
       _self.isAuthenticated = false;
       _self.role = undefined;
       _self.uid = null;
-      if(typeof window === 'undefined') return  reject();
+      if(typeof window.localStorage === 'undefined') return  reject();
       window.localStorage.removeItem('accessToken');
       window.localStorage.removeItem('photoURL');
       window.localStorage.removeItem('displayName');

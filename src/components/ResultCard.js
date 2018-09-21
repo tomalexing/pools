@@ -289,7 +289,7 @@ class ResultCard extends React.Component {
 
     render(){
         let {classes} = this.props;
-        
+
         return (this.finalCard ? <div style={{height: '100%'}}>
                     <div ref='header' className={classes.header}>
                         <Typography variant="display1">
@@ -297,7 +297,9 @@ class ResultCard extends React.Component {
                         </Typography>
                     </div>
                     <div className={classes.cardBodyResult}>
+                    
                         <Login open={this.open} logout={this.getLogOut} close={this.closeLoginModal}/>
+
                             <div className={classes.row + ' ' + classes.responseRow}>
                                 <div className={classes.col1}>
                                     { !this.finalCard.info.img && this.finalCard.info.cat == 'Polls' && <LazyImage className={classes.resImage} load={'./assets/polls.png'}/>}
@@ -306,7 +308,7 @@ class ResultCard extends React.Component {
                                 </div> 
                                 <div className={classes.col2}>
                                     <Typography variant="title" className={classes.resTitle}>{this.finalCard.info.title}</Typography>
-                                    <a className={classes.linksite} onClick={Api.saveReferral('congratulations', this.props.cardSlug.substr(1), this.finalCard.info.id)} href={`http://${this.finalCard.info.linksite}`} target="_blank" ><Typography variant="display1" className={classes.linksite}>{this.finalCard.info.linksite}</Typography></a>
+                                        <a className={classes.linksite} onClick={Api.saveReferral('congratulations', this.props.cardSlug.substr(1), this.finalCard.info.id)} href={`http://${this.finalCard.info.linksite}`} target="_blank" ><Typography variant="display1" className={classes.linksite}>{this.finalCard.info.linksite}</Typography></a>
                                     <Typography variant="body1" className={classes.description}>{this.finalCard.info.desc}</Typography>
                                     <div className={classes.btnsRow}>
                                         <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small" onClick={this.again} >Take again
@@ -344,7 +346,7 @@ class ResultCard extends React.Component {
                                         <Typography variant="body1" className={classes.resHeader}>
                                             Share with your friends:
                                         </Typography>}
-                                        <Share update={this.loadFinal} cardSlug={this.props.cardSlug}/>
+                                        <Share update={this.loadFinal} cardSlug={this.props.cardSlug} title={this.finalCard.info.title} description={this.finalCard.info.desc} image={this.finalCard.info.img}/>
                                     </div>
                                 </div>
                                 <div className={classes.vertdevider} />
@@ -363,11 +365,11 @@ class ResultCard extends React.Component {
                                         </Button>
                                     </div> }
                                     { Auth.isAuthenticated && !this.props.embed && <div className={classes.col}> 
-                                        <Link style={{textDecoration: 'none'}} to="/dashboard/account"><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Withdraw</Button></Link>
+                                        <Link style={{textDecoration: 'none'}} to="/dashboard/profile"><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Withdraw</Button></Link>
                                     </div> }
 
                                     {this.props.embed && <div className={classes.col}>
-                                        <a href={`${window.location.origin}/dashboard/account${this.backup ? `?backup=${this.backup}` : ''}`} target="_blank" style={{textDecoration: 'none'}} ><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Dashboard</Button></a>
+                                        <a href={`${window.location.origin}/dashboard/profile${this.backup ? `?backup=${this.backup}` : ''}`} target="_blank" style={{textDecoration: 'none'}} ><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Dashboard</Button></a>
                                     </div> }
                                 </div>
                             </div>

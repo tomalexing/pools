@@ -728,6 +728,13 @@ export const parseMustache = (tmpl, data) => {
     return output
 }
 
+export const metaContent = (entry) => {
+  for(let { propertyName, content } of entry){
+    let meta = document.querySelector(propertyName);
+    if(content) meta.content = content;
+  }
+}
+
 util.listener = listener
 util.requestAnimationFramePromise = requestAnimationFramePromise
 util.transitionEndPromise = transitionEndPromise
@@ -749,5 +756,6 @@ util.withGracefulUnmount = withGracefulUnmount
 util.ScrollRestortion = ScrollRestortion
 util.getTabTime = getTabTime
 util.parseMustache = parseMustache
+util.metaContent = metaContent
 
 export default util

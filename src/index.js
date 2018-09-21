@@ -261,7 +261,7 @@ class App extends React.Component{
                     {this.firstChild(this.props.children)}
 
                 </div>
-                {/*<DevTools />*/}
+                <DevTools />
                 { !(this.props.nofooter || this.props.embed) && <Footer /> }
             </div>
         );

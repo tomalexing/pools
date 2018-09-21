@@ -378,7 +378,10 @@ const styles = theme => ({
     ovalContainer3: {
         position: 'absolute',
         bottom: '34%',
-        right: '20%'
+        right: '20%',
+        '@media (max-width: 768px)': {
+            display: 'none'
+        }
     },
 
     oval3:{
@@ -414,6 +417,13 @@ const styles = theme => ({
         zIndex: 10,
         '& img': {
             position: 'absolute'
+        },
+        '@media (max-width: 768px)': {
+            width: 100,
+            height: 100,
+        },
+        '@media (max-width: 768px)': {
+            display: 'none'
         }
     },
 
@@ -425,7 +435,10 @@ const styles = theme => ({
         width: '60px',
         height: '60px',
         borderRadius: '50%',
-        border: '1px solid #fc3868'
+        border: '1px solid #fc3868',
+        '@media (max-width: 768px)': {
+            display: 'none'
+        }
     },
 
 
@@ -786,20 +799,22 @@ class Landing extends React.Component {
     onMouseMoveFeature = e => {
 
         let  {left, top, width, height} = e.currentTarget.firstElementChild.getBoundingClientRect();
-        console.log(e.clientY - top - 30)
         let enlargeRange = document.getElementById('enlargeRange');
         enlargeRange.style.top =  Math.max(Math.min(e.clientY - top - 30 , height - 60), 0)   + 'px';
         enlargeRange.style.left =  Math.max(Math.min(e.clientX - left - 30, width - 60), 0) + 'px';
 
+        let enlargeCover = document.getElementById('enlarge');
         let enlarge = document.getElementById('enlarge').firstElementChild;
         
         let {width:widthZoomed, height:heightZoomed} = enlarge.getBoundingClientRect();
+        let {width:widthCoverZoomed, height:heightCoverZoomed} = enlargeCover.getBoundingClientRect();
 
         let koef1 = heightZoomed/height,
             koef2 = widthZoomed/width;
-      
-        enlarge.style.top =  Math.max( Math.min(-(e.clientY - top - 30 * koef1 - 15) * koef1 , 0), -(heightZoomed - 60 * koef1)) + 'px';
-        enlarge.style.left = Math.max( Math.min(-(e.clientX - left - 30 * koef2 - 15) * koef2, 0) , -(widthZoomed - 60 * koef2)) + 'px';
+            console.log(koef2)
+
+        enlarge.style.top =  Math.max( Math.min(-(e.clientY - top) * koef1 + heightCoverZoomed/2 , 0), -(heightZoomed) + heightCoverZoomed/2) + 'px';
+        enlarge.style.left = Math.max( Math.min(-(e.clientX - left ) * koef2, 0) + widthCoverZoomed/2 , -(widthZoomed) + widthCoverZoomed/2) + 'px';
 
     }
 

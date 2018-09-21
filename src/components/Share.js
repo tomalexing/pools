@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import Modal from '@material-ui/core/Modal';
 import IconButton from '@material-ui/core/IconButton'
 import Icon  from '@material-ui/core/Icon'
-import { listener } from './../utils';
+import { listener, metaContent } from './../utils';
 import CardsModel from './../models/Cards'
 
 import {
@@ -113,7 +113,7 @@ const styles = theme => ({
 class Share extends React.Component {
 
     open = false;
-    title = document.title;
+    title = this.props.title || document.title;
     state= {open: false};
     
     constructor(p){
@@ -144,13 +144,43 @@ class Share extends React.Component {
 
     socClicked = _ => {
         CardsModel.saveLike(this.props.cardSlug).then(_ => {
-            this.props.update();
+            this.props.update(this.props.cardSlug);
         })
     }
 
     render(){
         let {classes} = this.props;
         let {open} = this.state;
+        metaContent([
+            {
+                propertyName: '[property="og:title"]',
+                content: this.title
+            },
+            {
+                propertyName: '[property="og:description"]',
+                content: this.props.description
+            },
+            {
+                propertyName: '[property="og:image"]',
+                content: this.props.image
+            },
+            {
+                propertyName: '[property="og:url"]',
+                content: this.shareUrl
+            },
+            {
+                propertyName: '[name="twitter:title"]',
+                content: this.title
+            },
+            {
+                propertyName: '[name="twitter:description"]',
+                content: this.props.description
+            },
+            {
+                propertyName: '[name="twitter:image"]',
+                content: this.props.image
+            }
+        ]);
         return(
             <div className={classes.socialNetworks} >
                 <div className={classes.socialNetwork} onClick={this.socClicked} >

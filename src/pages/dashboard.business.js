@@ -283,11 +283,6 @@ class Dashboard extends React.Component {
                     <PrivateRoute role={['user', 'business', 'admin']} path="/dashboard/profile" component={Profile} /> 
                     <PrivateRoute role={['user', 'business', 'admin']} path="/dashboard/history" component={History} />
                     <PrivateRoute role={['business', 'admin']} path="/dashboard/analytics" component={Analytics} />
-
-                    <PrivateRoute role={['user', 'business', 'admin']} exact path="/dashboard" component={Common} /> 
-                    <PrivateRoute role={['user', 'business', 'admin']} path="/dashboard/profile" component={Profile} /> 
-                    <PrivateRoute role={['user', 'business', 'admin']} path="/dashboard/history" component={History} />
-                    <PrivateRoute role={['business', 'admin']} path="/dashboard/analytics" component={Analytics} />
                 </Switch>
             </div>
             </div>
@@ -359,9 +354,6 @@ const stylesCommon = theme => ({
         boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
         '@media (max-width: 600px)':{
             marginRight: 0
-        },
-        '&.quizzes': {
-            height: '280px'
         }
     },
 
@@ -454,12 +446,12 @@ const stylesCommon = theme => ({
     },
 
     space1:{
-        height: 7,
-        minWidth: '222px',
+        height: 28,
+        minWidth: '210px',
     },
     space2:{
         height: 40,
-        minWidth: '222px',
+        minWidth: '210px',
     },
 
     progressBar:{
@@ -491,7 +483,7 @@ const stylesCommon = theme => ({
         borderRadius: 74
     },
     title: {
-        padding: '0 20px',
+        padding: '0 30px',
         display: 'flex',
         display: 'inline-block',
         width: '193px',
@@ -537,14 +529,12 @@ const stylesCommon = theme => ({
     },
 
     statusIconCheck:{
-        fontSize: '30px',
-        margin: '0 8px 0 0',
+        margin: '0 10px',
         color: '#35e8c0',
     },
 
     statusIconWarning:{
-        fontSize: '30px',
-        margin: '0 8px 0 0',
+        margin: '0 10px',
         color: '#fc3868',
     }
 })
@@ -648,10 +638,9 @@ class Common extends React.Component{
                                         <div ref='header' className={classes.header}>
                                             <Link style={{textDecoration: 'none'}} to={slug.replace('/v1','')} >
                                                 <Tooltip  title={info.dashTitle} placement="top">
-                                                    <Typography variant="display1" className={classes.title}>{info.dashTitle}</Typography> 
+                                                    <Typography variant="display1" className={classes.title}>{info.dashTitle}<Icon className={classes.titleAddon}>navigate_next</Icon></Typography> 
                                                 </Tooltip>
                                             </Link>
-
                                             <span className={classes.delimeter}></span>
 
                                             { info.cat == 'Polls' &&  <Typography variant="display1" className={classes.impNum}>  
@@ -678,7 +667,6 @@ class Common extends React.Component{
                                             </Typography>}
 
                                             { info.cat == 'Quizzes' && <div className={classes.space1}></div>}
-
                                             { info.cat == 'Quizzes' && progress.final && <div className={classes.noWrap}>
                                                 <Icon className={classes.statusIconCheck} >check_circle</Icon>  
                                                 <Typography variant="title" >Completed</Typography> 
@@ -711,7 +699,7 @@ class Common extends React.Component{
                                         </div>
                                     </div>) : <div key={`common-${idx}`} />
                             }) }
-                            <div key={`create-${idx}`} className={cx(classes.createCard, cat.toLowerCase())}>
+                            <div key={`create-${idx}`} className={classes.createCard}>
                                 <Link className={classes.createLink} to='/contact'></Link>
                                 <Typography gutterBottom variant="body1" className={classes.createTitle}>
                                     Create your own {cat.toLowerCase()}

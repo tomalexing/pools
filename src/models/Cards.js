@@ -282,11 +282,10 @@ export default class Cards {
     let cards = this;
 
     return loadFromStore('commonSlugs').then(cardsStore => {
-      let cardSlugData = cardsStore[cards.cardSlug];
+      let cardSlugData = cardsStore[cardSlug];
 
       if(cardSlugData.liked) return Promise.resolve(true);
-
-      cardsStore[cards.cardSlug] =  Object.assign(cardSlugData, {
+      cardsStore[cardSlug] =  Object.assign(cardSlugData, {
         liked: true,
       })
 
@@ -298,7 +297,7 @@ export default class Cards {
     let cards = this;
 
     return loadFromStore('commonSlugs').then(cardsStore => {
-      let cardSlugData = cardsStore[cards.cardSlug];
+      let cardSlugData = cardsStore[cardSlug];
 
       if(cardSlugData.liked) return Promise.resolve(true);
       else return Promise.resolve(false);

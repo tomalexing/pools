@@ -871,7 +871,7 @@ const quizzes1 = [
       '3',
       '4'
     ],
-    "questionSrcImg": './assets/impleum3q.png',
+    "questionSrcImg": './assets/iqtest/impleum3q.png',
     "question" : "How does Impleum logo look?",
     "answerCorrect": 2,
     "cardType": "quiz",
@@ -1191,7 +1191,7 @@ function setQuizzes1(){
       title: 'Quiz',
       linksite: 'impleum.com',
       desc: 'Impleum is a powerful and scalable path to develop DApps.',
-      img: './assets/impleum.png',
+      img: './assets/catalog/impleum.png',
       result: 'You gave {{number}} right answers.'
     }, { merge: true });
 
@@ -1221,7 +1221,7 @@ async function setQuizzes2(){
       title: 'Quiz',
       linksite: 'impleum.com',
       desc: 'Will Your Business Survive in Ukrainian Cyber Realities?',
-      img: './assets/10guards.png',
+      img: './assets/catalog/10guards.png',
       result: `You gave {{number}} right {{startIf  number > 1  }}answers.{{endIf}} {{startIf  number <= 1  }}answer.{{endIf}}
       <br/> 
       {{startIf  number > 9  }}
@@ -1261,13 +1261,13 @@ function setPolls(){
         id: 'TufVMx0dkDVAaOr5KSdF',
         allCardsNumber: 10,
         dashOutput: 'number',
-        dashTitle: 'Quizi.io\'s poll',
+        dashTitle: 'Common poll',
         reward: 0.1,
         cat: 'Polls',
         title: 'Poll',
         linksite: 'quizi.io',
         desc: 'Discover answers to the most provocative question.',
-        img: './assets/polls.png',
+        img: './assets/catalog/common.png',
         result: 'You answered {{number}} of 10 polls.'
       }, { merge: true });
 
@@ -1297,7 +1297,7 @@ async function setPolls1(){
     title: 'Raters Movie',
     linksite: 'ratersapp.com',
     desc: 'Join Raters and discover great movies based on reviews from your friends.',
-    img: './assets/raters.png',
+    img: './assets/catalog/raters.png',
     result: 'You answered {{number}} of 10 polls.',
     appleStore: 'https://itunes.apple.com/us/app/raters-movie-lovers-network/id1258540735?mt=8'
   }, { merge: true });
@@ -1327,7 +1327,7 @@ async function setPolls2(){
     title: 'Raters Comics',
     linksite: 'ratersapp.com',
     desc: 'Join Raters and discover great movies based on reviews from your friends.',
-    img: './assets/ratersComics.png',
+    img: './assets/catalog/ratersComics.png',
     result: 'You answered {{number}} of 10 polls.',
     appleStore: 'https://itunes.apple.com/us/app/raters-movie-lovers-network/id1258540735?mt=8'
   }, { merge: true });
@@ -1335,7 +1335,7 @@ async function setPolls2(){
   for(let i = 0; i < polls2.length; i++){
     console.log('polls ' + i)
     db.collection(`polls`).doc(doc.id).collection(`v1`).doc(polls2[i].id).set({
-    ... polls2[i] ,
+    ...withOutQuantity( polls2[i] ) ,
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true })
   }
@@ -1381,7 +1381,7 @@ function setCats(){
         number: 20,
         btn: 'Take quiz',
         slug: 'quizzes/iq',
-        img: './assets/IQ.png',
+        img: './assets/catalog/IQ.png',
         link: `/quizzes/mNrynOde7h2pec3R9rKe`,
         reward: 0.1,
       });
@@ -1396,7 +1396,7 @@ function setCats(){
       number: 14,
       btn: 'Take quiz',
       slug: 'quizzes/blockchain',
-      img: './assets/impleum.png',
+      img: './assets/catalog/impleum.png',
       reward: 0.1,
       link: `/quizzes/OMx1k83U7LcZwlvZs9Aw`,
     });
@@ -1411,7 +1411,7 @@ function setCats(){
       number: 10,
       btn: 'Take quiz',
       slug: 'quizzes/cybersecurity',
-      img: './assets/10guards.png', 
+      img: './assets/catalog/10guards.png', 
       reward: 0.1,
       link: `/quizzes/cHuEIjL3dsvNTVXNXa1Z`,
     });
@@ -1419,14 +1419,14 @@ function setCats(){
     db.collection('categories/polls/common').doc('EhA5Mms18RSnxoJNQ1JX').set({
       id: 'TufVMx0dkDVAaOr5KSdF',
       type: 'term',
-      title: 'Quizi.io\'s poll',
+      title: 'Common poll',
       linksite: 'quizi.io',
       desc: 'Discover answers to the most provocative question.',
       cardtype: 'Poll',
       number: 10,
       btn: 'Take polls',
       slug: 'polls/common',
-      img: './assets/Common.png',
+      img: './assets/catalog/common.png',
       link: `/polls/TufVMx0dkDVAaOr5KSdF`,
       reward: 0.1,
     })
@@ -1441,7 +1441,7 @@ function setCats(){
       number: 10,
       btn: 'Take polls',
       slug: 'polls/movies',
-      img: './assets/raters.png',
+      img: './assets/catalog/raters.png',
       link: `/polls/ga2Y4kgp7kHOxu2IF4dl`,
       reward: 0.1,
     })
@@ -1456,7 +1456,7 @@ function setCats(){
       number: 10,
       btn: 'Take polls',
       slug: 'polls/movies',
-      img: './assets/ratersComics.png',
+      img: './assets/catalog/ratersComics.png',
       link: `/polls/jUxerqRUfMblYzRbGRY4`,
       reward: 0.1,
     })
