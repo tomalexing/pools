@@ -255,6 +255,7 @@ const styles = theme => ({
         marginRight: 0,
         borderRadius: 74,
         marginLeft: 23,
+        color: '#fc3868',
         '@media (max-width: 768px)': {
             margin: theme.spacing.unit,
             marginRight: 0,
@@ -1007,7 +1008,7 @@ class Landing extends React.Component {
                         <Grid item xs={12} sm={1}  ></Grid>
                         <Grid item xs={12} sm={3}  className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
                             <h2 className={classes.header}>More than…</h2>
-                            <p className={classes.description}>Solving tests and answering questionnaires  and get reward in cryptocurrency</p>
+                            <p className={classes.description}>Solving tests and answering questionnaires and getting cryptocurrency rewards</p>
                             <Button variant="raised" color="secondary"  className={classes.btn}  href={'/categories'}>Explore</Button> 
                         </Grid>
                 
@@ -1024,7 +1025,7 @@ class Landing extends React.Component {
                         <Grid item xs={12} sm={4}  className={cx(classes.center, classes.toRight, classes.zIndex10)}>
                             <div className={cx(classes.centerOnMobile)} >
                                 <h2 className={classes.header}>Easy control</h2>
-                                <p className={classes.description}>Useful dashboard allows you to control  rewards and make fast withdraw.</p>
+                                <p className={classes.description}>Useful dashboard allows you to control rewards and make fast withdrawals</p>
                                 <Button variant="raised" color="secondary"  className={classes.btn}  href={'/categories'}>Explore</Button> 
                             </div>
                         </Grid>
@@ -1074,7 +1075,7 @@ class Landing extends React.Component {
                             <div className={cx(classes.cardFeature, classes.cardFeature1)}>
                                 <div className={classes.imageFeature}> <img srcSet={`${Unchangeble2x} 2x, ${Unchangeble} 1x`} src={Unchangeble} alt="Unchangeble" /> </div>
                                 <div className={classes.contentFeature}> 
-                                    <h3 className={cx(classes.subHeader, classes.centerOnMobile)}>Unchangeble</h3>
+                                    <h3 className={cx(classes.subHeader, classes.centerOnMobile)}>Unchangeable</h3>
                                     <p className={classes.description}>The results of quizzes and polls are being saved in the blockchain. They stay reliable and unchangeable forever. </p>
                                 </div>
                             </div>
@@ -1085,7 +1086,7 @@ class Landing extends React.Component {
                                 <div className={classes.imageFeature}> <img srcSet={`${Customer_Acquisition2x} 2x, ${Customer_Acquisition} 1x`} src={Customer_Acquisition} alt="Customer_Acquisition" /> </div>
                                 <div className={classes.contentFeature}> 
                                     <h3 className={cx(classes.subHeader, classes.centerOnMobile)}>Customer acquisition</h3>
-                                    <p className={classes.description}>The service allows you to attract new users, increase their level of awareness about the brand. </p>
+                                    <p className={classes.description}>The service allows you to attract new users, and increase their level of awareness about your brand. </p>
                                 </div>
                             </div>
                         </Grid>
@@ -1105,7 +1106,7 @@ class Landing extends React.Component {
                                 <div className={classes.imageFeature}> <img srcSet={`${Promotion2x} 2x, ${Promotion} 1x`} src={Promotion} alt="Promotion" /> </div>
                                 <div className={classes.contentFeature}> 
                                     <h3 className={cx(classes.subHeader, classes.centerOnMobile)}>Promotion</h3>
-                                    <p className={classes.description}>Users can pass the test and share it with your friends. For this they will receive reward in the cryptocurrency.</p>
+                                    <p className={classes.description}>Users can take quizzes and share them with their friends. Doing so will result in additional cryptocurrency rewards for them.</p>
                                 </div>
                             </div>
                         </Grid>

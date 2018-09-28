@@ -375,8 +375,7 @@ class Poll extends React.Component {
     rememberPoints = (e) => {
         //e.stopPropagation();
         e.preventDefault(); // todo should be implemented cusom scroll
-       // if(window.innerWidth > 600 ){
-       // }
+
         this._dragging = true;
 
         this.startX = e.clientX || e.touches[0].clientX;
@@ -389,8 +388,6 @@ class Poll extends React.Component {
         e.preventDefault(); // todo should be implemented cusom scroll
        // e.stopPropagation();
         if (!this._dragging) return;
-        // if(window.innerWidth > 600 ){
-        //}
 
         this.deltaX = (e.clientX || e.touches[0].clientX) - this.startX;
         this.deltaY = (e.clientY || e.touches[0].clientY) - this.startY;
@@ -413,7 +410,7 @@ class Poll extends React.Component {
 
         this.props.store.currentCard.updating = true;
         this.picking = true;
-        e.stopImmediatePropagation();
+        //e.stopImmediatePropagation();
 
         let that = this;
         let {top, left} = e.currentTarget.getBoundingClientRect();

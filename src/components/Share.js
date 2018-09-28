@@ -80,6 +80,7 @@ const styles = theme => ({
         margin: '0px 10px 10px'
     },
     socialNetworkBtn:{
+        cursor: 'pointer',
         height: 36
     },
     paper: {
@@ -121,7 +122,6 @@ class Share extends React.Component {
         this.shareUrl = this.props.link ? this.props.link : (/embed/.test(window.location.href) ? window.location.href.replace('/embed','') : window.location.href);
         
     }
-
 
     handleOpen = () => {
         this.setState({open: true});
@@ -221,6 +221,30 @@ class Share extends React.Component {
                         Share
                     </Typography>
                     <div className={classes.socialNetworksModal}  id="share-modal-description">
+
+                        <div className={classes.socialNetwork} onClick={this.socClicked} >
+                            <FacebookShareButton
+                                url={this.shareUrl}
+                                quote={this.title}
+                                className={classes.socialNetworkBtn}>
+                                <FacebookIcon
+                                size={36}
+                                round />
+                            </FacebookShareButton>
+
+                        </div>
+
+                        <div className={classes.socialNetwork} onClick={this.socClicked}>
+                            <TwitterShareButton
+                                url={this.shareUrl}
+                                title={this.title}
+                                className={classes.socialNetworkBtn}>
+                                <TwitterIcon
+                                size={36}
+                                round />
+                            </TwitterShareButton>
+                        </div>
+
                         <div className={classes.socialNetworkModal} onClick={this.socClicked}>
                   
                             <TelegramShareButton
@@ -267,7 +291,7 @@ class Share extends React.Component {
                             </LinkedinShareButton>
                        </div>
 
-                        <div className={classes.socialNetworkModal} onClick={this.socClicked}>
+                        {/*<div className={classes.socialNetworkModal} onClick={this.socClicked}>
                             <PinterestShareButton
                                 url={String(window.location)}
                                 media={`${String(window.location)}/${logo}`}
@@ -278,7 +302,7 @@ class Share extends React.Component {
                             </PinterestShareButton>
 
                         
-                        </div>
+                        </div> */}
 
                         <div className={classes.socialNetworkModal} onClick={this.socClicked}>
                             <RedditShareButton
@@ -308,17 +332,17 @@ class Share extends React.Component {
 
                             </div>
 
-                            <div className={classes.socialNetworkModal} onClick={this.socClicked}>
-                            <EmailShareButton
-                                url={this.shareUrl}
-                                subject={this.title}
-                                body="body"
-                                className={classes.socialNetworkBtn}>
-                                <EmailIcon
-                                size={36}
-                                round />
-                            </EmailShareButton>
-                            </div>
+                            {/*<div className={classes.socialNetworkModal} onClick={this.socClicked}>
+                                <EmailShareButton
+                                    url={this.shareUrl}
+                                    subject={this.title}
+                                    body="body"
+                                    className={classes.socialNetworkBtn}>
+                                    <EmailIcon
+                                    size={36}
+                                    round />
+                                </EmailShareButton>
+                            </div> */}
                     </div>
                     <Button size="small" variant="raised" color="secondary" className={classes.modalBtn} onClick={this.handleClose}>Close</Button>
                     </div>

@@ -40,6 +40,7 @@ const styles = theme => ({
         margin: 2 * theme.spacing.unit,
         marginRight: 0,
         borderRadius: 74,
+        color: '#fc3868',
         '@media (max-width: 600px)': {
             margin: theme.spacing.unit,
             marginRight: 0
@@ -267,7 +268,7 @@ class Header extends React.Component {
                     <NavLink tabIndex='1' to={'/term-of-use'} className={classes.menuMobileLinkSpacings} >
                         <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={this.handleClose}>
                             <Typography variant="subheading" >
-                                Terms of service
+                                Terms of Use
                             </Typography>
                             </MenuItem>
                     </NavLink>  
@@ -291,7 +292,7 @@ class Header extends React.Component {
                     <NavLink tabIndex='1' to={'/create'} className={classes.menuMobileLinkSpacings} >
                         <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={this.handleClose}>
                             <Typography variant="subheading" >
-                                Create
+                                Create Quiz or Poll
                             </Typography>
                         </MenuItem>
                     </NavLink>

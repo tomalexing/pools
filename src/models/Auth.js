@@ -123,6 +123,8 @@ class Auth {
       window.localStorage.removeItem('displayName');
       window.localStorage.removeItem('email');
       window.localStorage.removeItem('uid');
+      window.localStorage.removeItem('role');
+      
       if (typeof cb === 'function') {
         Api.auth().signOut().then( _ => {
           cb(resolve);

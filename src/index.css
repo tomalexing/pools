@@ -48,7 +48,7 @@ div::-webkit-scrollbar-track {
 
 /* Handle */
 div::-webkit-scrollbar-thumb {
-    background: #888; 
+    background: #6A7081; 
 }
 
 /* Handle on hover */
@@ -76,5 +76,5 @@ div::-webkit-scrollbar-thumb:hover {
 }
 
 button{
-  padding: 0 20px !important;
+  padding: 0 17px !important;
 }

@@ -202,14 +202,14 @@ class Contact extends React.Component{
             that.name = '';
             that.question = '';
             that.email = '';
-            that.sended = true;
+            that.sent = true;
             setTimeout(() => {
-                that.sended = false;
-            }, 1500);
+                that.sent = false;
+            }, 5000);
         })
     }   
 
-    @observable sended = false;
+    @observable sent = false;
     @observable entername = false;
     @observable enteremail = false;
     @observable enterquestion = false;
@@ -244,7 +244,7 @@ class Contact extends React.Component{
                 </div>
                 <div className={classes.cardBodyResult}>
                     
-                    <Typography variant="body1" className={classes.headerField} >Don't hesitate to contact us if you have any question
+                    <Typography variant="body1" className={classes.headerField} >Don't hesitate to contact us if you have any questions
                     </Typography>
 
                     <form  onSubmit={this.send} noValidate autoComplete="off"> 
@@ -312,8 +312,8 @@ class Contact extends React.Component{
                         </Button>
                     </form>
                     
-                    <Grow in={this.sended} timeout={1000}>
-                        <Typography color="secondary" variant="body1">Sended.</Typography>
+                    <Grow in={this.sent} timeout={1000}>
+                        <Typography color="secondary" variant="body1">Your question has been sent, we will get in touch with you soon.</Typography>
                     </Grow>
                     <Grow in={this.entername} timeout={1000}>
                         <Typography color="secondary" variant="body1">Please, enter name.</Typography>

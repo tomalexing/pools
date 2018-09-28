@@ -142,9 +142,9 @@ class Card extends React.Component {
         let cardPlace = this.props.cardPlace, that = this;
         
         if( cardPlace == 'currentCard' && that.refs && that.refs.header){
-            that.listeners.push(listener(that.refs.card, 'mousedown', that.startDrag, false));
-            that.listeners.push(listener(document, 'mouseup', that.stopDrag, false));
-            that.listeners.push(listener(document, 'mousemove', that.drag, false));
+            // that.listeners.push(listener(that.refs.card, 'mousedown', that.startDrag, false));
+            // that.listeners.push(listener(document, 'mouseup', that.stopDrag, false));
+            // that.listeners.push(listener(document, 'mousemove', that.drag, false));
             that.listeners.push(listener(that.refs.card, 'touchstart', that.startDrag, false));
             that.listeners.push(listener(document, 'touchend', that.stopDrag, false));
             that.listeners.push(listener(document, 'touchmove', that.drag, false));

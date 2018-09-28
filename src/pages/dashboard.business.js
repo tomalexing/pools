@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import {observable, action, when} from 'mobx';
+import {observable, action, when, computed} from 'mobx';
 import { observer }  from 'mobx-react';
 import cx from 'classnames';
 
@@ -9,7 +9,7 @@ import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
 import { listener, getMonthName, roundeWithDec, loadScript } from './../utils';
 
-import {Switch, Route, Redirect, Link, withRouter} from 'react-router-dom';
+import {Route, Redirect, Link, withRouter} from 'react-router-dom';
 import {NavLink} from './../components/NavLink';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
@@ -23,11 +23,11 @@ import Divider from '@material-ui/core/Divider';
 
 import classNames from 'classnames';
 
-import Drawer from '@material-ui/core/Drawer';
+import Switch from '@material-ui/core/Switch';
 import IconButton from '@material-ui/core/IconButton';
 import {loadFromStore , saveToStore, clearAll} from "./../services/localDb";
 
-import Grow from '@material-ui/core/Grow';
+
 import Tooltip from '@material-ui/core/Tooltip';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -38,6 +38,8 @@ import SModal from './../components/Modal';
 
 import Checkbox from '@material-ui/core/Checkbox';
 
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import themeObject from './../theme.js';
 
 import BTC from './../assets/BTC.svg';
 import IMP from './../assets/IMP.svg';
@@ -61,659 +63,7 @@ const PrivateRoute =  ({ component: Component, ...rest }) => (
             )
         )} />)
 
-const drawerWidth = 200;
 
-const styles = theme => ({
-
-    cardWrapper:{
-        display: 'flex',
-        margin: 'auto',
-        height: '100%',
-        // position: 'relative',
-        width: '100%'
-    },
-    aside:{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        borderRight: '1px solid #6b7183',
-    },
-    icon:{
-        color: 'white'
-    },
-    link: {
-        textDecoration: 'none'
-    },
-    footer: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        marginTop: 'auto',
-        marginBottom: '20px',
-        padding: '0 20px',
-    },
-
-    footerText:{
-        color: 'white',
-        fontSize: 14,
-        textAlign: 'left',
-        width: '100%'
-    },
-
-    footerImageCover:{
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: 10
-    },
-
-    footerImage:{
-        width: 20
-    },
-
-    menuBtnSpacings:{
-        padding: '3px 0px',
-        textAlign: 'left'
-    },
-    
-    mainArea: {
-        padding: 40,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        flexGrow: 1,
-        '@media (max-width: 600px)':{
-            overflowX: 'auto',
-            padding: 20,
-        }
-    },
-    drawerPaper: {
-        position: 'relative',
-        whiteSpace: 'nowrap',
-        width: drawerWidth,
-        background: '#474E65',
-        height: 'calc(100vh - 64px)',
-        zIndex: 1,
-        transition: theme.transitions.create('width', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.enteringScreen,
-        }),
-      },
-    drawerPaperClose: {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: '56px',
-    },
-    mainMenuIcon: {
-        color: 'white'
-    }
-
-})
-
-@withStyles(styles)
-@withRouter
-@observer
-class Dashboard extends React.Component {
-
-
-    state= {
-        open: window.innerWidth > 600,
-        analytics: false
-    }
-
-    componentDidMount(){
-        this.mounted = true;
-        let that = this;
-
-        loadFromStore('meta').then(meta => {
-            if(that.mounted)
-                that.setState({open: meta.userOpenMenu});
-        }, _ => {})
-
-        when(() => ['business', 'admin'].includes(Auth.role) , _ => {
-            if(that.mounted)
-                that.setState({analytics: true});
-        })
-
-    }
-
-    componentWillUnmount(){
-        this.mounted = false;
-    }
-
-      
-    toogle = () => {
-        this.setState({ open: !this.state.open }, _ =>   
-            loadFromStore('meta').then( meta => { 
-                        saveToStore('meta', Object.assign(meta, {userOpenMenu: this.state.open}))
-                    }).then(Api.saveUserData)
-                )
-    };
-
-    render() {
-        
-        let {classes} = this.props;
-
-        let {analytics} = this.state;
-
-        return (
-            <div className={classes.cardWrapper}>
-            <aside className={classes.daside}>
-            <Drawer
-                variant="permanent"
-                classes={{
-                paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
-                }}
-                open={this.state.open}
-                className={classes.aside}
-            >
-                <MenuList>
-                    <NavLink tabIndex='1' to={'/dashboard'} className={classes.link} >
-                        <MenuItem selected={/^\/dashboard$/.test(this.props.location.pathname)} onClick={this.handleClose}>
-                            <ListItemIcon className={classes.icon}>
-                                <Icon  className={classes.mainMenuIcon} >dashboard</Icon>
-                            </ListItemIcon>
-                            <Typography variant="display1" >
-                                Dashboard
-                            </Typography>
-                        </MenuItem>
-                    </NavLink>
-                    <NavLink tabIndex='1' to={'/dashboard/profile'} className={classes.link} >
-                        <MenuItem selected={/dashboard\/profile/.test(this.props.location.pathname)} onClick={this.handleClose}>
-                            <ListItemIcon className={classes.icon}>
-                                <Icon  className={classes.mainMenuIcon} >account_box</Icon>
-                            </ListItemIcon>
-                            <Typography variant="display1" >
-                                Profile
-                            </Typography>
-                        </MenuItem>
-                    </NavLink>
-                    <NavLink tabIndex='1' to={'/dashboard/history'} className={classes.link} >
-                        <MenuItem selected={/dashboard\/history/.test(this.props.location.pathname)} onClick={this.handleClose}>
-                            <ListItemIcon className={classes.icon}>
-                                <Icon className={classes.mainMenuIcon} >access_time</Icon>
-                            </ListItemIcon>
-                            <Typography variant="display1" >
-                                History
-                            </Typography>
-                            
-                        </MenuItem>
-                    </NavLink>
-                    { analytics &&
-                        <NavLink tabIndex='1' to={'/dashboard/analytics'} className={classes.link} >
-                            <MenuItem selected={/dashboard\/analytics/.test(this.props.location.pathname)} onClick={this.handleClose}>
-                                <ListItemIcon className={classes.icon}>
-                                    <Icon className={classes.mainMenuIcon} >trending_up</Icon>
-                                </ListItemIcon>
-                                <Typography variant="display1" >
-                                    Analytics
-                                </Typography>
-                                
-                            </MenuItem>
-                        </NavLink>}
-                </MenuList>
-                <div className={classes.footer}>
-
-                <IconButton onClick={this.toogle}>
-                    { !this.state.open ? <Icon className={classes.mainMenuIcon} >chevron_right</Icon> : <Icon   className={classes.mainMenuIcon} >chevron_left</Icon>}
-                </IconButton>
-                
-
-                {this.state.open && <Typography variant="body1"  className={classes.footerText + ' ' + classes.footerImageCover}> 
-                    <img className={classes.footerImage} src={IMP} /> 1IMP  =  <img className={classes.footerImage} style={{margin: '0 3px'}} src={BTC}/> 0.00013 BTC 
-                </Typography>}
-                
-                {this.state.open && <Typography ref='copyright' variant="body1" className={classes.menuBtnSpacings + ' ' + classes.footerText} >
-                    Copyright © 2018 Quizi.
-                </Typography>}
-                {this.state.open && <Typography ref='copyright' variant="body1" className={classes.menuBtnSpacings + ' ' + classes.footerText} >
-                    All Rights Reserved.
-                </Typography>}
-                
-                </div>
-
-                </Drawer>
-            </aside>
-            
-            <div className={classes.mainArea}>
-                <Switch>
-                    <PrivateRoute role={['user', 'business', 'admin']} exact path="/dashboard" component={Common} /> 
-                    <PrivateRoute role={['user', 'business', 'admin']} path="/dashboard/profile" component={Profile} /> 
-                    <PrivateRoute role={['user', 'business', 'admin']} path="/dashboard/history" component={History} />
-                    <PrivateRoute role={['business', 'admin']} path="/dashboard/analytics" component={Analytics} />
-                </Switch>
-            </div>
-            </div>
-        )
-    }
-}
-const stylesCommon = theme => ({
-
-    cardWrapper:{
-        display: 'flex',
-        flexWrap: 'wrap'
-    },
-
-    catWrapper:{
-        width: '100%'
-    },
-
-    catTitle: {
-        fontWeight: 700,
-        letterSpacing: 1,
-        opacity: .6,
-        transition: 'opacity .5s',        
-        '&.activeTab':{
-            opacity: 1,
-        },
-        '&:hover':{
-            opacity: .9
-        }
-    },
-
-    catTitleBtn: {
-        padding: '10px 0px 30px 0 !important',
-        marginRight: '30px !important',
-        '& > span': {
-            display: 'flex',
-            justifyContent: 'flex-start'
-        } 
-    },
-
-    activeTab: {},
-
-    card:{
-        maxHeight: '100%',
-        zIndex: '100',
-        position: 'relative',
-        marginBottom: 40,
-        marginRight: 40,
-        borderRadius: '8px',
-        overflow: 'hidden',
-        maxWidth: '690px',
-        height: '100%',
-        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
-        '@media (max-width: 600px)':{
-            marginRight: 0
-        }
-    },
-
-    createCard:{
-        height: '294px',
-        width: '284px',
-        zIndex: '100',
-        position: 'relative',
-        marginBottom: 40,
-        marginRight: 40,
-        marginLeft: 5,
-        borderRadius: '8px',
-        overflow: 'hidden',
-        backgroundColor: '#b1b4bd',
-        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
-        '@media (max-width: 600px)':{
-            marginRight: 0
-        }
-    },
-
-    createLink:{
-        display: 'block',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        backgroundColor: '#d8d9dd',
-        height: '100px',
-        width: '100px',
-        margin: '70px auto 33px',
-        position: 'relative',
-        transition: 'boxShadow .5s',
-        '&:hover': {
-            boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.1)',
-        },
-        '&:before': {
-            content: '\'\'',
-            position: 'absolute',
-            left: '20px',
-            top: '50%',
-            width: '60px',
-            height: '5px',
-            borderRadius: '14px',
-            overflow: 'hidden',
-            backgroundColor: '#506880',   
-            transform: 'translateY(-50%)' 
-        },
-
-        '&:after':{
-            content: '\'\'',
-            position: 'absolute',
-            left: '50%',
-            top: '20px',
-            height: '60px',
-            width: '5px',
-            borderRadius: '14px',
-            overflow: 'hidden',
-            backgroundColor: '#506880',   
-            transform: 'translateX(-50%)' 
-        }
-    },
-
-    createTitle: {
-        textAlign: 'center'
-    },
-
-    header:{
-        color: 'white',
-        background: '#FC3868',
-        fontWeight: 100,
-        display: 'flex',
-        height: 40,
-        alignItems: 'center',
-        justifyContent: 'center',
-        '& $delimeter': {
-            background: 'rgba(0, 0, 0, 0.1)',
-            height: '100%',
-            width: 1,
-            marginLeft: 'auto'
-        },
-        '& $impNum':{
-            padding: '0 10px'
-        }
-    },
-    delimeter:{},
-    impNum:{},
-    impNumNotFinished:{
-        opacity: '0.6'
-    },
-
-    cardBodyResult: {
-        padding: '23px 30px',
-        backgroundColor: 'white',
-        overflow: 'hidden'
-    },
-
-    row: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-    },
-
-    responseRow:{
-        '@media (max-width: 600px)':{
-            flexDirection: 'column',
-            alignItems: 'center',
-            flex: '1 0 66%'
-        }
-    },
-
-    space1:{
-        height: 28,
-        minWidth: '210px',
-    },
-    space2:{
-        height: 40,
-        minWidth: '210px',
-    },
-
-    progressBar:{
-        marginTop: 20,
-        marginBottom: 20,
-        minWidth: '210px',
-        height: '4px',
-        borderRadius: '3px',
-        backgroundColor: '#bbc2d8',
-        position: 'relative',
-        overflow: 'hidden'
-    },
-    progress:{
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        height: '4px',
-        backgroundColor: '#fc3868'
-    },
-    col:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: 250,
-    },
-    btnResult: {
-        marginTop: 30,
-        borderRadius: 74
-    },
-    title: {
-        padding: '0 30px',
-        display: 'flex',
-        display: 'inline-block',
-        width: '193px',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap'
-    },
-
-    titleAddon:{
-        verticalAlign: 'middle',
-        height: '1.1em'
-    },
-
-    column:{
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-
-    headerResult: {
-        paddingBottom: '1rem'
-    },
-
-    noWrap:{
-        whiteSpace: 'nowrap',
-        textAlign: 'center',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-
-    btnResultSmaller:{
-        marginTop: 16,
-        borderRadius: 74,
-        borderColor: '#fc3868',
-        color: '#fc3868',
-        fontWeight: 700,
-        textDecoration: 'none',
-        lineHeight: 1
-    },
-
-    toResult: {
-        color: 'inherit'
-    },
-
-    statusIconCheck:{
-        margin: '0 10px',
-        color: '#35e8c0',
-    },
-
-    statusIconWarning:{
-        margin: '0 10px',
-        color: '#fc3868',
-    }
-})
-// AKA Dashboard itself
-@withStyles(stylesCommon)
-@observer
-class Common extends React.Component{
-
-    @observable cardsInProcessAndFinished = {};
-    @observable totalIMP;
-    @observable loaded = false;
-    catsAvailable = new Set();
-
-    state = {'showTab-0': true};
-
-    socTitle
-    socDescription
-    socImage
-
-    componentWillMount(){
-        this.getProgress();
-    }
-    
-    @action
-    getProgress = (slugOfCardUpdatedFromShare) => {
-        let that = this;
-        when(() => !Auth.logging && !Auth.loadingUserData , () => {
-            
-            loadFromStore('commonSlugs').then(slugs => {
-                
-                Promise.all(Object.entries(slugs).map(([slug, { Progress } ]) => {
-                        return CardsModel.allProgress(slug).then((progress , idx) => {
-                            Object.assign(that.cardsInProcessAndFinished, {[slug]:{progress:{...progress, ...Progress}}})
-                        });
-                    })
-                ).then( _ => {
-                    return Promise.all( Object.entries(slugs).map(([slug, _]) => {
-                        return Api.getAdditionlCardInfo(slug).then(info => {
-                                if(!info || !info.cat) return
-
-                                if(slugOfCardUpdatedFromShare === slug){                              
-                                    that.socTitle = info.title;
-                                    that.socDescription = info.desc;
-                                    that.socImage = info.img;
-                                }
-
-                                that.catsAvailable.add(info.cat);
-                                Object.assign(that.cardsInProcessAndFinished, {[slug]: Object.assign({},that.cardsInProcessAndFinished[slug], {info: info}, {slug: slug})})
-                                
-                                return CardsModel.isLiked(slug);
-                            }).then(isLiked => {
-                                Object.assign(that.cardsInProcessAndFinished, {[slug]: Object.assign({},that.cardsInProcessAndFinished[slug], {isLiked: isLiked})})
-                            })
-                    }))
-                }).then( _ => {
-                    that.forceUpdate();
-                    that.totalIMP = Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => acc+=prog['info'] ? Math.min(( prog['progress'].number ), prog['info'].allCardsNumber) * prog['info'].reward : 0,0);
-                })
-            }, _ => {
-                that.loaded = true;
-                // Api.loadUserData({forceLoad: true}).then(data => {
-                //     if(!data || !data['SlugsCardsInProcess']) return
-                //     let reload = prompt('Error has happened. Reload page?', 'yes');
-                //     if( reload == 'yes' )
-                //     window.location.reload();
-                // })
-            })
-        });
-    }
-        
-    @action
-    changeTab = indexTab => _ => {
-
-        Object.keys(this.state).forEach(k => this.setState({[k]: false}))
-
-        this.setState({[`showTab-${indexTab}`]: true});
-    } 
-
-    render(){
-        let {classes} = this.props;
-        let that = this;
-        
-        return( 
-            <div className={classes.cardWrapper} >
-            {Array.from(this.catsAvailable).length == 0 && this.loaded && <div>
-                <Typography variant="display4" className={classes.catTitle}>You don't finish anything yet.</Typography>
-                <Explore/>
-                </div>}
-            {Array.from(this.catsAvailable).length == 0 && !this.loaded && <CircularProgress color="secondary" />}
-
-            { Array.from(this.catsAvailable).map((cat, idx) => {
-                return <Button className={classes.catTitleBtn} color="primary" key={`${cat}Title`} onClick={that.changeTab(idx)} ><Typography variant="display4" className={cx(classes.catTitle, {'activeTab' :that.state[`showTab-${idx}`]})} >{cat}</Typography></Button>
-            })}
-
-            { Array.from(this.catsAvailable).map((cat, idx) => {
-                return <div key={`${cat}`} className={classes.catWrapper}>
-                    { that.state[`showTab-${idx}`] &&
-                        <div className={classes.cardWrapper} >
-                        { that.cardsInProcessAndFinished && Object.values(that.cardsInProcessAndFinished).filter(o => o['info'] && o['info'].cat == cat).map(({progress, info, slug, isLiked}, idx) => {
-                            return  info ? (<div key={`card-${idx}`} className={classes.card}>
-                                        <div ref='header' className={classes.header}>
-                                            <Link style={{textDecoration: 'none'}} to={slug.replace('/v1','')} >
-                                                <Tooltip  title={info.dashTitle} placement="top">
-                                                    <Typography variant="display1" className={classes.title}>{info.dashTitle}<Icon className={classes.titleAddon}>navigate_next</Icon></Typography> 
-                                                </Tooltip>
-                                            </Link>
-                                            <span className={classes.delimeter}></span>
-
-                                            { info.cat == 'Polls' &&  <Typography variant="display1" className={classes.impNum}>  
-                                                {progress && roundeWithDec(progress.number * info.reward)} {Api.getCoinName()}
-                                            </Typography> }
-
-                                            { info.cat == 'Quizzes' && progress.final &&  <Typography variant="display1" className={classes.impNum}>  
-                                                {progress && roundeWithDec(progress.number * info.reward)} {Api.getCoinName()}
-                                            </Typography> }
-
-                                            { info.cat == 'Quizzes' && !progress.final && <Typography variant="display1" className={cx(classes.impNum, classes.impNumNotFinished)}>  
-                                                - {Api.getCoinName()}
-                                            </Typography> }
-                                        </div>
-
-                                        <div className={classes.cardBodyResult}>
-                                            {info && info.allCardsNumber > 0  &&  <Typography variant="display2" className={classes.noWrap}>
-                                                {info.cat == 'Polls' && info.dashOutput === 'number' && `${Math.floor( progress[info.dashOutput] * 100/ info.allCardsNumber)}%` /* Bad Design */ }
-                
-                                                { /* info.cat == 'Quizzes' && info.dashOutput === 'number' && `${progress[info.dashOutput]} / ${info.allCardsNumber}` */}
-                                             
-                                                { /* info.dashOutput === 'iqValue' && `${Math.floor(progress[info.dashOutput] )}` */}
-                                                
-                                            </Typography>}
-
-                                            { info.cat == 'Quizzes' && <div className={classes.space1}></div>}
-                                            { info.cat == 'Quizzes' && progress.final && <div className={classes.noWrap}>
-                                                <Icon className={classes.statusIconCheck} >check_circle</Icon>  
-                                                <Typography variant="title" >Completed</Typography> 
-                                            </div>}
-                                            { info.cat == 'Quizzes' && !progress.final && <div className={classes.noWrap}>
-                                                    <Icon className={classes.statusIconWarning} >warning</Icon>
-                                                    <Typography variant="title" >Not finished</Typography> 
-                                            </div>}
-                                            { info.cat == 'Quizzes' && <div className={classes.noWrap}>
-                                                <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small"  style={{textDecoration: 'none'}} href={slug.replace('/v1','')} >
-                                                        <Typography variant="button" className={classes.toResult}>View result</Typography> 
-                                                </Button>
-                                            </div>}
-                                        
-                                            { info.cat == 'Polls' && progress && <div className={classes.progressBar}>
-                                            <div style={{width: `${progress.number * 100/ info.allCardsNumber}%`}} className={classes.progress}></div>
-                                            </div>} 
-                                            { info.cat == 'Quizzes' && <div className={classes.space2}></div>}
-                                            <div className={classes.share}>
-                                                {!isLiked &&
-                                                <Typography variant="body1" gutterBottom className={classes.resHeader}>
-                                                    Share and get +0.5 {Api.getCoinName()}:
-                                                </Typography>}
-                                                {isLiked &&
-                                                <Typography gutterBottom variant="body1" className={classes.resHeader}>
-                                                    Share with your friends:
-                                                </Typography>}
-                                                <Share link={`${window.location.protocol}//${window.location.host}${slug.replace('/v1','')}`} update={this.getProgress} cardSlug={slug} title={this.socTitle} description={this.socDescription} image={this.socImage}/>
-                                            </div>
-                                        </div>
-                                    </div>) : <div key={`common-${idx}`} />
-                            }) }
-                            <div key={`create-${idx}`} className={classes.createCard}>
-                                <Link className={classes.createLink} to='/contact'></Link>
-                                <Typography gutterBottom variant="body1" className={classes.createTitle}>
-                                    Create your own {cat.toLowerCase()}
-                                </Typography>
-                            </div>
-                        </div> 
-                    }
-                    </div> 
-                })
-            }
-            </div>
-            )
-    }
-}
 const stylesProfile = theme => ({
 
     cardWrapper:{
@@ -955,7 +305,7 @@ const stylesProfile = theme => ({
 // Profile
 @withStyles(stylesProfile)
 @observer
-class Profile extends React.Component{
+export  class Profile extends React.Component{
 
     constructor(props){
         super(props);
@@ -1275,351 +625,13 @@ class Profile extends React.Component{
 }
 
 
-
-const stylesHistory = theme => ({
-
-    cardWrapper:{
-        display: 'flex',
-        flexWrap: 'wrap'
-    },
-    card:{
-        maxHeight: '100%',
-        zIndex: '100',
-        position: 'relative',
-        marginBottom: 40,
-        marginRight: 40,
-        borderRadius: '8px',
-        overflow: 'hidden',
-        maxWidth: '100%',
-        width: 'auto',
-        height: '100%',
-        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
-        '@media (max-width: 600px)':{
-            marginRight: 0,
-            minWidth: 690
-        }
-    },
-    header:{
-        color: 'white',
-        background: '#FC3868',
-        fontWeight: 100,
-        display: 'flex',
-        height: 40,
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        '& $delimeter': {
-            background: 'rgba(0, 0, 0, 0.1)',
-            height: '100px',
-            width: 1,
-            margin: '-50px 0'
-        },
-        '& $impNum':{
-            padding: '0 10px'
-        }
-    },
-    delimeter:{},
-    impNum:{},
-
-    cardBodyResult: {
-        padding: '23px 0px',
-        backgroundColor: 'white',
-        overflow: 'hidden'
-    },
-
-    row: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        padding: '0 30px',
-        '&:nth-of-type(2)': {
-            marginTop: 20
-        }
-    },
-
-    responseRow:{
-        '@media (max-width: 600px)':{
-            flexDirection: 'column',
-            alignItems: 'center',
-            flex: '1 0 66%'
-        }
-    },
-
-    col:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: 200,
-        height: 33,
-    },
-
-    btnResult: {
-        marginTop: 30,
-        borderRadius: 74
-    },
-
-    title: {
-        padding: '0 30px',
-    },
-
-    column:{
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-
-    headerResult: {
-        paddingBottom: '1rem'
-    },
-
-    noWrap:{
-        whiteSpace: 'nowrap',
-        textAlign: 'center'
-    },
-
-    history:{
-        display: 'flex',
-        flexDirection: 'column',
-    },
-
-    historyPic:{
-        width: 80,
-        height: '100%',
-        objectFit: 'cover',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        '& img': {
-            width: '100%',
-            height: 'auto',
-        }
-    },
-
-    historyDetails:{
-        display: 'flex',
-        flexDirection: 'column',
-        marginLeft: 20, 
-    },
-
-    historyName:{
-        fontSize: 16,
-        fontWeight: 600
-    },
-
-    historyEmail:{
-        fontSize: 14,
-        fontWeight: 400
-    },
-
-    historyImp:{
-        marginLeft: 'auto',
-        flexWrap: 'nowrap',
-        display: 'flex',
-        alignItems: 'baseline'
-    },
-
-    historyImpVal:{
-        textTransform: 'uppercase',
-        fontSize: 60,
-        fontWeight: 200,
-        letterSpacing: -1,
-        color: '#506980'
-    },
-    
-    historyImpAddon:{
-        textTransform: 'uppercase',
-        fontweight: 400,
-        color: '#506980',
-        paddingLeft: 15
-    },
-
-    walletSetWrapper:{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: '100%',
-        overflow: 'hidden',
-        width: 480,
-        marginBottom: 7,
-        marginTop: 29
-    },
-
-    walletSet:{
-        width: 'calc(100% - 65px)',
-        display: 'inline-block',
-    },
-    
-    divider: {
-        margin: '15px 30px',
-        backgroundColor: "#bbc2d8"
-    },
-
-    headerField:{
-        margin: '20px 0 12px',
-        fontSize: 16,
-    },
-
-    bold:{
-        fontWeight: 600
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
-    submitBtn:{
-        float: 'right',
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    editBtn:{
-        float: 'right',
-        borderRadius: 74,
-    },
-
-    editBtnTypo:{
-        fontSize: 14,
-        fontWeight: 700
-    },
-
-    short:{
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
-        display: 'inline-block',
-        width: '100%'
-    },
-    
-    delBtn:{
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    explorer: {
-        verticalAlign: 'middle',
-        lineHeight: '100%',
-        fontSize: 30,
-        color: '#4b5168'
-    }
-
-})
-
-// History
-@withStyles(stylesHistory)
-@observer
-class History extends React.Component{
-
-    constructor(props){
-        super(props);
-        this.getHistory();
-    }
-
-
-
-    @observable histories = [];
-
-    @action.bound
-    getHistory = _ => {
-        Api.getHistory(Auth.uid, this.histories)
-    }
-
-    render(){
-        let {classes} = this.props;
-
-        return( 
-            <div className={classes.cardWrapper} >
-
-            <div className={classes.card}>
-                <div ref='header' className={classes.header}>
-                    <div className={classes.row}>
-                        <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
-                            <Typography  align="left" variant="display1" className={classes.bold}>
-                                    Wallet
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
-                                    Amount, {Api.getCoinName()}
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '250px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
-                                    Date
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '150px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
-                                    Explorer
-                            </Typography>
-                        </div>
-                    </div>
-                </div>
-                <div className={classes.cardBodyResult}>
-                    <div className={classes.history}>
-                        
-                            {this.histories.map((history, idx, histories) => {
-                                return [<div key={`history-${idx}`} className={classes.row}>
-
-                                    <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
-                                        <Tooltip  title={history.wallet} placement="top">
-                                            <Typography className={classes.short} variant="body1" gutterBottom>
-                                                    {history.wallet}
-                                            </Typography>
-                                        </Tooltip>
-                                    </div>
-
-                                    <div className={classes.col}>
-                                        <Typography variant="body1" gutterBottom>
-                                                {roundeWithDec(history.amount)}
-                                        </Typography>
-                                    </div>
-
-                                    <div style={{width: '250px'}} className={classes.col}>
-                                        <Typography variant="body1" gutterBottom>
-                                                {(new Date(history.date)).getDate()} {getMonthName((new Date(history.date)).getMonth())}, {(new Date(history.date)).getFullYear()}, {(new Date(history.date)).getHours()}: {(new Date(history.date)).getMinutes()}
-                                        </Typography>
-                                    </div>
-
-                                    <div style={{width: '150px'}} className={classes.col}>
-                                        <Typography variant="body1" gutterBottom>
-                                            { history.responce && <a href={`https://explorer.impleum.com/tx/${history.responce.transactionId}`}
-                                                target="_blank" className={classes.explorer}><Icon>link</Icon>
-                                            </a>}
-                                        </Typography>
-                                    </div>
-                                </div>,
-                                histories.length - 1 !=  idx ? <Divider className={classes.divider} /> : <div key={`historydiv-${idx}`}/> ]
-                                }
-                            )}
-                    </div>
-
-                </div>
-            </div>
-        </div>)
-    }
-}
 const stylesAnalytics = theme => ({
 
     cardWrapper:{
         display: 'flex',
         flexWrap: 'wrap'
     },
+
     card:{
         maxHeight: '100%',
         zIndex: '100',
@@ -1632,11 +644,8 @@ const stylesAnalytics = theme => ({
         width: 'auto',
         height: '100%',
         boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
-        '@media (max-width: 600px)':{
-            marginRight: 0,
-            minWidth: 690
-        }
     },
+
     header:{
         color: 'white',
         background: '#FC3868',
@@ -1644,7 +653,7 @@ const stylesAnalytics = theme => ({
         display: 'flex',
         height: 40,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         overflow: 'hidden',
         '& $delimeter': {
             background: 'rgba(0, 0, 0, 0.1)',
@@ -1660,36 +669,26 @@ const stylesAnalytics = theme => ({
     impNum:{},
 
     cardBodyResult: {
-        padding: '23px 0px',
+        padding: '12px 0px',
         backgroundColor: 'white',
         overflow: 'hidden'
     },
 
     row: {
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
         padding: '0 30px',
-        '&:nth-of-type(2)': {
-            marginTop: 20
-        }
     },
 
-    responseRow:{
-        '@media (max-width: 600px)':{
-            flexDirection: 'column',
-            alignItems: 'center',
-            flex: '1 0 66%'
-        }
-    },
-
-    col:{
+    col: {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
         width: 200,
         height: 33,
+        flexShrink: 0,
     },
 
     btnResult: {
@@ -1715,59 +714,9 @@ const stylesAnalytics = theme => ({
         textAlign: 'center'
     },
 
-    history:{
+    analitics:{
         display: 'flex',
         flexDirection: 'column',
-    },
-
-    historyPic:{
-        width: 80,
-        height: '100%',
-        objectFit: 'cover',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        '& img': {
-            width: '100%',
-            height: 'auto',
-        }
-    },
-
-    historyDetails:{
-        display: 'flex',
-        flexDirection: 'column',
-        marginLeft: 20, 
-    },
-
-    historyName:{
-        fontSize: 16,
-        fontWeight: 600
-    },
-
-    historyEmail:{
-        fontSize: 14,
-        fontWeight: 400
-    },
-
-    historyImp:{
-        marginLeft: 'auto',
-        flexWrap: 'nowrap',
-        display: 'flex',
-        alignItems: 'baseline'
-    },
-
-    historyImpVal:{
-        textTransform: 'uppercase',
-        fontSize: 60,
-        fontWeight: 200,
-        letterSpacing: -1,
-        color: '#506980'
-    },
-    
-    historyImpAddon:{
-        textTransform: 'uppercase',
-        fontweight: 400,
-        color: '#506980',
-        paddingLeft: 15
     },
 
     walletSetWrapper:{
@@ -1788,7 +737,7 @@ const stylesAnalytics = theme => ({
     },
     
     divider: {
-        margin: '15px 30px',
+        margin: '7px 30px',
         backgroundColor: "#bbc2d8"
     },
 
@@ -1851,105 +800,360 @@ const stylesAnalytics = theme => ({
         lineHeight: '100%',
         fontSize: 30,
         color: '#4b5168'
-    }
+    },
+
+    addIMP:{
+        height: '100px',
+        width: '100px',
+        zIndex: '100',
+        position: 'relative',
+        marginBottom: 40,
+        marginRight: 40,
+        marginLeft: 5,
+        borderRadius: '8px',
+        overflow: 'hidden', 
+        backgroundColor: '#b1b4bd',
+        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
+        '@media (max-width: 600px)':{
+            marginRight: 0
+        }
+    },
+
+    addIMPLink:{
+        display: 'block',
+        borderRadius: '50%',
+        overflow: 'hidden',
+        backgroundColor: '#d8d9dd',
+        height: '56px',
+        width: '56px',
+        margin: '14px auto 4px',
+        position: 'relative',
+        transition: 'boxShadow .5s',
+        '&:hover': {
+            boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.1)',
+        },
+        '&:before': {
+            content: '\'\'',
+            position: 'absolute',
+            left: '8px',
+            top: '50%',
+            width: '40px',
+            height: '5px',
+            borderRadius: '14px',
+            overflow: 'hidden',
+            backgroundColor: '#506880',   
+            transform: 'translateY(-50%)' 
+        },
+
+        '&:after':{
+            content: '\'\'',
+            position: 'absolute',
+            left: '50%',
+            top: '8px',
+            height: '40px',
+            width: '5px',
+            borderRadius: '14px',
+            overflow: 'hidden',
+            backgroundColor: '#506880',   
+            transform: 'translateX(-50%)' 
+        }
+    },
+
+    addIMPTitle: {
+        textAlign: 'center'
+    },
 
 })
 
-// History
+const theme = createMuiTheme( Object.assign(themeObject, { 
+    typography: {
+        ...themeObject.typography,
+        body1: {
+            fontSize: '14px',
+            fontWeight: 400,
+            color: '#474e65',
+            fontFamily: '"Open Sans", "Helvetica", "Arial", sans-serif',
+        }
+    }
+}));
+
+// Analytics
 @withStyles(stylesAnalytics)
 @observer
-class Analytics extends React.Component{
+export class Analytics extends React.Component{
 
     constructor(props){
         super(props);
-        this.getHistory();
+        this.getAnalytics();
     }
 
-    @observable histories = [];
+    @observable analitics = {};
+    @observable balanceIncome = 0;
 
     @action.bound
-    getHistory = _ => {
-        Api.getHistory(Auth.uid, this.histories)
+    getAnalytics = async _ => {
+    
+        let that = this;
+        let user = await new Promise(r => Api.auth().onAuthStateChanged(r)).catch(function(error) {
+            console.trace(error.stack);
+            console.log('User token is outdated. Relogin is required.')
+        });
+
+        if (user) {
+
+            let idToken = await user.getIdToken();
+
+            let fetchBody = {token: idToken};
+
+            let analitics = await fetch(`http://localhost/api/getAnalytics/${Auth.uid}`,{
+                method: 'post',
+                headers: {
+                    'Content-type': 'application/json; charset=utf-8',
+                    'Accept': 'application/json'},
+                mode: 'cors',
+                body: JSON.stringify(fetchBody)
+            }).then(resp => resp.json())
+            .catch(error =>  {
+                console.trace(error.stack);
+            });
+
+
+            that.balanceIncome = await Api.getBalance();
+            that.analitics = analitics;
+        }
+      
     }
 
-    render(){
+    @computed
+    get balance(){
+        return this.balanceIncome - this.paid;
+    }
+
+    @computed
+    get paid(){
+        return Object.entries(this.analitics).reduce((allpayouts ,[path, {overall, payouts, responses, title, reward, sharedReward, sharedCount, sharedPayoutsCount}]) => {
+            return allpayouts + payouts + sharedReward * sharedPayoutsCount
+        }, 0)
+    }
+
+    @computed
+    get blocked(){
+        return Object.entries(this.analitics).reduce((allblocked ,[path, {overall, payouts, responses, title, reward, sharedReward, sharedCount, sharedPayoutsCount}]) => {
+            return allblocked + overall + sharedReward * sharedCount - payouts - sharedReward * sharedPayoutsCount
+        }, 0)
+    }
+
+    @computed
+    get available(){
+        return this.balance - this.blocked
+    }
+
+
+    makeVisibleInIframeOnly(){
+
+    }
+
+    getBalanceInfo(){
+
         let {classes} = this.props;
 
-        return( 
-            <div className={classes.cardWrapper} >
-
+        return (
+ 
             <div className={classes.card}>
                 <div ref='header' className={classes.header}>
-                    <div className={classes.row}>
-                        <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
+                    <div className={classes.row} style={{padding: '0 10px'}}>
+                        <div style={{ width: '100px'}} className={classes.col}>
                             <Typography  align="left" variant="display1" className={classes.bold}>
-                                    Wallet
+                                Available
                             </Typography>
                         </div>
                         <span className={classes.delimeter}></span>
-                        <div className={classes.col}>
+                        <div style={{ alignItems: 'center', width: '100px'}} className={classes.col}>
                             <Typography variant="display1" className={classes.bold}>
-                                    Amount, {Api.getCoinName()}
+                                Blocked
                             </Typography>
                         </div>
                         <span className={classes.delimeter}></span>
-                        <div style={{width: '250px'}} className={classes.col}>
+                        <div style={{ width: '100px'}} className={classes.col}>
                             <Typography variant="display1" className={classes.bold}>
-                                    Date
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '150px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
-                                    Explorer
+                                Balance
                             </Typography>
                         </div>
                     </div>
                 </div>
                 <div className={classes.cardBodyResult}>
-                    <div className={classes.history}>
-                        
-                            {this.histories.map((history, idx, histories) => {
-                                return [<div key={`history-${idx}`} className={classes.row}>
+                    <div className={classes.analitics}>
+                        <div className={classes.row} style={{padding: '0 10px'}}>
 
-                                    <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
-                                        <Tooltip  title={history.wallet} placement="top">
-                                            <Typography className={classes.short} variant="body1" gutterBottom>
-                                                    {history.wallet}
-                                            </Typography>
-                                        </Tooltip>
-                                    </div>
+                            <div style={{ width: '100px'}} className={classes.col}>
+                                <Typography variant="body1" >
+                                    {roundeWithDec(this.available)} {Api.getCoinName()}      
+                                </Typography>
+                            </div>
 
-                                    <div className={classes.col}>
-                                        <Typography variant="body1" gutterBottom>
-                                                {roundeWithDec(history.amount)}
-                                        </Typography>
-                                    </div>
+                            <div style={{width: '100px'}} className={classes.col}>
+                                <Typography variant="body1" >
+                                    {roundeWithDec(this.blocked)} {Api.getCoinName()}      
+                                </Typography>
+                            </div>
 
-                                    <div style={{width: '250px'}} className={classes.col}>
-                                        <Typography variant="body1" gutterBottom>
-                                                {(new Date(history.date)).getDate()} {getMonthName((new Date(history.date)).getMonth())}, {(new Date(history.date)).getFullYear()}, {(new Date(history.date)).getHours()}: {(new Date(history.date)).getMinutes()}
-                                        </Typography>
-                                    </div>
-
-                                    <div style={{width: '150px'}} className={classes.col}>
-                                        <Typography variant="body1" gutterBottom>
-                                            { history.responce && <a href={`https://explorer.impleum.com/tx/${history.responce.transactionId}`}
-                                                target="_blank" className={classes.explorer}><Icon>link</Icon>
-                                            </a>}
-                                        </Typography>
-                                    </div>
-                                </div>,
-                                histories.length - 1 !=  idx ? <Divider className={classes.divider} /> : <div key={`historydiv-${idx}`}/> ]
-                                }
-                            )}
+                            <div style={{ width: '100px'}} className={classes.col}>
+                                <Typography variant="body1" >
+                                    {roundeWithDec(this.balance)} {Api.getCoinName()}      
+                                </Typography>
+                            </div>
+                        </div>
+                                
                     </div>
 
                 </div>
             </div>
-        </div>)
+        )
+    }
+
+    render(){
+        let {classes} = this.props;
+
+        return(
+
+        <MuiThemeProvider theme={theme}>
+            <div className={classes.cardWrapper} >
+
+            { this.getBalanceInfo() }
+
+            <div className={classes.addIMP}>
+                <Link className={classes.addIMPLink} to='/contact'></Link>
+                <Typography  variant="body1" className={classes.addIMPTitle}>
+                    Add IMP
+                </Typography>
+            </div>
+
+            <div className={classes.card}>
+                <div ref='header' className={classes.header}>
+                    <div className={classes.row}>
+                        <div style={{ alignItems: 'flex-start', width: '180px'}} className={classes.col}>
+                            <Typography  align="left" variant="display1" className={classes.bold}>
+                                Title
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+                        <div style={{width: '100px'}} className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                On/Off
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+                        <div style={{width: '100px'}} className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                Iframe only
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+                        <div style={{width: '100px'}} className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                Reward
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+                        <div style={{width: '100px'}} className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                Responses
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+                        <div style={{width: '100px'}} className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                Payouts
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+                        <div style={{width: '250px'}} className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                Payouts(counting shares)
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+                        <div style={{width: '100px'}} className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                Blocked
+                            </Typography>
+                        </div>
+                        <span className={classes.delimeter}></span>
+            
+                        <span className={classes.delimeter}></span>
+                        <div style={{width: '100px'}} className={classes.col}>
+                            <Typography variant="display1" className={classes.bold}>
+                                More
+                            </Typography>
+                        </div>
+                    </div>
+                </div>
+                <div className={classes.cardBodyResult}>
+                    <div className={classes.analitics}>
+                            { Object.entries(this.analitics).map(([path, {overall, payouts, responses, title, reward, sharedReward, sharedCount, sharedPayoutsCount}], idx, analitics) => {
+                                return [<div key={`history-${idx}`} className={classes.row}>
+
+                                    <div style={{ alignItems: 'flex-start', width: '180px'}} className={classes.col}>
+                                        <Typography className={classes.short} variant="body1" >
+                                            {title}
+                                        </Typography>
+                                    </div>
+
+                                    <div style={{width: '100px'}} className={classes.col}>
+                                        <Switch
+                                            checked={false}
+                                            value="checkedA"
+                                        />
+                                    </div>
+                                    <div style={{width: '100px'}} className={classes.col}>
+                                        <Switch
+                                            checked={true}
+                                            onChange={this.makeVisibleInIframeOnly()}
+                                            value="checkedA"
+                                        />
+                                    </div>
+
+                                    <div style={{width: '100px'}} className={classes.col}>
+                                        <Typography variant="body1" >
+                                            {roundeWithDec(reward)} {Api.getCoinName()}                                        
+                                        </Typography>
+                                    </div>
+
+                                    <div style={{width: '100px'}} className={classes.col}>
+                                        <Typography variant="body1" >
+                                            {responses}
+                                        </Typography>
+                                    </div>
+
+                                    <div style={{width: '100px'}} className={classes.col}>
+                                        <Typography variant="body1" >
+                                            {roundeWithDec(payouts)} {Api.getCoinName()}         
+                                        </Typography>
+                                    </div>
+
+                                    <div style={{width: '250px'}} className={classes.col}>
+                                        <Typography variant="body1" >
+                                            {roundeWithDec(payouts + sharedReward * sharedPayoutsCount)} {Api.getCoinName()}         
+                                        </Typography>
+                                    </div>
+
+                                    <div style={{width: '100px'}} className={classes.col}>
+                                        <Typography variant="body1" >
+                                            {roundeWithDec(overall + sharedReward * sharedCount - payouts - sharedReward * sharedPayoutsCount)} {Api.getCoinName()}         
+                                        </Typography>
+                                    </div>
+                                    <div style={{width: '100px'}} className={classes.col}>
+                                       
+                                    </div>
+                                   
+                                </div>,
+                                analitics.length - 1 !=  idx ? <Divider key={`historydiv-${idx}`} className={classes.divider} /> : <div key={`historydiv-${idx}`}/> ]
+                                })
+                            }
+                    </div>
+
+                </div>
+            </div>
+        </div> </MuiThemeProvider>)
     }
 }
-
-
-export default Dashboard;

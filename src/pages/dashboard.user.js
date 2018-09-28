@@ -63,232 +63,6 @@ const PrivateRoute =  ({ component: Component, ...rest }) => (
 
 const drawerWidth = 200;
 
-const styles = theme => ({
-
-    cardWrapper:{
-        display: 'flex',
-        margin: 'auto',
-        height: '100%',
-        // position: 'relative',
-        width: '100%'
-    },
-    aside:{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        borderRight: '1px solid #6b7183',
-    },
-    icon:{
-        color: 'white'
-    },
-    link: {
-        textDecoration: 'none'
-    },
-    footer: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        marginTop: 'auto',
-        marginBottom: '20px',
-        padding: '0 20px',
-    },
-
-    footerText:{
-        color: 'white',
-        fontSize: 14,
-        textAlign: 'left',
-        width: '100%'
-    },
-
-    footerImageCover:{
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: 10
-    },
-
-    footerImage:{
-        width: 20
-    },
-
-    menuBtnSpacings:{
-        padding: '3px 0px',
-        textAlign: 'left'
-    },
-    
-    mainArea: {
-        padding: 40,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        flexGrow: 1,
-        '@media (max-width: 600px)':{
-            overflowX: 'auto',
-            padding: 20,
-        }
-    },
-    drawerPaper: {
-        position: 'relative',
-        whiteSpace: 'nowrap',
-        width: drawerWidth,
-        background: '#474E65',
-        height: 'calc(100vh - 64px)',
-        zIndex: 1,
-        transition: theme.transitions.create('width', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.enteringScreen,
-        }),
-      },
-    drawerPaperClose: {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: '56px',
-    },
-    mainMenuIcon: {
-        color: 'white'
-    }
-
-})
-
-@withStyles(styles)
-@withRouter
-@observer
-class Dashboard extends React.Component {
-
-
-    state= {
-        open: window.innerWidth > 600,
-        analytics: false
-    }
-
-    componentDidMount(){
-        this.mounted = true;
-        let that = this;
-
-        loadFromStore('meta').then(meta => {
-            if(that.mounted)
-                that.setState({open: meta.userOpenMenu});
-        }, _ => {})
-
-        when(() => ['business', 'admin'].includes(Auth.role) , _ => {
-            if(that.mounted)
-                that.setState({analytics: true});
-        })
-
-    }
-
-    componentWillUnmount(){
-        this.mounted = false;
-    }
-
-      
-    toogle = () => {
-        this.setState({ open: !this.state.open }, _ =>   
-            loadFromStore('meta').then( meta => { 
-                        saveToStore('meta', Object.assign(meta, {userOpenMenu: this.state.open}))
-                    }).then(Api.saveUserData)
-                )
-    };
-
-    render() {
-        
-        let {classes} = this.props;
-
-        let {analytics} = this.state;
-
-        return (
-            <div className={classes.cardWrapper}>
-            <aside className={classes.daside}>
-            <Drawer
-                variant="permanent"
-                classes={{
-                paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
-                }}
-                open={this.state.open}
-                className={classes.aside}
-            >
-                <MenuList>
-                    <NavLink tabIndex='1' to={'/dashboard'} className={classes.link} >
-                        <MenuItem selected={/^\/dashboard$/.test(this.props.location.pathname)} onClick={this.handleClose}>
-                            <ListItemIcon className={classes.icon}>
-                                <Icon  className={classes.mainMenuIcon} >dashboard</Icon>
-                            </ListItemIcon>
-                            <Typography variant="display1" >
-                                Dashboard
-                            </Typography>
-                        </MenuItem>
-                    </NavLink>
-                    <NavLink tabIndex='1' to={'/dashboard/profile'} className={classes.link} >
-                        <MenuItem selected={/dashboard\/profile/.test(this.props.location.pathname)} onClick={this.handleClose}>
-                            <ListItemIcon className={classes.icon}>
-                                <Icon  className={classes.mainMenuIcon} >account_box</Icon>
-                            </ListItemIcon>
-                            <Typography variant="display1" >
-                                Profile
-                            </Typography>
-                        </MenuItem>
-                    </NavLink>
-                    <NavLink tabIndex='1' to={'/dashboard/history'} className={classes.link} >
-                        <MenuItem selected={/dashboard\/history/.test(this.props.location.pathname)} onClick={this.handleClose}>
-                            <ListItemIcon className={classes.icon}>
-                                <Icon className={classes.mainMenuIcon} >access_time</Icon>
-                            </ListItemIcon>
-                            <Typography variant="display1" >
-                                History
-                            </Typography>
-                            
-                        </MenuItem>
-                    </NavLink>
-                    { analytics &&
-                        <NavLink tabIndex='1' to={'/dashboard/analytics'} className={classes.link} >
-                            <MenuItem selected={/dashboard\/analytics/.test(this.props.location.pathname)} onClick={this.handleClose}>
-                                <ListItemIcon className={classes.icon}>
-                                    <Icon className={classes.mainMenuIcon} >trending_up</Icon>
-                                </ListItemIcon>
-                                <Typography variant="display1" >
-                                    Analytics
-                                </Typography>
-                                
-                            </MenuItem>
-                        </NavLink>}
-                </MenuList>
-                <div className={classes.footer}>
-
-                <IconButton onClick={this.toogle}>
-                    { !this.state.open ? <Icon className={classes.mainMenuIcon} >chevron_right</Icon> : <Icon   className={classes.mainMenuIcon} >chevron_left</Icon>}
-                </IconButton>
-                
-
-                {this.state.open && <Typography variant="body1"  className={classes.footerText + ' ' + classes.footerImageCover}> 
-                    <img className={classes.footerImage} src={IMP} /> 1IMP  =  <img className={classes.footerImage} style={{margin: '0 3px'}} src={BTC}/> 0.00013 BTC 
-                </Typography>}
-                
-                {this.state.open && <Typography ref='copyright' variant="body1" className={classes.menuBtnSpacings + ' ' + classes.footerText} >
-                    Copyright © 2018 Quizi.
-                </Typography>}
-                {this.state.open && <Typography ref='copyright' variant="body1" className={classes.menuBtnSpacings + ' ' + classes.footerText} >
-                    All Rights Reserved.
-                </Typography>}
-                
-                </div>
-
-                </Drawer>
-            </aside>
-            
-            <div className={classes.mainArea}>
-                <Switch>
-                    <PrivateRoute role={['user', 'business', 'admin']} exact path="/dashboard" component={Common} /> 
-                    <PrivateRoute role={['user', 'business', 'admin']} path="/dashboard/profile" component={Profile} /> 
-                    <PrivateRoute role={['user', 'business', 'admin']} path="/dashboard/history" component={History} />
-                    <PrivateRoute role={['business', 'admin']} path="/dashboard/analytics" component={Analytics} />
-                </Switch>
-            </div>
-            </div>
-        )
-    }
-}
 const stylesCommon = theme => ({
 
     cardWrapper:{
@@ -328,8 +102,8 @@ const stylesCommon = theme => ({
         maxHeight: '100%',
         zIndex: '100',
         position: 'relative',
-        marginBottom: 40,
-        marginRight: 40,
+        marginBottom: 20,
+        marginRight: 20,
         borderRadius: '8px',
         overflow: 'hidden',
         maxWidth: '690px',
@@ -347,13 +121,15 @@ const stylesCommon = theme => ({
         position: 'relative',
         marginBottom: 40,
         marginRight: 40,
-        marginLeft: 5,
         borderRadius: '8px',
         overflow: 'hidden',
         backgroundColor: '#b1b4bd',
         boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
         '@media (max-width: 600px)':{
             marginRight: 0
+        },
+        '&.quizzes': {
+            height: '280px'
         }
     },
 
@@ -446,12 +222,12 @@ const stylesCommon = theme => ({
     },
 
     space1:{
-        height: 28,
-        minWidth: '210px',
+        height: 7,
+        minWidth: '222px',
     },
     space2:{
         height: 40,
-        minWidth: '210px',
+        minWidth: '222px',
     },
 
     progressBar:{
@@ -483,7 +259,7 @@ const stylesCommon = theme => ({
         borderRadius: 74
     },
     title: {
-        padding: '0 30px',
+        padding: '0 20px',
         display: 'flex',
         display: 'inline-block',
         width: '193px',
@@ -529,19 +305,21 @@ const stylesCommon = theme => ({
     },
 
     statusIconCheck:{
-        margin: '0 10px',
+        fontSize: '30px',
+        margin: '0 8px 0 0',
         color: '#35e8c0',
     },
 
     statusIconWarning:{
-        margin: '0 10px',
+        fontSize: '30px',
+        margin: '0 8px 0 0',
         color: '#fc3868',
     }
 })
 // AKA Dashboard itself
 @withStyles(stylesCommon)
 @observer
-class Common extends React.Component{
+export class Common extends React.Component{
 
     @observable cardsInProcessAndFinished = {};
     @observable totalIMP;
@@ -638,9 +416,10 @@ class Common extends React.Component{
                                         <div ref='header' className={classes.header}>
                                             <Link style={{textDecoration: 'none'}} to={slug.replace('/v1','')} >
                                                 <Tooltip  title={info.dashTitle} placement="top">
-                                                    <Typography variant="display1" className={classes.title}>{info.dashTitle}<Icon className={classes.titleAddon}>navigate_next</Icon></Typography> 
+                                                    <Typography variant="display1" className={classes.title}>{info.dashTitle}</Typography> 
                                                 </Tooltip>
                                             </Link>
+
                                             <span className={classes.delimeter}></span>
 
                                             { info.cat == 'Polls' &&  <Typography variant="display1" className={classes.impNum}>  
@@ -667,6 +446,7 @@ class Common extends React.Component{
                                             </Typography>}
 
                                             { info.cat == 'Quizzes' && <div className={classes.space1}></div>}
+
                                             { info.cat == 'Quizzes' && progress.final && <div className={classes.noWrap}>
                                                 <Icon className={classes.statusIconCheck} >check_circle</Icon>  
                                                 <Typography variant="title" >Completed</Typography> 
@@ -699,7 +479,7 @@ class Common extends React.Component{
                                         </div>
                                     </div>) : <div key={`common-${idx}`} />
                             }) }
-                            <div key={`create-${idx}`} className={classes.createCard}>
+                            <div key={`create-${idx}`} className={cx(classes.createCard, cat.toLowerCase())}>
                                 <Link className={classes.createLink} to='/contact'></Link>
                                 <Typography gutterBottom variant="body1" className={classes.createTitle}>
                                     Create your own {cat.toLowerCase()}
@@ -955,7 +735,7 @@ const stylesProfile = theme => ({
 // Profile
 @withStyles(stylesProfile)
 @observer
-class Profile extends React.Component{
+export class Profile extends React.Component{
 
     constructor(props){
         super(props);
@@ -981,7 +761,7 @@ class Profile extends React.Component{
     @observable wallet = '';
     @observable grecaptcha;
     
-
+    withdrawDetail = {};
     calculatingProgress = false
     @action
     getProgress = async () => {
@@ -1016,6 +796,7 @@ class Profile extends React.Component{
                 .then( _ => {
                     return Api.getWithdrawn(Auth.uid)
                 }).then( amountWithdrawn => {
+
                     that.totalIMP = Math.max(0, Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => {
                     
                     if(!prog['info']){
@@ -1027,7 +808,9 @@ class Profile extends React.Component{
                         addToTotal = Math.min(( prog['progress'].number ), prog['info'].allCardsNumber) * prog['info'].reward;
                     }
 
-                    return acc += addToTotal + (prog['isLiked'] ? .5000 : 0);
+                    that.withdrawDetail[`${prog['info'].id}`] = {amount: addToTotal, addr: null, isLiked: prog['isLiked']};
+                    
+                    return acc += addToTotal + (prog['isLiked'] ? prog['info'].sharedReward : 0);
                     
 
                     }, -amountWithdrawn)) 
@@ -1111,13 +894,13 @@ class Profile extends React.Component{
         }
         
         that.paying = true;
-        Api.auth().onAuthStateChanged(function(user) {
+        Api.auth().onAuthStateChanged(function(user) { // callback hell
             
             if (user) {
 
                 user.getIdToken().then(function(idToken) {
 
-                    fetch(`https://quizi.io/api/getUser/${Auth.uid}`,{
+                    fetch(`http://localhost/api/transaction/${Auth.uid}`,{
                         method: 'post',
                         headers: {
                             'content-type': 'application/x-www-form-urlencoded; charset=utf-8',
@@ -1132,10 +915,11 @@ class Profile extends React.Component{
                                 return that.isErrorModalOpened = true;
                             }
 
-                            Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken, resp ).then( amount => {
+                            Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken, resp, that.withdrawDetail ).then( amount => {
                                 that.getProgress();
                                 that.paying = false;
                             })
+                            
                         })
                         
                   }).catch(function(error) {
@@ -1143,9 +927,7 @@ class Profile extends React.Component{
                     that.paying = false;
                   });
         
-            } 
-            
-            else{
+            }else{
               console.error("user not logged in");
             }
         
@@ -1520,345 +1302,7 @@ const stylesHistory = theme => ({
 // History
 @withStyles(stylesHistory)
 @observer
-class History extends React.Component{
-
-    constructor(props){
-        super(props);
-        this.getHistory();
-    }
-
-
-
-    @observable histories = [];
-
-    @action.bound
-    getHistory = _ => {
-        Api.getHistory(Auth.uid, this.histories)
-    }
-
-    render(){
-        let {classes} = this.props;
-
-        return( 
-            <div className={classes.cardWrapper} >
-
-            <div className={classes.card}>
-                <div ref='header' className={classes.header}>
-                    <div className={classes.row}>
-                        <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
-                            <Typography  align="left" variant="display1" className={classes.bold}>
-                                    Wallet
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
-                                    Amount, {Api.getCoinName()}
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '250px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
-                                    Date
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '150px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
-                                    Explorer
-                            </Typography>
-                        </div>
-                    </div>
-                </div>
-                <div className={classes.cardBodyResult}>
-                    <div className={classes.history}>
-                        
-                            {this.histories.map((history, idx, histories) => {
-                                return [<div key={`history-${idx}`} className={classes.row}>
-
-                                    <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
-                                        <Tooltip  title={history.wallet} placement="top">
-                                            <Typography className={classes.short} variant="body1" gutterBottom>
-                                                    {history.wallet}
-                                            </Typography>
-                                        </Tooltip>
-                                    </div>
-
-                                    <div className={classes.col}>
-                                        <Typography variant="body1" gutterBottom>
-                                                {roundeWithDec(history.amount)}
-                                        </Typography>
-                                    </div>
-
-                                    <div style={{width: '250px'}} className={classes.col}>
-                                        <Typography variant="body1" gutterBottom>
-                                                {(new Date(history.date)).getDate()} {getMonthName((new Date(history.date)).getMonth())}, {(new Date(history.date)).getFullYear()}, {(new Date(history.date)).getHours()}: {(new Date(history.date)).getMinutes()}
-                                        </Typography>
-                                    </div>
-
-                                    <div style={{width: '150px'}} className={classes.col}>
-                                        <Typography variant="body1" gutterBottom>
-                                            { history.responce && <a href={`https://explorer.impleum.com/tx/${history.responce.transactionId}`}
-                                                target="_blank" className={classes.explorer}><Icon>link</Icon>
-                                            </a>}
-                                        </Typography>
-                                    </div>
-                                </div>,
-                                histories.length - 1 !=  idx ? <Divider className={classes.divider} /> : <div key={`historydiv-${idx}`}/> ]
-                                }
-                            )}
-                    </div>
-
-                </div>
-            </div>
-        </div>)
-    }
-}
-const stylesAnalytics = theme => ({
-
-    cardWrapper:{
-        display: 'flex',
-        flexWrap: 'wrap'
-    },
-    card:{
-        maxHeight: '100%',
-        zIndex: '100',
-        position: 'relative',
-        marginBottom: 40,
-        marginRight: 40,
-        borderRadius: '8px',
-        overflow: 'hidden',
-        maxWidth: '100%',
-        width: 'auto',
-        height: '100%',
-        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
-        '@media (max-width: 600px)':{
-            marginRight: 0,
-            minWidth: 690
-        }
-    },
-    header:{
-        color: 'white',
-        background: '#FC3868',
-        fontWeight: 100,
-        display: 'flex',
-        height: 40,
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        '& $delimeter': {
-            background: 'rgba(0, 0, 0, 0.1)',
-            height: '100px',
-            width: 1,
-            margin: '-50px 0'
-        },
-        '& $impNum':{
-            padding: '0 10px'
-        }
-    },
-    delimeter:{},
-    impNum:{},
-
-    cardBodyResult: {
-        padding: '23px 0px',
-        backgroundColor: 'white',
-        overflow: 'hidden'
-    },
-
-    row: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        padding: '0 30px',
-        '&:nth-of-type(2)': {
-            marginTop: 20
-        }
-    },
-
-    responseRow:{
-        '@media (max-width: 600px)':{
-            flexDirection: 'column',
-            alignItems: 'center',
-            flex: '1 0 66%'
-        }
-    },
-
-    col:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: 200,
-        height: 33,
-    },
-
-    btnResult: {
-        marginTop: 30,
-        borderRadius: 74
-    },
-
-    title: {
-        padding: '0 30px',
-    },
-
-    column:{
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-
-    headerResult: {
-        paddingBottom: '1rem'
-    },
-
-    noWrap:{
-        whiteSpace: 'nowrap',
-        textAlign: 'center'
-    },
-
-    history:{
-        display: 'flex',
-        flexDirection: 'column',
-    },
-
-    historyPic:{
-        width: 80,
-        height: '100%',
-        objectFit: 'cover',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        '& img': {
-            width: '100%',
-            height: 'auto',
-        }
-    },
-
-    historyDetails:{
-        display: 'flex',
-        flexDirection: 'column',
-        marginLeft: 20, 
-    },
-
-    historyName:{
-        fontSize: 16,
-        fontWeight: 600
-    },
-
-    historyEmail:{
-        fontSize: 14,
-        fontWeight: 400
-    },
-
-    historyImp:{
-        marginLeft: 'auto',
-        flexWrap: 'nowrap',
-        display: 'flex',
-        alignItems: 'baseline'
-    },
-
-    historyImpVal:{
-        textTransform: 'uppercase',
-        fontSize: 60,
-        fontWeight: 200,
-        letterSpacing: -1,
-        color: '#506980'
-    },
-    
-    historyImpAddon:{
-        textTransform: 'uppercase',
-        fontweight: 400,
-        color: '#506980',
-        paddingLeft: 15
-    },
-
-    walletSetWrapper:{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: '100%',
-        overflow: 'hidden',
-        width: 480,
-        marginBottom: 7,
-        marginTop: 29
-    },
-
-    walletSet:{
-        width: 'calc(100% - 65px)',
-        display: 'inline-block',
-    },
-    
-    divider: {
-        margin: '15px 30px',
-        backgroundColor: "#bbc2d8"
-    },
-
-    headerField:{
-        margin: '20px 0 12px',
-        fontSize: 16,
-    },
-
-    bold:{
-        fontWeight: 600
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
-    submitBtn:{
-        float: 'right',
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    editBtn:{
-        float: 'right',
-        borderRadius: 74,
-    },
-
-    editBtnTypo:{
-        fontSize: 14,
-        fontWeight: 700
-    },
-
-    short:{
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
-        display: 'inline-block',
-        width: '100%'
-    },
-    
-    delBtn:{
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    explorer: {
-        verticalAlign: 'middle',
-        lineHeight: '100%',
-        fontSize: 30,
-        color: '#4b5168'
-    }
-
-})
-
-// History
-@withStyles(stylesAnalytics)
-@observer
-class Analytics extends React.Component{
+export class History extends React.Component{
 
     constructor(props){
         super(props);
@@ -1940,7 +1384,7 @@ class Analytics extends React.Component{
                                         </Typography>
                                     </div>
                                 </div>,
-                                histories.length - 1 !=  idx ? <Divider className={classes.divider} /> : <div key={`historydiv-${idx}`}/> ]
+                                histories.length - 1 !=  idx ? <Divider key={`historydiv-${idx}`} className={classes.divider} /> : <div key={`historydiv-${idx}`}/> ]
                                 }
                             )}
                     </div>
@@ -1951,5 +1395,3 @@ class Analytics extends React.Component{
     }
 }
 
-
-export default Dashboard;

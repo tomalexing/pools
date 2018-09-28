@@ -288,7 +288,7 @@ class Subscribe extends React.Component {
 
                         </div>
                         <div className={classes.cardBodyResult}>
-                            <Typography variant="body1" className={classes.headerField} >We sent only news, no spam.
+                            <Typography variant="body1" className={classes.headerField} >Subscribe to our news and updates.  No spam, only useful information.
                             </Typography>
 
                             <form className={classes.form} onSubmit={this.onSubmit} noValidate autoComplete="off">

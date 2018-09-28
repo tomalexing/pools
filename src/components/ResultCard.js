@@ -136,7 +136,6 @@ const styles = theme => ({
     },
 
     btnResultSmaller:{
-        marginTop: 6,
         borderRadius: 74,
         borderColor: '#fc3868',
         color: '#fc3868',
@@ -310,16 +309,14 @@ class ResultCard extends React.Component {
                                     <Typography variant="title" className={classes.resTitle}>{this.finalCard.info.title}</Typography>
                                         <a className={classes.linksite} onClick={Api.saveReferral('congratulations', this.props.cardSlug.substr(1), this.finalCard.info.id)} href={`http://${this.finalCard.info.linksite}`} target="_blank" ><Typography variant="display1" className={classes.linksite}>{this.finalCard.info.linksite}</Typography></a>
                                     <Typography variant="body1" className={classes.description}>{this.finalCard.info.desc}</Typography>
-                                    <div className={classes.btnsRow}>
+                                    <div className={classes.btnsRow} style={{marginTop: 6}}>
                                         <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small" onClick={this.again} >Take again
                                         </Button>
                                         {!this.props.embed && <Typography variant="body1" style={{margin:"0 20px"}}>or</Typography> }
                                         {!this.props.embed && 
                                             <div>
-                                                { this.finalCard.info.cat == 'Polls' && <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/categories/polls'} > View more polls
-                                                </Link>}
-                                                { this.finalCard.info.cat == 'Quizzes' && <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/categories/quizzes'} > View more quizzes
-                                                </Link>}
+                                                { this.finalCard.info.cat == 'Polls' && <Typography variant="button"> <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/categories/polls'} > View more polls</Link> </Typography>}
+                                                { this.finalCard.info.cat == 'Quizzes' && <Typography variant="button"> <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/categories/quizzes'} > View more quizzes </Link> </Typography>}
                                             </div>
                                         }
                                     </div>
@@ -361,15 +358,16 @@ class ResultCard extends React.Component {
                                     
                                     { !Auth.isAuthenticated && !this.props.embed && <div className={classes.col}>
                                         
-                                        <Button className={classes.resBtn} variant="raised" color="secondary"  side="small" onClick={this.openLoginModal}>Withdraw
+                                        <Button className={classes.resBtn} variant="raised" color="secondary"  side="small" onClick={this.openLoginModal}>Payout
                                         </Button>
+
                                     </div> }
                                     { Auth.isAuthenticated && !this.props.embed && <div className={classes.col}> 
-                                        <Link style={{textDecoration: 'none'}} to="/dashboard/profile"><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Withdraw</Button></Link>
+                                        <Link style={{textDecoration: 'none'}} to="/dashboard/profile"><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Payout</Button></Link>
                                     </div> }
 
                                     {this.props.embed && <div className={classes.col}>
-                                        <a href={`${window.location.origin}/dashboard/profile${this.backup ? `?backup=${this.backup}` : ''}`} target="_blank" style={{textDecoration: 'none'}} ><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Dashboard</Button></a>
+                                        <a href={`${window.location.origin}/dashboard/profile${this.backup ? `?backup=${this.backup}` : ''}`} target="_blank" style={{textDecoration: 'none'}} ><Button className={classes.resBtn} variant="raised" color="secondary"  side="small" >Payout</Button></a>
                                     </div> }
                                 </div>
                             </div>

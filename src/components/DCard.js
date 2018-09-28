@@ -27,7 +27,6 @@ class DCard extends React.Component {
         }
 
         if(/^\/quizzes/.test(match.path)){
-
             this.model = new Cards({getIds: Api.getCardByIds(`${slug}/v1`), cardSlug: `${slug}/v1`,
              tryAgainIsCleanPrevious: true});
         }
@@ -35,7 +34,7 @@ class DCard extends React.Component {
         if(/^\/embed/.test(match.path)){
 
             slug = `/${match.params.cardtype}/${match.params.id}/v1`;
-
+            
             if(match.params.cardtype == 'polls'){
                 this.model = new Cards({getIds: Api.getCardByIds(slug), cardSlug: slug, tryAgainIsCleanPrevious: false, embed: true});
             }

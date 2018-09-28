@@ -247,12 +247,14 @@ class Explore extends React.Component {
         let showCats = this.slug == this.props.match.path.substr(1);
 
         let that = this;
-        Api.getCatsMenu().then(menu =>  this.Menu = menu)
+        Api.getCatsMenu().then(menu => this.Menu = menu)
         Api.getCatsCards(this.slug).then(cards =>  {
 
             that.Cards = showCats 
                 ?  cards
-                :  cards.filter(card => card.type === 'term');
+                :  cards.filter(card => {
+                    return card.type === 'term' && !card.onlyIframe
+                });
         })
     }
 
@@ -332,7 +334,7 @@ class Explore extends React.Component {
                         </header>
                         <article className={classes.article}>
 
-                            { card.link && <Link style={{textDecoration: 'none'}}  to={card.link}><Typography variant="title" className={classes.title}>{card.title}</Typography></Link> }
+                            { card.link && <Link style={{textDecoration: 'none'}}  to={card.link.startsWith('/') ? card.link : locationStrip + '/' + card.link}><Typography variant="title" className={classes.title}>{card.title}</Typography></Link> }
 
                             { !card.link && <Typography variant="title" className={classes.title}>{card.title}</Typography> }
 

@@ -95,25 +95,25 @@ function changeScoresPolls(slug ,id, {l,r}){
 }
 
 
-var getQuizzesIds = (query) => (models) => {
+// var getQuizzesIds = (query) => (models) => {
     
-    return new Promise((resolve, reject) => {
-        db.collection(`${query}`).orderBy("order").onSnapshot(snap => {
+//     return new Promise((resolve, reject) => {
+//         db.collection(`${query}`).orderBy("order").onSnapshot(snap => {
                 
-                if(snap.empty) return resolve([]);
-            // acc.push({id: snap.docs[0].id,...snap.docs[0].data()});
-                let ids = [];
-                snap.docChanges().forEach(change => {
-                    if(change.type == 'added' ){
-                        ids.push(change.doc.id);
-                    }
+//                 if(snap.empty) return resolve([]);
+//             // acc.push({id: snap.docs[0].id,...snap.docs[0].data()});
+//                 let ids = [];
+//                 snap.docChanges().forEach(change => {
+//                     if(change.type == 'added' ){
+//                         ids.push(change.doc.id);
+//                     }
 
-                })
-                resolve(ids);
-            })
-    })
+//                 })
+//                 resolve(ids);
+//             })
+//     })
     
-}
+// }
 
 
 function getUserById(id){
@@ -178,7 +178,7 @@ function create(name, email){
 }
 
 
-function withdraw(id, amount, wallet, idTocken, resp){
+function withdraw(id, amount, wallet, idToken, resp, detailed){
     if(!id || !amount || !wallet) return Promise.resolve();
     var batch = db.batch();
 
@@ -192,6 +192,9 @@ function withdraw(id, amount, wallet, idTocken, resp){
             batch.set(userRef, {
                 withdrawTotal: amountWithdrawn + amount
             }, { merge: true });
+            batch.set(userRef, {
+                withdrawDetailed: detailed
+            }, { merge: true });
 
             batch.commit().then(resolve);
         })
@@ -200,7 +203,9 @@ function withdraw(id, amount, wallet, idTocken, resp){
 }
 
 function getWithdrawn(id){
-    if(!id) return Promise.resolve();
+    if(!id && !Auth.uid) return Promise.resolve();
+
+    id = id || Auth.uid;
     return new Promise(resolve => {
         let userRef = db.collection(userPoint).doc(id);
         var setWithMerge = userRef.get().then(doc => {
@@ -208,6 +213,25 @@ function getWithdrawn(id){
                 let docDate = doc.data()
                 if('withdrawTotal' in docDate){
                     resolve(docDate.withdrawTotal)
+                }else{
+                    resolve(0)
+                }
+            }
+        });
+    })
+}
+
+function getBalance(id){
+    if(!id && !Auth.uid) return Promise.resolve();
+
+    id = id || Auth.uid;
+    return new Promise(resolve => {
+        let userRef = db.collection(userPoint).doc(id);
+        var setWithMerge = userRef.get().then(doc => {
+            if(doc.exists){
+                let docDate = doc.data()
+                if('balance' in docDate){
+                    resolve(docDate.balance)
                 }else{
                     resolve(0)
                 }
@@ -468,7 +492,7 @@ function checkCaptcha(resp) {
 
 const Api = {
     getCard,
-    getQuizzesIds,
+   // getQuizzesIds,
     getCardByIds,
     changeScoresPolls,
     getUserById,
@@ -492,6 +516,7 @@ const Api = {
     create,
     checkCaptcha,
     getRole,
-    saveReferral
+    saveReferral,
+    getBalance
 }
 export default Api;
