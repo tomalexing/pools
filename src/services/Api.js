@@ -4,7 +4,7 @@ import 'firebase/firestore';
 import 'firebase/auth';
 import { loadAllFromStore, saveAllToStore } from './localDb';
 import Auth from '../models/Auth';
-
+import {sleep} from './../utils.js'
 const settings = { timestampsInSnapshots: true};
 let db = fire.firestore();
 db.settings(settings)
@@ -26,8 +26,8 @@ var getAdditionlCardInfo = (slug) => {
     })
 }
 
-var getCardByIds = (query) => (models) => {
-
+var getCardByIds = (query) => async (models) => {
+    let info = await getAdditionlCardInfo(query);
     return new Promise((resolve, reject) => {
         db.collection(`${query}`).orderBy("order").onSnapshot(snap => {
 
@@ -49,7 +49,7 @@ var getCardByIds = (query) => (models) => {
                         }
                     }
                 })
-                resolve(ids);
+                resolve({ids, info});
             })
     })
     
@@ -187,7 +187,7 @@ function withdraw(id, amount, wallet, idToken, resp, detailed){
         Api.getWithdrawn(id).then( amountWithdrawn  => {
             let userRef = db.collection(userPoint).doc(id);
             batch.set(userRef, {
-                withdraw: {[(new Date).toISOString()]:{amount, wallet, responce: JSON.parse(resp)}}
+                withdraw: {[(new Date).toISOString()]:{amount, wallet, responce: resp}}
             }, { merge: true });
             batch.set(userRef, {
                 withdrawTotal: amountWithdrawn + amount
@@ -221,10 +221,30 @@ function getWithdrawn(id){
     })
 }
 
+function getWithdrawDetailed(id){
+    if(!id && !Auth.uid) return Promise.resolve();
+
+    id = id || Auth.uid;
+    return new Promise(resolve => {
+        let userRef = db.collection(userPoint).doc(id);
+        var setWithMerge = userRef.get().then(doc => {
+            if(doc.exists){
+                let docDate = doc.data()
+                if('withdrawDetailed' in docDate){
+                    resolve(docDate.withdrawDetailed)
+                }else{
+                    resolve(0)
+                }
+            }
+        });
+    })
+}
+
 function getBalance(id){
     if(!id && !Auth.uid) return Promise.resolve();
 
     id = id || Auth.uid;
+
     return new Promise(resolve => {
         let userRef = db.collection(userPoint).doc(id);
         var setWithMerge = userRef.get().then(doc => {
@@ -253,14 +273,23 @@ function saveWallet(id, wallet){
 }
 
 function getWallet(id){
-    if(!id) return Promise.resolve();
+    if(!id && !Auth.uid) return Promise.resolve();
+
+    id = id || Auth.uid;
+    var field = 'wallet';
+
+    if(Auth.role && Auth.role == 'business'){
+        field = Auth.role + 'wallet';
+    }
+
     return new Promise(resolve => {
         let userRef = db.collection(userPoint).doc(id);
         userRef.get().then(doc => {
             if(doc.exists){
                 let docDate = doc.data()
-                if('wallet' in docDate){
-                    resolve(docDate.wallet)
+
+                if(field in docDate){
+                    resolve(docDate[field])
                 }else{
                     resolve(null)
                 }
@@ -437,10 +466,11 @@ function getCatsMenu(){
 
 //var catsCache = null;
 function getCatsCards(path){
+
     //if( catsCache ) return Promise.resolve(catsCache)
     return new Promise(resolve => {
 
-        let userRef = path.split('/').reduce((db, p, idx) => {
+        let collectionRef = path.split('/').reduce((db, p, idx) => {
             if(idx % 2){
                 return db.doc(p)
             }else{
@@ -448,7 +478,7 @@ function getCatsCards(path){
             }
         }, db);
         
-        userRef.get().then(async doc => {
+        collectionRef.get().then(async doc => {
             
             let allDocs = [];
             if( 'exists' in doc && doc.exists){
@@ -474,8 +504,81 @@ function getCatsCards(path){
     })
 }
 
+async function setValueInCatalog(label, value, path, id){
+    await setInCategories(label, id, value);
+    await setInEntity(label, path, value);
+}
+
+
+async function setInEntity(label, path, value){
+    if (!path) return Promise.resolve();
+
+    let [_ ,coll, id] = path.replace('/v1','').split('/');
+    let cardRef = await db.collection(coll).doc(id).get();
+    let cardData = await cardRef.data();
+    cardData[label] = value;
+    await cardRef.ref.set(cardData);
+    
+}
+
+//var catsCache = null;
+function setInCategories(label, id, value, path = 'categories'){
+    //if( catsCache ) return Promise.resolve(catsCache)
+
+    return new Promise(resolve => {
+
+        let collectionRef = path.split('/').reduce((db, p, idx) => {
+            if(idx % 2){
+                return db.doc(p)
+            }else{
+                return db.collection(p)
+            }
+        }, db);
+
+        collectionRef.get().then(async doc => {
+
+            // 
+            if( 'empty' in doc && !doc.empty){
+                let resolver = null
+                Array.from(doc.docs).map(async catEntries => {
+                    if( 'exists' in catEntries && catEntries.exists){
+                        let catEntriesData = catEntries.data();
+                   
+
+                        if('id' in catEntriesData && catEntriesData.id == id){
+                            catEntriesData[label] = value;
+                            resolver = catEntries.ref.set(catEntriesData, { merge: false });
+                        }
+
+                        if('collections' in catEntriesData){
+                            await setInCategories(label, id, value, `${path}/${catEntriesData.slug}`);
+                        }
+          
+                    }
+                })
+                resolve(resolver)
+            }
+
+            // 
+            if( 'exists' in doc && doc.exists ){
+                let docData = doc.data();
+        
+                if('collections' in docData){
+                    await docData.collections.reduce(async(docs, coll) => {
+                        await docs;
+                        await setInCategories(label, id, value, `${path}/${coll}`);
+                        return Promise.resolve()
+                        }, Promise.resolve())
+                }
+                return resolve()
+
+            }
+        });
+    })
+}
+
 function getCoinName(){
-    return "IMP"
+    return "IMPL"
 }
 
 function checkCaptcha(resp) {
@@ -489,6 +592,21 @@ function checkCaptcha(resp) {
     })
 }
 
+async function ourApi(path, fetchBody) {
+
+    return await fetch(`${window.location.protocol}//${window.location.hostname}/api/${path}`,{
+        method: 'post',
+        headers: {
+            'Content-type': 'application/json; charset=utf-8',
+            'Accept': 'application/json'},
+        mode: 'cors',
+        body: JSON.stringify(fetchBody)
+    })
+    .then(resp => resp.json())
+    .catch(error =>  {
+        console.trace(error.stack);
+    });
+}
 
 const Api = {
     getCard,
@@ -503,6 +621,7 @@ const Api = {
     addReview,
     withdraw,
     getWithdrawn,
+    getWithdrawDetailed,
     getWallet,
     saveWallet,
     saveUserData,
@@ -517,6 +636,8 @@ const Api = {
     checkCaptcha,
     getRole,
     saveReferral,
-    getBalance
+    getBalance,
+    setValueInCatalog,
+    ourApi
 }
 export default Api;

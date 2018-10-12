@@ -6,7 +6,8 @@ import Card from './Card';
 import { listener } from './../utils';
 import noPullToRefresh from './../no-pull-to-refresh.js';
 import Auth from './../models/Auth';
-// noPullToRefresh();
+import Api from './../services/Api';
+import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
 
@@ -14,6 +15,15 @@ const styles = theme => ({
         display: 'flex',
         margin: 'auto',
         height: '100%',
+        // position: 'relative',
+        width: '100%',
+    },
+    notAvailable:{
+        display: 'flex',
+        margin: 'auto',
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
         // position: 'relative',
         width: '100%',
     }
@@ -40,11 +50,19 @@ class CardWrapper extends React.Component {
                 that.props.store.currentCard.reactClass.adjustStyle();
             }, false))
         }
+        
         when(() => !Auth.logging && !Auth.loadingUserData , () => {
-            this.props.store && this.props.store.load().then(current => {
+            this.props.store && this.props.store.load().then(async current => {
                 
                 that.current = current + 1;
                 that.next = current + 2;
+            
+                let blockSomeOf = await Api.ourApi('checkentity', {id: that.props.store.id, path: that.props.store.cardSlug});
+                if(blockSomeOf.actions){
+                    Object.values(blockSomeOf.values).map(block => {
+                       Api.setValueInCatalog('blockedEntity', block.value, block.entry_path, block.entry_id);
+                    })
+                }
             })
         })
 
@@ -69,6 +87,15 @@ class CardWrapper extends React.Component {
         if(!this.props.store || this.props.store.allCardsNumber == 0 ){
              return(<div/>)
         }
+
+        if(!this.props.store.IsEnd && this.props.store.info && (this.props.store.info.blockedByUser || this.props.store.info.blockedEntity) ){
+             return(
+                <div className={classes.notAvailable}>
+                    <Typography variant="display2" >Time's up</Typography> 
+                </div> 
+             )
+        }
+
         return (
             <div className={classes.cardWrapper}>
                 <Card startCard={this.current} cardPlace='currentCard' store={this.props.store}/>

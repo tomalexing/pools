@@ -9,6 +9,7 @@ import Button from '@material-ui/core/Button'
 import quizzesSVG from './../assets/quizzes.svg';
 import pollsSVG from './../assets/polls.svg';
 import Api from './../services/Api';
+import Icon from '@material-ui/core/Icon';
 
 import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -17,7 +18,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import * as cn from 'classnames'
 import { NavLink } from './NavLink';
 import { LazyImage } from './../utils';
-
+import {loadFromStore , saveToStore, clearAll} from "./../services/localDb";
 
 const styles = theme => ({
 
@@ -106,6 +107,7 @@ const styles = theme => ({
         overflow: 'hidden',
         display: 'flex',
         flex: '1 0 300px',
+        position: 'relative',
         '@media (max-width: 767px)':{
             width: '100%',
             height: 'auto',
@@ -168,7 +170,7 @@ const styles = theme => ({
 
     description: {
         textAlign: 'left',
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: 400,
         display: 'block',
         display: '-webkit-box',
@@ -180,18 +182,17 @@ const styles = theme => ({
         textOverflow: 'ellipsis'
     },
     
-    number: {
+    param: {
         color: '#474e65',
-        fontSize: 16,
+        fontSize: 13,
         fontWeight: 600,
-        marginRight: 25
+        marginRight: 5
     },
-    
-    reward:{
-        color: '#474e65',
-        fontSize: 16,
-        fontWeight: 600,
-        marginRight: 25
+
+    paramIcon: {
+        color: '#fc3868',
+        fontSize: 15,
+        marginRight: 2
     },  
     
     btn: {
@@ -222,7 +223,42 @@ const styles = theme => ({
             height: 'auto',
             paddingTop: '10px',
         }
+    },
+
+    progressBar:{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        width: '100%',
+        backgroundColor: '#BCC2D9',
+        height: 4
+    },
+
+    progressLine:{
+        backgroundColor: '#FC3868',
+        display: 'block',
+        height: 4
+    },
+
+    progressStatus:{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        zIndex: 10,
+        overflow: 'hidden',
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        padding: '15px',
+        background: 'linear-gradient(to top, rgba(0,0,0,.3), rgba(0,0,0,0) 40%)',
+
+    },
+
+    footerParamRow:{
+        display: 'flex'
     }
+
 })
 
 @withStyles(styles)
@@ -247,14 +283,36 @@ class Explore extends React.Component {
         let showCats = this.slug == this.props.match.path.substr(1);
 
         let that = this;
-        Api.getCatsMenu().then(menu => this.Menu = menu)
-        Api.getCatsCards(this.slug).then(cards =>  {
 
-            that.Cards = showCats 
+        Api.getCatsMenu().then(menu => this.Menu = menu);
+
+        loadFromStore('commonSlugs').then(slugs => {
+            that.cardsProgress = slugs;
+        });
+
+        Api.getCatsCards(this.slug).then(async cards =>  {
+            let cardsFiltered = showCats
                 ?  cards
                 :  cards.filter(card => {
-                    return card.type === 'term' && !card.onlyIframe
+                    return card.type === 'term' && !card.onlyIframe && !card.blockedByUser && !card.blockedEntity
                 });
+
+            that.Cards = cardsFiltered;
+            that.loading = false;
+
+            return  cards.filter(card => {
+                        return card.type === 'term'
+                    });
+
+        }).then(cats => {
+            cats.map(async item => {
+                let blockSomeOf = await Api.ourApi('checkentity', {id: item.id, path: item.link + '/v1'});
+                if(blockSomeOf.actions){
+                    Object.values(blockSomeOf.values).map(block => {
+                       Api.setValueInCatalog('blockedEntity', block.value, block.entry_path, block.entry_id);
+                    })
+                }
+            })
         })
     }
 
@@ -263,6 +321,8 @@ class Explore extends React.Component {
     @observable slug = {};
     @observable Cards = [];
     @observable openMenu = false;
+    @observable loading = true;
+    @observable cardsProgress = {};
     
 
     componentWillUnmount(){
@@ -318,7 +378,7 @@ class Explore extends React.Component {
                     </MenuList>
                 </aside>
                 <div className={classes.catsCard}>
-                    {this.Cards.length == 0 && <div className={classes.center}><CircularProgress color="secondary" /></div>}
+                    {this.Cards.length == 0 && this.loading && <div className={classes.center}><CircularProgress color="secondary" /></div>}
                     {this.Cards.map((card, idx) => (<div key={`cats-${idx}`} className={classes.card}>
                         <header className={classes.header}>
 
@@ -331,6 +391,15 @@ class Explore extends React.Component {
                             { !card.link && !card.img && card.cardtype == 'Quiz' && <LazyImage className={classes.image} load={'./assets/quiz.png'}/>}
                             { !card.link && card.img && <LazyImage className={classes.image} load={card.img}/>}
 
+                            { that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].number>0 && <div className={classes.progressBar} > <span className={classes.progressLine} style={{width: that.cardsProgress[card.link + '/v1']['Progress'].number * 100 / card.number }}> </span>  </div>}
+                            
+                            { card.link && <Link className={classes.progressStatus} style={{textDecoration: 'none'}} to={card.link.startsWith('/') ?  card.link : locationStrip + '/' + card.link}> 
+                                
+                                { card.cardtype == 'Quiz' && that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="display4">Completed</Typography> }
+                                { card.cardtype == 'Quiz' && that.cardsProgress[card.link + '/v1'] && !that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="display4">Not finished</Typography> }
+
+                            </Link> }
+
                         </header>
                         <article className={classes.article}>
 
@@ -338,15 +407,19 @@ class Explore extends React.Component {
 
                             { !card.link && <Typography variant="title" className={classes.title}>{card.title}</Typography> }
 
-
                             <a style={{textDecoration: 'none'}} onClick={Api.saveReferral('catalog',card.slug,card.id)} href={`http://${card.linksite}`} target="_blank" ><Typography variant="display1" className={classes.link}>{card.linksite}</Typography></a>
 
                             <Typography variant="body1" className={classes.description}>{card.desc}</Typography>
                             <div className={classes.footer}>
-                                {card.number && <Typography variant="display1" className={classes.number}>{card.number} cards</Typography>}
-                                {card.number && <Typography variant="display1" className={classes.reward}>up to {roundeWithDec(card.reward * card.number)} {Api.getCoinName()}</Typography>}
-                            
-                               { card.link && <Link className={classes.btnlink} to={card.link.startsWith('/') ? card.link : locationStrip + '/' + card.link }><Button className={classes.btn} variant="raised" color="secondary" side="small" >{card.btn}</Button></Link>}
+
+                                {card.number && <div className={classes.footerParamRow} >
+                                    <Icon className={classes.paramIcon}>offline_bolt</Icon> <Typography variant="display1" className={classes.param}>{card.number} cards</Typography>
+                                    <Icon className={classes.paramIcon}>layers</Icon> <Typography variant="display1" className={classes.param}>{roundeWithDec(card.number * card.reward)} {Api.getCoinName()}</Typography>
+                                    <Icon className={classes.paramIcon}>share</Icon> <Typography variant="display1" className={classes.param}>{roundeWithDec(card.sharedReward)} {Api.getCoinName()}</Typography>
+                                </div>}
+
+                               { card.link && (!that.cardsProgress[card.link + '/v1'] || !that.cardsProgress[card.link + '/v1']['Progress'].final) && <Link className={classes.btnlink} to={card.link.startsWith('/') ? card.link : locationStrip + '/' + card.link }><Button className={classes.btn} variant="raised" color="secondary" side="small" >{card.btn}</Button></Link>}
+                               { card.link && that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].final && <Link className={classes.btnlink} to={card.link.startsWith('/') ? card.link : locationStrip + '/' + card.link }><Button className={classes.btn} variant="raised" color="secondary" side="small" >Take again</Button></Link>}
                                { !card.link && <div className={classes.btnlink} ><Button  to={card.link} className={classes.btn} variant="raised" disabled color="secondary" side="small" >Coming Soon</Button></div>}
                             </div>
                         </article>

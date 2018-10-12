@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {observable, action, when} from 'mobx';
 import { observer }  from 'mobx-react';
-import cx from 'classnames';
+import cn from 'classnames';
 
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuList from '@material-ui/core/MenuList';
@@ -148,15 +148,22 @@ const styles = theme => ({
     drawerPaper: {
         position: 'relative',
         whiteSpace: 'nowrap',
-        width: drawerWidth,
-        background: '#474E65',
         height: 'calc(100vh - 64px)',
+        backgroundColor: "#474E65",
         zIndex: 1,
         transition: theme.transitions.create('width', {
           easing: theme.transitions.easing.sharp,
           duration: theme.transitions.duration.enteringScreen,
         }),
-      },
+    },
+
+    dartBackground:{
+        backgroundColor: "#474E65"
+    },
+
+    bussBackground: {
+        backgroundColor: "#353B4D"
+    },
     drawerPaperClose: {
         overflowX: 'hidden',
         transition: theme.transitions.create('width', {
@@ -165,6 +172,7 @@ const styles = theme => ({
         }),
         width: '56px',
     },
+    
     mainMenuIcon: {
         color: 'white'
     }
@@ -223,7 +231,12 @@ class Dashboard extends React.Component {
             <Drawer
                 variant="permanent"
                 classes={{
-                paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
+                    paper: cn({
+                        [classes.drawerPaper]           : true, 
+                        [classes.drawerPaperClose]      : !this.state.open,
+                        [classes.dartBackground]        :   Auth.role == 'user', 
+                        [classes.bussBackground]        :   Auth.role == 'business' || Auth.role == 'admin', 
+                    })
                 }}
                 open={this.state.open}
                 className={classes.aside}
@@ -282,7 +295,7 @@ class Dashboard extends React.Component {
 
                 {this.state.open && <Typography component="div"  variant="body1"  className={classes.footerText + ' ' + classes.footerImageCover}> 
                     <img className={classes.footerImage} src={IMP} /> 
-                    <Typography ref='copyright' variant="body1" className={classes.footerTitle + ' ' + classes.footerText} > <span className={classes.footerAltColor}> IMP/BTC</span></Typography>
+                    <Typography ref='copyright' variant="body1" className={classes.footerTitle + ' ' + classes.footerText} > <span className={classes.footerAltColor}> {Api.getCoinName()}/BTC</span></Typography>
                     <p className={classes.footerDesc} >0.838 <span className={classes.footerAltColor}>USD</span></p>
                 </Typography>}
                 
@@ -303,7 +316,9 @@ class Dashboard extends React.Component {
                 <PrivateRoute role={['user']} exact path="/dashboard/profile" component={User.Profile} /> 
                 <PrivateRoute role={['user']} exact path="/dashboard/history" component={User.History} />
 
-                <PrivateRoute role={['business']} exact path="/dashboard" component={Business.Analytics} /> 
+
+                <PrivateRoute role={['business']} exact path="/dashboard" component={User.Common} /> 
+                <PrivateRoute role={['business']} exact path="/dashboard/analytics" component={Business.Analytics} /> 
                 <PrivateRoute role={['business']} exact path="/dashboard/profile" component={Business.Profile} /> 
             </div>
             </div>

@@ -7,7 +7,7 @@ import cx from 'classnames';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
-import { listener, getMonthName, roundeWithDec, loadScript } from './../utils';
+import { listener, getMonthName, roundeWithDec, loadScript, sleep } from './../utils';
 
 import {Switch, Route, Redirect, Link, withRouter} from 'react-router-dom';
 import {NavLink} from './../components/NavLink';
@@ -740,8 +740,11 @@ export class Profile extends React.Component{
     constructor(props){
         super(props);
 
-        this.getProgress();
         let that = this;
+
+
+        this.getProgress()
+
         Api.getWallet(Auth.uid).then(wallet => {
             if(!wallet) return
 
@@ -752,6 +755,7 @@ export class Profile extends React.Component{
         window.onloadCaptchaCallback = () => {
             this.grecaptcha = true;
         }
+
 
     }
 
@@ -808,7 +812,7 @@ export class Profile extends React.Component{
                         addToTotal = Math.min(( prog['progress'].number ), prog['info'].allCardsNumber) * prog['info'].reward;
                     }
 
-                    that.withdrawDetail[`${prog['info'].id}`] = {amount: addToTotal, addr: null, isLiked: prog['isLiked']};
+                    that.withdrawDetail[`${prog['info'].id}`] = {amount: addToTotal, addr: prog['info'].addr, isLiked: prog['isLiked']};
                     
                     return acc += addToTotal + (prog['isLiked'] ? prog['info'].sharedReward : 0);
                     
@@ -819,6 +823,7 @@ export class Profile extends React.Component{
             }, _ => {})
 
             this.calculatingProgress = false;
+
         });
     }
 
@@ -881,57 +886,66 @@ export class Profile extends React.Component{
         })
     }
 
+    static getDiffAmount(oldObj, newObj){
+        let diff = {};
+        Object.entries(newObj).map(([key, value]) => {
+            diff[key] = Object.assign(newObj[key]);
+            
+            if( oldObj[key] && !isNaN( oldObj[key]['amount']) ){
+                diff[key]['amount'] =  newObj[key]['amount'] - oldObj[key]['amount'];
+            }
+        })
+        return diff;
+    }
+
     @action.bound
-    payoff = _ => {
+    payoff = async _ => {
         let that = this;
         if(that.paying) return
         if(that.totalIMP <= 0) return
 
-        if(!this.captchaVerified){
-            this.openCaptcha = true;
-            this.loadCaptcha()
-            return
-        }
+        // if(!this.captchaVerified){
+        //     this.openCaptcha = true;
+        //     this.loadCaptcha()
+        //     return
+        // }
         
-        that.paying = true;
-        Api.auth().onAuthStateChanged(function(user) { // callback hell
-            
-            if (user) {
 
-                user.getIdToken().then(function(idToken) {
-
-                    fetch(`http://localhost/api/transaction/${Auth.uid}`,{
-                        method: 'post',
-                        headers: {
-                            'content-type': 'application/x-www-form-urlencoded; charset=utf-8',
-                            'Accept': 'application/json'},
-                        mode: 'cors',
-                        body: 'token=' + idToken + '&totalIMP=' + that.totalIMP + '&wallet=' + that.wallet
-                    }).then(resp => {
-                        return resp.json()}).then(resp => {
-
-                            if(resp.status == false) {
-                                that.paying = false;
-                                return that.isErrorModalOpened = true;
-                            }
-
-                            Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken, resp, that.withdrawDetail ).then( amount => {
-                                that.getProgress();
-                                that.paying = false;
-                            })
-                            
-                        })
-                        
-                  }).catch(function(error) {
-                    console.trace(error.stack);
-                    that.paying = false;
-                  });
-        
-            }else{
-              console.error("user not logged in");
-            }
-        
+        let user = await new Promise(r => Api.auth().onAuthStateChanged(r)).catch(function(error) {
+            console.trace(error.stack);
+            console.log('User token is outdated. Relogin is required.')
         });
+        
+        
+            
+        if (user) {
+            let idToken = await user.getIdToken();
+            let oldWithdrawDetailed = await Api.getWithdrawDetailed();
+
+            let diffWithdrawDetail = Profile.getDiffAmount( oldWithdrawDetailed, that.withdrawDetail);
+
+            let fetchBody = {
+                token: idToken,
+                totalIMP: that.totalIMP,
+                wallet: that.wallet,
+                diffWithdrawDetail
+            };
+
+            that.paying = true;
+
+            let resp = await Api.ourApi(`transaction`, fetchBody);
+
+            if(resp.status == false) {
+                that.paying = false;
+                return that.isErrorModalOpened = true;
+            }
+
+            Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken, resp, that.withdrawDetail ).then( amount => {
+                that.getProgress();
+                that.paying = false;
+            })           
+        
+        }
     }
 
     @observable isErrorModalOpened = false    
@@ -982,7 +996,7 @@ export class Profile extends React.Component{
                     </div>
                     <Divider className={classes.divider} />
 
-                    <Typography variant="body1" className={classes.headerField + ' ' + classes.bold} >Your Impleum wallet adress:
+                    <Typography variant="body1" className={classes.headerField + ' ' + classes.bold} >Your Impleum wallet address:
                     </Typography>
                     { !this.enteder && <form onSubmit={this.setEntered} noValidate autoComplete="off"> 
                         <TextField
@@ -1032,7 +1046,7 @@ export class Profile extends React.Component{
 
                 </div>
             </div>
-            <div className={classes.card}>
+            { /* <div className={classes.card}>
                 <div ref='header' className={classes.header}>
                     <Typography variant="display1" className={classes.title}>
                         My Data
@@ -1051,7 +1065,7 @@ export class Profile extends React.Component{
                         </Button>
                         </div>} open={this.conformModal} close={this.closeConformModal}/>
                 </div>
-            </div>
+            </div> */ }
         </div>)
     }
 }
@@ -1114,9 +1128,7 @@ const stylesHistory = theme => ({
         justifyContent: 'center',
         alignItems: 'flex-start',
         padding: '0 30px',
-        '&:nth-of-type(2)': {
-            marginTop: 20
-        }
+ 
     },
 
     responseRow:{
@@ -1232,7 +1244,7 @@ const stylesHistory = theme => ({
     },
     
     divider: {
-        margin: '15px 30px',
+        margin: '7px 30px',
         backgroundColor: "#bbc2d8"
     },
 

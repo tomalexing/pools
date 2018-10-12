@@ -310,9 +310,9 @@ class ResultCard extends React.Component {
                                         <a className={classes.linksite} onClick={Api.saveReferral('congratulations', this.props.cardSlug.substr(1), this.finalCard.info.id)} href={`http://${this.finalCard.info.linksite}`} target="_blank" ><Typography variant="display1" className={classes.linksite}>{this.finalCard.info.linksite}</Typography></a>
                                     <Typography variant="body1" className={classes.description}>{this.finalCard.info.desc}</Typography>
                                     <div className={classes.btnsRow} style={{marginTop: 6}}>
-                                        <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small" onClick={this.again} >Take again
-                                        </Button>
-                                        {!this.props.embed && <Typography variant="body1" style={{margin:"0 20px"}}>or</Typography> }
+                                        {this.finalCard.info && !(this.finalCard.info.blockedByUser || this.finalCard.info.blockedEntity) && <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small" onClick={this.again} >Take again
+                                        </Button>}
+                                        {this.finalCard.info && !(this.finalCard.info.blockedByUser || this.finalCard.info.blockedEntity) && !this.props.embed && <Typography variant="body1" style={{margin:"0 20px"}}>or</Typography> }
                                         {!this.props.embed && 
                                             <div>
                                                 { this.finalCard.info.cat == 'Polls' && <Typography variant="button"> <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/categories/polls'} > View more polls</Link> </Typography>}

@@ -78,6 +78,10 @@ const styles = theme => ({
         backgroundColor: "#474E65"
     },
 
+    bussBackground: {
+        backgroundColor: "#353B4D"
+    },
+
     trBackground:{
         backgroundColor: 'transparent'
     },
@@ -129,6 +133,7 @@ class App extends React.Component{
                     });
             })
        }
+
     }
 
     firstChild(children) {
@@ -138,16 +143,23 @@ class App extends React.Component{
       
     render() {
         const { classes } = this.props;
-       
+        let embed = typeof this.props.embed == 'boolean' ? this.props.embed : false ;
+
         return (
-            <div className={cn({"App": true, [classes.mainScreen]: true, [classes.dartBackground] : !this.props.embed, [classes.trBackground]: this.props.embed})} >
-                {!this.props.embed && <Header isLanding={this.props.landingscreen} /> }
+            <div className={cn({
+                    "App"                           :   true, 
+                    [classes.mainScreen]            :   true, 
+                    [classes.dartBackground]        :   (!embed && (Auth.role != 'business' || Auth.role != 'admin') ), 
+                    [classes.bussBackground]        :   (!embed && (Auth.role == 'business' || Auth.role == 'admin')), 
+                    [classes.trBackground]          :   embed
+                })} >
+                {!embed && <Header isLanding={this.props.landingscreen} /> }
                 <div className={cn(classes.container, {'fullscreen': this.props.fullscreen}, {cardpage: this.props.cardpage})}>
                     {this.firstChild(this.props.children)}
 
                 </div>
                 {/*<DevTools />*/}
-                { !(this.props.nofooter || this.props.embed) && <Footer /> }
+                { !(this.props.nofooter || embed) && <Footer /> }
             </div>
         );
     }

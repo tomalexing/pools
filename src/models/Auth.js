@@ -10,7 +10,7 @@ const ROLES = (num) => {
   case(0) : return('admin')
   case(1) : return('business')
   case(9) : return('user')
-  default   : return('user')
+  default : return('user')
   }
 };
 

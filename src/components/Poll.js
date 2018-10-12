@@ -66,11 +66,11 @@ const styles = theme => ({
             zIndex: 10
         },
         '&:hover':{
-             boxShadow: '0 2px 20px rgba(0,0,0, .5)'
+            boxShadow: '0 2px 20px rgba(0,0,0, .5)'
         },
         '@media (max-width: 600px)':{
-                width: '100%',
-                height: 100,
+            width: '100%',
+            height: 100,
         }
     },
     answerText: {

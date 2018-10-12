@@ -493,14 +493,19 @@ export const LightenDarkenColor = (col, amt) => {
 
 export const roundeWithDec = (value) => {
 
+  let sign = '';
+  if(value < 0){
+    value = Math.abs(value);
+    sign = '-';
+  }
   const whole = Math.floor(Number(value));
   const decimal = Math.abs(Math.round((Number(value) % 1) * 100));
   const marker = (1.1).toLocaleString().charAt(1);
 
   if (decimal < 10) {
-    return `${whole.toLocaleString()}${marker}0${decimal.toString()}`;
+    return `${sign}${whole.toLocaleString()}${marker}0${decimal.toString()}`;
   }
-  return `${whole.toLocaleString()}${marker}${decimal.toString()}`;
+  return `${sign}${whole.toLocaleString()}${marker}${decimal.toString()}`;
 }
 
 export const isTouchDevice = () => {
@@ -735,6 +740,65 @@ export const metaContent = (entry) => {
   }
 }
 
+
+export const copy = (function(window, document, navigator) {
+  var textArea,
+      copy;
+
+  function isOS() {
+      return navigator.userAgent.match(/ipad|iphone/i);
+  }
+
+
+  function createTextArea(text) {
+      textArea = document.createElement('textArea');
+      textArea.value = text;
+      textArea.setAttribute('value', text);
+      document.body.appendChild(textArea);
+  }
+
+  function selectText() {
+      var range,
+          selection;
+
+      if (isOS()) {
+          range = document.createRange();
+          range.selectNodeContents(textArea);
+          selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          textArea.setSelectionRange(0, 999999);
+      } else {
+          textArea.select();
+      }
+  }
+
+  function copyToClipboard() {        
+      document.execCommand('copy');
+  }
+
+  function removeTextArea() {        
+      document.body.removeChild(textArea);
+  }
+
+  copy = function(textOrElement) {
+      
+      if(textOrElement.current && textOrElement.current instanceof Element){
+          textArea = textOrElement.current;
+          selectText();
+          copyToClipboard();
+      }else{
+          createTextArea(textOrElement);
+          selectText();
+          copyToClipboard();
+          removeTextArea(textOrElement);
+      }
+  };
+
+  return copy
+})(window, document, navigator);
+
+util.copy = copy
 util.listener = listener
 util.requestAnimationFramePromise = requestAnimationFramePromise
 util.transitionEndPromise = transitionEndPromise

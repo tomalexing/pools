@@ -9,8 +9,9 @@ import Auth from "./../models/Auth";
 
 export default class Cards {
 
-  constructor({getIds, cardSlug, tryAgainIsCleanPrevious, embed}){
+  constructor({getIds, cardSlug, tryAgainIsCleanPrevious, embed, id}){
     this.cardSlug = cardSlug;
+    this.id = id;
     this.tryAgainIsCleanPrevious = tryAgainIsCleanPrevious || false;
     this.embed = embed;
     this.bindModel(getIds);
@@ -20,8 +21,9 @@ export default class Cards {
   bindModel = (getIds) => {
     let that = this;
 
-    getIds(this.cardsModel).then( ids =>{ 
+    getIds(this.cardsModel).then( ({ids, info}) =>{ 
       that.cards = ids;
+      that.info = info;
     })
   }
 
@@ -56,6 +58,7 @@ export default class Cards {
   @observable cardsModel = new Map();
   @observable positionStyles = {};
   @observable IsEnd = false;
+  @observable info = {};
 
   initialNumber = this.cards.length;
   isStack = false;

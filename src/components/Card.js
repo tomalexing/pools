@@ -106,6 +106,7 @@ class Card extends React.Component {
     picking = false;
 
     componentDidMount(){
+      
         let cardPlace = this.props.cardPlace;
         if(this.props.store[cardPlace]) { 
             this.props.store[cardPlace].ref = this.refs.card;
@@ -467,6 +468,8 @@ class Card extends React.Component {
         
     }
 
+
+    // Todo: redo into forwardRef id this Needed
     getRef = (ref)  => {
         this.innerContainerRef = ref;
     }
@@ -510,7 +513,8 @@ class Card extends React.Component {
             <div ref='card' className={[classes.card, cardPlace].join(' ')} style={{ ...this.props.store.getPositionStyles, ...scale}}>
                 <div className={classes.cardInner} >
                     <div
-                    ref='header' className={classes.header}>
+                        ref='header'
+                        className={classes.header}>
                         <span className={classes.delimeter}></span>
                         <Typography variant="display1" className={classes.prog}>  
                             {card.number} /  {this.props.store.allCardsNumber}

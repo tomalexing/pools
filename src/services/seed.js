@@ -1160,12 +1160,12 @@ function setQuizzes(){
         reward: 0.1,
         sharedReward: 0.5,
         cat: 'Quizzes',
-        title: 'Quiz',
         linksite: 'quizi.io',
-        title: 'Quiz',
+        title: 'IQ test',
         desc: 'Discover popular answers to the most provocative questions.',
         img: './assets/polls.png',
-        result: 'Your IQ is {{iqValue}}.'
+        result: 'Your IQ is {{iqValue}}.',
+        addr: 'q8TbAwAjRnSa38zVq5PQJCpKw0w1'
       }, { merge: true });
       
       for(let i = 0; i < quizzes.length; i++){
@@ -1190,11 +1190,12 @@ function setQuizzes1(){
       reward: 0.1,
       sharedReward: 0.5,
       cat: 'Quizzes',
-      title: 'Quiz',
+      title: 'Impleum Platform',
       linksite: 'impleum.com',
       desc: 'Impleum is a powerful and scalable path to develop DApps.',
       img: './assets/catalog/impleum.png',
-      result: 'You gave {{number}} right answers.'
+      result: 'You gave {{number}} right answers.',
+      addr: 'q8TbAwAjRnSa38zVq5PQJCpKw0w1'
     }, { merge: true });
 
     for(let i = 0; i < quizzes1.length; i++){
@@ -1221,7 +1222,7 @@ async function setQuizzes2(){
       reward: 0.1,
       sharedReward: 0.5,
       cat: 'Quizzes',
-      title: 'Quiz',
+      title: 'Cyber Resilience',
       linksite: 'impleum.com',
       desc: 'Will Your Business Survive in Ukrainian Cyber Realities?',
       img: './assets/catalog/10guards.png',
@@ -1238,10 +1239,11 @@ async function setQuizzes2(){
       {{endIf}}
 
       {{startIf  number <= 3 }}
-        Cyber Buddhist {{ number }}<br/> 
+        Cyber Buddhist<br/> 
         You have nerves of steel! You laugh in the face of danger, believe in karma and practice meditation to the sound of broken hopes. The only thing that stands between you and the hacker is a red thread tied to a computer monitor. But for the sake of the Buddha, before it's too late, contact cybersecurity specialists.
       {{endIf}}
-      `
+      `,
+      addr: 'q8TbAwAjRnSa38zVq5PQJCpKw0w1'
     }, { merge: true });
 
     for(let i = 0; i < quizzes2.length; i++){
@@ -1272,7 +1274,8 @@ function setPolls(){
         linksite: 'quizi.io',
         desc: 'Discover popular answers to the most provocative questions.',
         img: './assets/catalog/common.png',
-        result: 'You answered {{number}} of 10 polls.'
+        result: 'You answered {{number}} of 10 polls.',
+        addr: 'q8TbAwAjRnSa38zVq5PQJCpKw0w1'
       }, { merge: true });
 
       for(let i = 0; i < polls.length; i++){
@@ -1304,7 +1307,8 @@ async function setPolls1(){
     desc: 'Join Raters and discover great movies based on reviews from your friends.',
     img: './assets/catalog/raters.png',
     result: 'You answered {{number}} of 10 polls.',
-    appleStore: 'https://itunes.apple.com/us/app/raters-movie-lovers-network/id1258540735?mt=8'
+    appleStore: 'https://itunes.apple.com/us/app/raters-movie-lovers-network/id1258540735?mt=8',
+    addr: 'q8TbAwAjRnSa38zVq5PQJCpKw0w1'
   }, { merge: true });
 
   for(let i = 0; i < polls1.length; i++){
@@ -1335,7 +1339,8 @@ async function setPolls2(){
     desc: 'Join Raters and discover great movies based on reviews from your friends.',
     img: './assets/catalog/ratersComics.png',
     result: 'You answered {{number}} of 10 polls.',
-    appleStore: 'https://itunes.apple.com/us/app/raters-movie-lovers-network/id1258540735?mt=8'
+    appleStore: 'https://itunes.apple.com/us/app/raters-movie-lovers-network/id1258540735?mt=8',
+    addr: 'q8TbAwAjRnSa38zVq5PQJCpKw0w1'
   }, { merge: true });
 
   for(let i = 0; i < polls2.length; i++){
@@ -1390,6 +1395,7 @@ function setCats(){
         img: './assets/catalog/IQ.png',
         link: `/quizzes/mNrynOde7h2pec3R9rKe`,
         reward: 0.1,
+        sharedReward: 0.5, 
       });
     
     db.collection('categories/quizzes/blockchain').doc('Pu7JCX43tfzoigRFJrQM').set({
@@ -1404,6 +1410,7 @@ function setCats(){
       slug: 'quizzes/blockchain',
       img: './assets/catalog/impleum.png',
       reward: 0.1,
+      sharedReward: 0.5, 
       link: `/quizzes/OMx1k83U7LcZwlvZs9Aw`,
     });
     
@@ -1419,6 +1426,7 @@ function setCats(){
       slug: 'quizzes/cybersecurity',
       img: './assets/catalog/10guards.png', 
       reward: 0.1,
+      sharedReward: 0.5, 
       link: `/quizzes/cHuEIjL3dsvNTVXNXa1Z`,
     });
 
@@ -1435,6 +1443,7 @@ function setCats(){
       img: './assets/catalog/common.png',
       link: `/polls/TufVMx0dkDVAaOr5KSdF`,
       reward: 0.1,
+      sharedReward: 0.5, 
     })
 
     db.collection('categories/polls/movies').doc('oTFTncqMYa315ydrQUCD').set({
@@ -1450,6 +1459,7 @@ function setCats(){
       img: './assets/catalog/raters.png',
       link: `/polls/ga2Y4kgp7kHOxu2IF4dl`,
       reward: 0.1,
+      sharedReward: 0.5, 
     })
 
     db.collection('categories/polls/movies').doc('Q8G2L4BfcNvbMZbwzzVV').set({
@@ -1465,6 +1475,7 @@ function setCats(){
       img: './assets/catalog/ratersComics.png',
       link: `/polls/jUxerqRUfMblYzRbGRY4`,
       reward: 0.1,
+      sharedReward: 0.5, 
     })
   }
     
@@ -1522,12 +1533,12 @@ function withOutQuantity(obj){
 }
 
 
-// setPolls();
-// setPolls1();
-// setPolls2();
-// setQuizzes();
-// setQuizzes1();
-// setQuizzes2();
-// setCats();
+setPolls();
+setPolls1();
+setPolls2();
+setQuizzes(); 
+setQuizzes1();
+setQuizzes2();
+setCats();
 
 // setCatMenu();

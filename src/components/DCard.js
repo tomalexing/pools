@@ -23,12 +23,12 @@ class DCard extends React.Component {
 
 
         if(/^\/polls/.test(match.path)){
-            this.model = new Cards({getIds: Api.getCardByIds(`${slug}/v1`), cardSlug: `${slug}/v1`,tryAgainIsCleanPrevious: false});
+            this.model = new Cards({getIds: Api.getCardByIds(`${slug}/v1`), cardSlug: `${slug}/v1`,tryAgainIsCleanPrevious: false, id: match.params.id});
         }
 
         if(/^\/quizzes/.test(match.path)){
             this.model = new Cards({getIds: Api.getCardByIds(`${slug}/v1`), cardSlug: `${slug}/v1`,
-             tryAgainIsCleanPrevious: true});
+             tryAgainIsCleanPrevious: true, id: match.params.id});
         }
 
         if(/^\/embed/.test(match.path)){
@@ -36,12 +36,12 @@ class DCard extends React.Component {
             slug = `/${match.params.cardtype}/${match.params.id}/v1`;
             
             if(match.params.cardtype == 'polls'){
-                this.model = new Cards({getIds: Api.getCardByIds(slug), cardSlug: slug, tryAgainIsCleanPrevious: false, embed: true});
+                this.model = new Cards({getIds: Api.getCardByIds(slug), cardSlug: slug, tryAgainIsCleanPrevious: false, embed: true, id: match.params.id});
             }
 
             if(match.params.cardtype == 'quizzes'){
 
-                this.model = new Cards({getIds: Api.getCardByIds(slug), cardSlug: slug, tryAgainIsCleanPrevious: true, embed: true});
+                this.model = new Cards({getIds: Api.getCardByIds(slug), cardSlug: slug, tryAgainIsCleanPrevious: true, embed: true, id: match.params.id });
             }
         }
 

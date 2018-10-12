@@ -302,7 +302,7 @@ class Header extends React.Component {
                             <Typography variant="subheading" >
                                 Contact us
                             </Typography>
-                            </MenuItem>
+                        </MenuItem>
                     </NavLink>
                     
                     {Auth.isAuthenticated && <MenuItem selected={false} className={classes.menuMobileBtnSpacings}  onClick={this.logout}>

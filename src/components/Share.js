@@ -143,6 +143,7 @@ class Share extends React.Component {
       }
 
     socClicked = _ => {
+        if(!this.props.cardSlug) return
         CardsModel.saveLike(this.props.cardSlug).then(_ => {
             this.props.update(this.props.cardSlug);
         })
@@ -151,64 +152,71 @@ class Share extends React.Component {
     render(){
         let {classes} = this.props;
         let {open} = this.state;
-        metaContent([
-            {
-                propertyName: '[property="og:title"]',
-                content: this.title
-            },
-            {
-                propertyName: '[property="og:description"]',
-                content: this.props.description
-            },
-            {
-                propertyName: '[property="og:image"]',
-                content: this.props.image
-            },
-            {
-                propertyName: '[property="og:url"]',
-                content: this.shareUrl
-            },
-            {
-                propertyName: '[name="twitter:title"]',
-                content: this.title
-            },
-            {
-                propertyName: '[name="twitter:description"]',
-                content: this.props.description
-            },
-            {
-                propertyName: '[name="twitter:image"]',
-                content: this.props.image
-            }
-        ]);
+        if(this.props.image && this.props.description && this.title) {
+            metaContent([
+                {
+                    propertyName: '[property="og:title"]',
+                    content: this.title
+                },
+                {
+                    propertyName: '[property="og:description"]',
+                    content: this.props.description
+                },
+                {
+                    propertyName: '[property="og:image"]',
+                    content: this.props.image
+                },
+                {
+                    propertyName: '[property="og:url"]',
+                    content: this.shareUrl
+                },
+                {
+                    propertyName: '[name="twitter:title"]',
+                    content: this.title
+                },
+                {
+                    propertyName: '[name="twitter:description"]',
+                    content: this.props.description
+                },
+                {
+                    propertyName: '[name="twitter:image"]',
+                    content: this.props.image
+                }
+            ]);
+        }
+
         return(
             <div className={classes.socialNetworks} >
-                <div className={classes.socialNetwork} onClick={this.socClicked} >
-                    <FacebookShareButton
-                        url={this.shareUrl}
-                        quote={this.title}
-                        className={classes.socialNetworkBtn}>
-                        <FacebookIcon
-                        size={36}
-                        round />
-                    </FacebookShareButton>
+                {   React.Children.count(this.props.children) > 0 ? 
+                    <div style={{width: '100%'}} onClick={this.handleOpen} >{React.cloneElement( this.props.children )}</div>
+                :
+                    [<div key="fbshare" className={classes.socialNetwork} onClick={this.socClicked} >
+                        <FacebookShareButton
+                            url={this.shareUrl}
+                            quote={this.title}
+                            className={classes.socialNetworkBtn}>
+                            <FacebookIcon
+                            size={36}
+                            round />
+                        </FacebookShareButton>
 
-                </div>
+                    </div>,
 
-                <div className={classes.socialNetwork} onClick={this.socClicked}>
-                    <TwitterShareButton
-                        url={this.shareUrl}
-                        title={this.title}
-                        className={classes.socialNetworkBtn}>
-                        <TwitterIcon
-                        size={36}
-                        round />
-                    </TwitterShareButton>
-                </div>  
+                    <div key="twshare" className={classes.socialNetwork} onClick={this.socClicked}>
+                        <TwitterShareButton
+                            url={this.shareUrl}
+                            title={this.title}
+                            className={classes.socialNetworkBtn}>
+                            <TwitterIcon
+                            size={36}
+                            round />
+                        </TwitterShareButton>
+                    </div>,
 
-                <IconButton style={{height: 36, width: 36}} size='small' onClick={this.handleOpen}>
-                    <Icon>more_horiz</Icon>
-                </IconButton>
+                    <IconButton key="moreshare" style={{height: 36, width: 36}} size='small' onClick={this.handleOpen}>
+                        <Icon>more_horiz</Icon>
+                    </IconButton>]
+                }
 
                 <Modal
                     aria-labelledby="share-modal-title"

@@ -280,7 +280,7 @@ class SimpleModal extends React.Component {
                 </div>
             }
             <div style={{height: '12px'}} />
-            <Button size="large" color="primary" className={classes.closeModal} onClick={this.closeModal}>Close</Button>
+            <Button size={this.props.full?'large':'small'} variant="raised" color="secondary" className={classes.closeModal} onClick={this.closeModal}>Close</Button>
           </div>
         </Modal>
       </div>

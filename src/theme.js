@@ -28,6 +28,9 @@ export default {
         },
         background: {
             default: 'transparent'
+        },
+        text: {
+            disabled: '#ECEDF3'    
         }
     },
     typography: {
