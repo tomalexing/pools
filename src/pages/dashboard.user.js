@@ -812,7 +812,7 @@ export class Profile extends React.Component{
                         addToTotal = Math.min(( prog['progress'].number ), prog['info'].allCardsNumber) * prog['info'].reward;
                     }
 
-                    that.withdrawDetail[`${prog['info'].id}`] = {amount: addToTotal, addr: prog['info'].addr, isLiked: prog['isLiked']};
+                    that.withdrawDetail[`${prog['info'].id}`] = { amount: addToTotal, addr: prog['info'].addr, isLiked: prog['isLiked'], sharedReward: prog['info'].sharedReward };
                     
                     return acc += addToTotal + (prog['isLiked'] ? prog['info'].sharedReward : 0);
                     
@@ -904,11 +904,11 @@ export class Profile extends React.Component{
         if(that.paying) return
         if(that.totalIMP <= 0) return
 
-        // if(!this.captchaVerified){
-        //     this.openCaptcha = true;
-        //     this.loadCaptcha()
-        //     return
-        // }
+        if(!this.captchaVerified){
+            this.openCaptcha = true;
+            this.loadCaptcha();
+            return
+        }
         
 
         let user = await new Promise(r => Api.auth().onAuthStateChanged(r)).catch(function(error) {

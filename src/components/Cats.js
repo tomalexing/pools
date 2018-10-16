@@ -391,12 +391,14 @@ class Explore extends React.Component {
                             { !card.link && !card.img && card.cardtype == 'Quiz' && <LazyImage className={classes.image} load={'./assets/quiz.png'}/>}
                             { !card.link && card.img && <LazyImage className={classes.image} load={card.img}/>}
 
-                            { that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].number>0 && <div className={classes.progressBar} > <span className={classes.progressLine} style={{width: that.cardsProgress[card.link + '/v1']['Progress'].number * 100 / card.number }}> </span>  </div>}
+                            { that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].number>0 && <div className={classes.progressBar} > <span className={classes.progressLine} style={{width: that.cardsProgress[card.link + '/v1']['Progress'].number * 100 / card.number + '%' }}> </span>  </div>}
                             
                             { card.link && <Link className={classes.progressStatus} style={{textDecoration: 'none'}} to={card.link.startsWith('/') ?  card.link : locationStrip + '/' + card.link}> 
                                 
                                 { card.cardtype == 'Quiz' && that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="display4">Completed</Typography> }
                                 { card.cardtype == 'Quiz' && that.cardsProgress[card.link + '/v1'] && !that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="display4">Not finished</Typography> }
+                                { card.cardtype == 'Poll' && that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="display4">Completed 100%</Typography> }
+                                { card.cardtype == 'Poll' && that.cardsProgress[card.link + '/v1'] && !that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="display4">In progress {that.cardsProgress[card.link + '/v1']['Progress'].number * 100 / card.number}%</Typography> }
 
                             </Link> }
 
@@ -420,7 +422,7 @@ class Explore extends React.Component {
 
                                { card.link && (!that.cardsProgress[card.link + '/v1'] || !that.cardsProgress[card.link + '/v1']['Progress'].final) && <Link className={classes.btnlink} to={card.link.startsWith('/') ? card.link : locationStrip + '/' + card.link }><Button className={classes.btn} variant="raised" color="secondary" side="small" >{card.btn}</Button></Link>}
                                { card.link && that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].final && <Link className={classes.btnlink} to={card.link.startsWith('/') ? card.link : locationStrip + '/' + card.link }><Button className={classes.btn} variant="raised" color="secondary" side="small" >Take again</Button></Link>}
-                               { !card.link && <div className={classes.btnlink} ><Button  to={card.link} className={classes.btn} variant="raised" disabled color="secondary" side="small" >Coming Soon</Button></div>}
+                               { !card.link && <div className={classes.btnlink} ><Button to={card.link} className={classes.btn} variant="raised" disabled color="secondary" side="small" >Coming Soon</Button></div>}
                             </div>
                         </article>
                         </div>))}

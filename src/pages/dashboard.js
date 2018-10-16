@@ -294,9 +294,9 @@ class Dashboard extends React.Component {
                 
 
                 {this.state.open && <Typography component="div"  variant="body1"  className={classes.footerText + ' ' + classes.footerImageCover}> 
-                    <img className={classes.footerImage} src={IMP} /> 
+                    <a target="_blank" href="https://impleum.com"> <img className={classes.footerImage} src={IMP} /> </a> 
                     <Typography ref='copyright' variant="body1" className={classes.footerTitle + ' ' + classes.footerText} > <span className={classes.footerAltColor}> {Api.getCoinName()}/BTC</span></Typography>
-                    <p className={classes.footerDesc} >0.838 <span className={classes.footerAltColor}>USD</span></p>
+                    <p className={classes.footerDesc} >0.86 <span className={classes.footerAltColor}>USD</span></p>
                 </Typography>}
                 
                 {this.state.open && <Typography ref='copyright' variant="body1" className={classes.menuBtnSpacings + ' ' + classes.footerText} >

@@ -355,7 +355,7 @@ export class Profile extends React.Component{
                 });
 
             that.wallet = wallet
-        })
+        })  
     }
 
 
@@ -371,7 +371,7 @@ export class Profile extends React.Component{
 
             that.balanceIncome = await Api.ourApi('getbalance', fetchBody);
             
-            let analitics = await Api.ourApi('getAnalytics', fetchBody);
+            let {list:analitics, debug} = await Api.ourApi('getAnalytic', fetchBody);
 
             that.analitics = analitics;
             this.loaded = true;
@@ -385,7 +385,7 @@ export class Profile extends React.Component{
 
     @computed
     get balance(){
-        return this.balanceIncome - this.paid;
+        return this.balanceIncome;
     }
 
     @computed
@@ -928,10 +928,10 @@ export class Analytics extends React.Component{
 
             let idToken = await user.getIdToken();
 
-            let fetchBody = {token: idToken};
-            let analitics = await Api.ourApi('getAnalytics', fetchBody);
+            let fetchBody = {token: idToken, uid: Auth.uid};
+            let {list:analitics, d} = await Api.ourApi('getAnalytic', fetchBody);
 
-            console.log(analitics)
+            console.log(analitics, d)
 
             that.balanceIncome = await Api.ourApi('getbalance', fetchBody);
 
@@ -956,7 +956,7 @@ export class Analytics extends React.Component{
 
     @computed
     get balance(){
-        return this.balanceIncome - this.paid;
+        return this.balanceIncome;
     }
 
     @computed

@@ -76,6 +76,12 @@ import Oval32x from './../assets/landing/Oval3@2x.png'
 import logo from './../assets/quiz-logo.png';
 import logo2x from './../assets/quiz-logo2x.png';
 
+
+import pa_bg from './../assets/landing/pa_bg.png';
+import pa_bg2x from './../assets/landing/pa_bg@2x.png';
+import pa_db from './../assets/landing/pa_db.png';
+import pa_db2x from './../assets/landing/pa_db@2x.png';
+
 import {
 FacebookIcon,
 TwitterIcon,
@@ -94,6 +100,8 @@ LivejournalIcon,
 } from 'react-share';
 
 import InstaIcon from './../assets/insta.svg'
+import BehanceIcon from './../assets/behance.svg'
+import BitcoinTalkIcon from './../assets/bitcointalk.svg'
 
 const styles = theme => ({
   
@@ -443,7 +451,19 @@ const styles = theme => ({
     },
 
 
-    // 3 Slides
+    // 3 Slide
+
+    slideAnalyticsBg:{
+        position: 'absolute',
+        top: '20%',
+        left: 0,
+        right: 0,
+        '@media (max-width: 768px)': {
+            top: '40%',
+        }
+    },
+
+    // 4 Slides
 
     cardFeature:{
         display: 'flex',
@@ -508,7 +528,7 @@ const styles = theme => ({
     },
 
 
-    // 4 Slides
+    // 5 Slides
 
     slideSubscribe: {
         padding: '80px 0',
@@ -650,6 +670,7 @@ class Landing extends React.Component {
         this.listeners = [];
         document.querySelector('header').style.boxShadow = 'none';
         this.parallexRef = React.createRef();
+        this.parallexRef1 = React.createRef();
 
     }
 
@@ -695,8 +716,18 @@ class Landing extends React.Component {
                 this.allowParallax = entry.isIntersecting
             });
           }, options);
+
+        var observer1 = new IntersectionObserver(entries =>  {
+            entries.forEach(entry => {
+                this.allowParallax1 = entry.isIntersecting
+            });
+          }, options);
+
         if(this.parallexRef.current instanceof Element)
         observer.observe(this.parallexRef.current);
+
+        if(this.parallexRef1.current instanceof Element)
+        observer1.observe(this.parallexRef1.current);
     }
 
     @observable subscribeValue = '';
@@ -704,12 +735,16 @@ class Landing extends React.Component {
     @observable title = '';
     @observable description = '';
     @observable parallaxY = 0;
+    @observable parallaxY1 = 0;
     @observable allowParallax = false;
+    @observable allowParallax1 = false;
     startParallaxY = -1;
+    startParallaxY1 = -1;
 
     static propTypes = {
         classes: PropTypes.object.isRequired
     }
+    
     @action.bound
     onScroll = e => {
         if(e.target.scrollTop > 140){
@@ -721,6 +756,12 @@ class Landing extends React.Component {
         if(this.allowParallax){
             if(this.startParallaxY == -1) this.startParallaxY = e.target.scrollTop;
             this.parallaxY = (e.target.scrollTop - this.startParallaxY) / 10
+            
+        }
+
+        if(this.allowParallax1){
+            if(this.startParallaxY1 == -1) this.startParallaxY1 = e.target.scrollTop;
+            this.parallaxY1 = (e.target.scrollTop - this.startParallaxY1) / 10
             
         }
     };
@@ -1022,7 +1063,7 @@ class Landing extends React.Component {
                 <div className={classes.slideInto}>
                     <Grid container className={classes.root} spacing={40} >
 
-                        <Grid item xs={12} sm={4}  className={cx(classes.center, classes.toRight, classes.zIndex10)}>
+                        <Grid item xs={12} sm={4} className={cx(classes.center, classes.toRight, classes.zIndex10)}>
                             <div className={cx(classes.centerOnMobile)} >
                                 <h2 className={classes.header}>Easy control</h2>
                                 <p className={classes.description}>Useful dashboard allows you to control rewards and make fast withdrawals</p>
@@ -1041,6 +1082,38 @@ class Landing extends React.Component {
                 </div>
 
             </div>
+
+            <div className={cx(classes.space120)} />
+            <div className={cx(classes.space120, classes.displayOffOnMobile)} />
+
+            <div className={classes.slide}>
+
+                <div className={classes.slideAnalyticsBg}><img className={classes.img} srcSet={`${pa_bg2x} 2x, ${pa_bg} 1x`} src={pa_bg} alt="Quizi" /></div>
+
+                <div className={classes.slideInto}>
+                    <Grid container className={classes.root} spacing={40} >
+
+                        <Grid item xs={12} sm={4} className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
+                        </Grid>
+
+                        <Grid item xs={12} sm={4} className={cx(classes.center, classes.textCenter , classes.toRight, classes.zIndex10)}>
+                            <div>
+                                <h2 className={classes.header}>Powerful analitycs</h2>
+                                <p className={classes.description}>Quizi.io enable to create unique quizzes and polls and get detailed statistic on them.</p>
+                            </div>
+                        </Grid>
+                        <Grid item xs={12} sm={4} className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
+                        </Grid>
+
+                        <Grid item xs={12} sm={12} className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
+                            <div ref={this.parallexRef1} style={{transform: `translate3d(0, ${this.parallaxY1}px, 0)`}}  className={classes.slideAnalytics}><img className={classes.img} srcSet={`${pa_db2x} 2x, ${pa_db} 1x`} src={pa_db} alt="Quizi" /></div>
+                        </Grid>
+                
+                    </Grid>
+            
+                </div>
+            </div>
+
 
             <div className={cx(classes.space120, classes.displayOffOnMobile)} />
 
@@ -1236,7 +1309,12 @@ class Landing extends React.Component {
                                 <a target="_blank" className={cx(classes.footerIcon)} href="https://www.instagram.com/quizi.io/"> 
                                     <img  src={InstaIcon} />
                                 </a>
-                                
+                                <a target="_blank" className={cx(classes.footerIcon)} href="https://www.behance.net/gallery/71288261/Quiziio-blockchain-marketing-platform"> 
+                                    <img  src={BehanceIcon} />
+                                </a>
+                                <a target="_blank" className={cx(classes.footerIcon)} href="https://bitcointalk.org/index.php?topic=5051515.msg46951919#msg46951919"> 
+                                    <img  src={BitcoinTalkIcon} />
+                                </a>
                             </div>
                         </Grid>
                         

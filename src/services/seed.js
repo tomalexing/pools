@@ -843,7 +843,7 @@ const quizzes1 = [
       'Federal Reserve System',
       'Bank of America',    
       'Bank of Japan',
-      'No one organization isn\'t engaged in emission of IMP',
+      'No one organization isn\'t engaged in emission of IMPL',
     ],
     "question" : "What organization is engaged in emission of Impleum Coin?",
     "answerCorrect": 3,
@@ -881,7 +881,7 @@ const quizzes1 = [
   {
     "answers" : [
       'Impleum Foundation gives an award for using user\'s computer facilities ',
-      'All IMP are created in advance and distributed for all users in ratio equal to a contribution, to network power',
+      'All IMPL are created in advance and distributed for all users in ratio equal to a contribution, to network power',
       'They are created by certain mining-companies',
       'A reward is given to the first miner who solves a block problem'
     ],
@@ -894,9 +894,9 @@ const quizzes1 = [
   {
     "answers" : [
       'Yes, since they will not receive an reward ',
-      'No, since the system will move to other level and to proceed IMP release',
+      'No, since the system will move to other level and to proceed IMPL release',
       'No, since calculation of transactions is necessary always, the award will go from the increased transaction commission.',
-      'Yes, since also the Impleum system will disappear if all IMP are extracted'
+      'Yes, since also the Impleum system will disappear if all IMPL are extracted'
     ],
     "question" : "When 100 million imp will have been extracted, the \"miners\" will disappear?",
     "answerCorrect": 2,
@@ -922,9 +922,9 @@ const quizzes1 = [
       'No, because it is only a program code',
       'Yes, as well as any digital documents and data',
       'No, because it is necessary to decrypt the unit of transactions again',
-      'Yes, but only by means of phishing (by deception, when transfer IMP from a wallet on a wallet is forced)'
+      'Yes, but only by means of phishing (by deception, when transfer IMPL from a wallet on a wallet is forced)'
     ],
-    "question" : "Whether is it possible to steal IMP?",
+    "question" : "Whether is it possible to steal IMPL?",
     "answerCorrect": 3,
     "cardType": "quiz",
     "order" : 7,
@@ -947,7 +947,7 @@ const quizzes1 = [
     "answers" : [
       'In proportion to the power of miner (changes at the same time with a network speed)',
       'From time recalculation of difficulty and power of a network',
-      'Only from the number of the got IMP',
+      'Only from the number of the got IMPL',
       'The complexity is set by the creator of a network'
     ],
     "question" : "What major factors does influence on complexity of the impleum network?",
@@ -958,8 +958,8 @@ const quizzes1 = [
   },
   {
     "answers" : [
-      'Double wasting of the same IMP',
-      'Possession of 51% of the got IMP',
+      'Double wasting of the same IMPL',
+      'Possession of 51% of the got IMPL',
       'Change of complexity at discretion',
       'Change the information more than half of all Impleum\'s transactions and the impact on the whole system'
     ],
@@ -976,7 +976,7 @@ const quizzes1 = [
       'up to 7 signs',
       'up to 8 signs'
     ],
-    "question" : "How many signs after comma IMP have?",
+    "question" : "How many signs after comma IMPL have?",
     "answerCorrect": 3,
     "cardType": "quiz",
     "order" : 11,
@@ -1165,7 +1165,7 @@ function setQuizzes(){
         desc: 'Discover popular answers to the most provocative questions.',
         img: './assets/polls.png',
         result: 'Your IQ is {{iqValue}}.',
-        addr: 'q8TbAwAjRnSa38zVq5PQJCpKw0w1'
+        addr: process.env.NODE_ENV === "production" ? 'q8TbAwAjRnSa38zVq5PQJCpKw0w1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
       }, { merge: true });
       
       for(let i = 0; i < quizzes.length; i++){
@@ -1195,7 +1195,7 @@ function setQuizzes1(){
       desc: 'Impleum is a powerful and scalable path to develop DApps.',
       img: './assets/catalog/impleum.png',
       result: 'You gave {{number}} right answers.',
-      addr: 'q8TbAwAjRnSa38zVq5PQJCpKw0w1'
+      addr: process.env.NODE_ENV === "production" ? 'q8TbAwAjRnSa38zVq5PQJCpKw0w1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
     }, { merge: true });
 
     for(let i = 0; i < quizzes1.length; i++){
@@ -1243,7 +1243,7 @@ async function setQuizzes2(){
         You have nerves of steel! You laugh in the face of danger, believe in karma and practice meditation to the sound of broken hopes. The only thing that stands between you and the hacker is a red thread tied to a computer monitor. But for the sake of the Buddha, before it's too late, contact cybersecurity specialists.
       {{endIf}}
       `,
-      addr: 'q8TbAwAjRnSa38zVq5PQJCpKw0w1'
+      addr: process.env.NODE_ENV === "production" ? 'q8TbAwAjRnSa38zVq5PQJCpKw0w1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
     }, { merge: true });
 
     for(let i = 0; i < quizzes2.length; i++){
@@ -1275,7 +1275,7 @@ function setPolls(){
         desc: 'Discover popular answers to the most provocative questions.',
         img: './assets/catalog/common.png',
         result: 'You answered {{number}} of 10 polls.',
-        addr: 'q8TbAwAjRnSa38zVq5PQJCpKw0w1'
+        addr: process.env.NODE_ENV === "production" ? 'q8TbAwAjRnSa38zVq5PQJCpKw0w1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
       }, { merge: true });
 
       for(let i = 0; i < polls.length; i++){
@@ -1308,7 +1308,7 @@ async function setPolls1(){
     img: './assets/catalog/raters.png',
     result: 'You answered {{number}} of 10 polls.',
     appleStore: 'https://itunes.apple.com/us/app/raters-movie-lovers-network/id1258540735?mt=8',
-    addr: 'q8TbAwAjRnSa38zVq5PQJCpKw0w1'
+    addr: process.env.NODE_ENV === "production" ? 'q8TbAwAjRnSa38zVq5PQJCpKw0w1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
   }, { merge: true });
 
   for(let i = 0; i < polls1.length; i++){
@@ -1340,7 +1340,7 @@ async function setPolls2(){
     img: './assets/catalog/ratersComics.png',
     result: 'You answered {{number}} of 10 polls.',
     appleStore: 'https://itunes.apple.com/us/app/raters-movie-lovers-network/id1258540735?mt=8',
-    addr: 'q8TbAwAjRnSa38zVq5PQJCpKw0w1'
+    addr: process.env.NODE_ENV === "production" ? 'q8TbAwAjRnSa38zVq5PQJCpKw0w1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
   }, { merge: true });
 
   for(let i = 0; i < polls2.length; i++){
@@ -1533,12 +1533,12 @@ function withOutQuantity(obj){
 }
 
 
-setPolls();
-setPolls1();
-setPolls2();
-setQuizzes(); 
-setQuizzes1();
-setQuizzes2();
-setCats();
+// setPolls();
+// setPolls1();
+// setPolls2();
+// setQuizzes(); 
+// setQuizzes1();
+// setQuizzes2();
+// setCats();
 
 // setCatMenu();
