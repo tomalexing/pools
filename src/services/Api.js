@@ -440,7 +440,6 @@ function getHistory(id, out){
             if(doc.exists){
                 let docDate = doc.data();
                 out.length = 0;
-                
                 if('withdraw' in docDate){
                     for( let [key, value] of Object.entries(docDate.withdraw)){
                         out.push({date: key, ...value});
@@ -675,6 +674,19 @@ async function getRequestsSubscriptions({uid}){
     })
 }
 
+async function loadCBTicker(ticker){
+    if (!ticker) return Promise.resolve({});
+
+    return fetch(`https://api.crypto-bridge.org/api/v1/ticker/${ticker}`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    }).then(r => r.json()).catch( _ => {})
+}
+
 const Api = {
     getCard,
    // getQuizzesIds,
@@ -709,6 +721,7 @@ const Api = {
     ourApi,
     getRequestsContact,
     getRequestsCreateNew,
-    getRequestsSubscriptions
+    getRequestsSubscriptions,
+    loadCBTicker
 }
 export default Api;

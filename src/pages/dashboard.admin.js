@@ -376,6 +376,14 @@ const stylesAnalytics = theme => ({
         position: 'absolute',
         top: 0,
         right: 0
+    },
+    
+    menuItem: {
+        textDecoration: 'none'
+    },
+
+    menuLink: {
+        textDecoration: 'none'
     }
 })
 
@@ -767,6 +775,14 @@ export class Analytics extends React.Component{
                                                     Embed code
                                                 </Typography>
                                             </MenuItem>
+
+                                            <NavLink tabIndex='1' to={`/dashboard/analytics${entry_path.replace('v1','')}`} className={classes.menuLink}>
+                                                <MenuItem selected={false} className={classes.menuItem}>
+                                                    <Typography variant="subheading" >
+                                                        Analytics
+                                                    </Typography>
+                                                </MenuItem>
+                                            </NavLink>
 
                                             <Share link={`${window.location.protocol}//${window.location.host}${entry_path.replace('/v1','')}`} >
                                                 <MenuItem selected={false} className={classes.menuMobileItemSpacings} >

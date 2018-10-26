@@ -314,7 +314,25 @@ const stylesCommon = theme => ({
         fontSize: '30px',
         margin: '0 8px 0 0',
         color: '#fc3868',
-    }
+    },
+
+    unavailable: {
+        position: 'absolute',
+        top: '40px',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        background: '#FC3868',
+        opacity: .9,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 40
+    },
+
+    unavailableText: {
+        fontSize: '18px'
+    },
 })
 // AKA Dashboard itself
 @withStyles(stylesCommon)
@@ -437,6 +455,9 @@ export class Common extends React.Component{
                                         </div>
 
                                         <div className={classes.cardBodyResult}>
+
+                                            {info && (info.blockedByUser || info.blockedEntity) && <div className={classes.unavailable}> <Typography className={classes.unavailableText} variant="display4"> Unavailable</Typography> </div>}
+                                            
                                             {info && info.allCardsNumber > 0  &&  <Typography variant="display2" className={classes.noWrap}>
                                                 {info.cat == 'Polls' && info.dashOutput === 'number' && `${Math.floor( progress[info.dashOutput] * 100/ info.allCardsNumber)}%` /* Bad Design */ }
                 

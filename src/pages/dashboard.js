@@ -186,7 +186,8 @@ class Dashboard extends React.Component {
     state= {
         open: window.innerWidth > 600,
         business: false,
-        admin: false
+        admin: false,
+        price: '---'
     }
 
     componentDidMount(){
@@ -208,6 +209,16 @@ class Dashboard extends React.Component {
                 that.setState({admin: true});
         })
 
+        this.loadCBPrice();
+
+    }
+
+    loadCBPrice = async _ => {
+        try {
+          let {last} = await Api.loadCBTicker('IMPL_BTC');
+          this.setState({'price': last})
+        } catch (error) {
+        }
     }
 
     componentWillUnmount(){
@@ -227,7 +238,7 @@ class Dashboard extends React.Component {
         
         let {classes} = this.props;
 
-        let {business, admin} = this.state;
+        let {business, admin, price} = this.state;
 
         return (
             <div className={classes.cardWrapper}>
@@ -299,8 +310,8 @@ class Dashboard extends React.Component {
 
                 {this.state.open && <Typography component="div"  variant="body1"  className={classes.footerText + ' ' + classes.footerImageCover}> 
                     <a target="_blank" href="https://impleum.com"> <img className={classes.footerImage} src={IMP} /> </a> 
-                    <Typography ref='copyright' variant="body1" className={classes.footerTitle + ' ' + classes.footerText} > <span className={classes.footerAltColor}> {Api.getCoinName()}/USD</span></Typography>
-                    <p className={classes.footerDesc} >0.86 <span className={classes.footerAltColor}>USD</span></p>
+                    <Typography ref='copyright' variant="body1" className={classes.footerTitle + ' ' + classes.footerText} > <span className={classes.footerAltColor}> {Api.getCoinName()}/BTC</span></Typography>
+                    <p className={classes.footerDesc} > {price} <span className={classes.footerAltColor}>BTC</span></p>
                 </Typography>}
                 
                 {this.state.open && <Typography ref='copyright' variant="body1" className={classes.menuBtnSpacings + ' ' + classes.footerText} >
@@ -329,6 +340,8 @@ class Dashboard extends React.Component {
 
                 <PrivateRoute role={['admin']} exact path="/dashboard" component={Admin.Analytics} /> 
                 <PrivateRoute role={['admin']} exact path="/dashboard/requests" component={Admin.Requests} /> 
+                <PrivateRoute role={['admin']} exact path="/dashboard/analytics/:slug/:id" component={Business.Analytics} />
+
             </div>
 
             </div>
