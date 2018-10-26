@@ -36,7 +36,6 @@ import CardsModel from './../models/Cards'
 import Share from './../components/Share';
 import SModal from './../components/Modal';
 
-import Checkbox from '@material-ui/core/Checkbox';
 
 
 import BTC from './../assets/BTC.svg';
@@ -44,10 +43,10 @@ import IMP from './../assets/IMP.png';
 
 import info from './../assets/info.svg';
 
-import Explore  from './Explore.js';
 
 import * as User from './dashboard.user.js'
 import * as Business from './dashboard.business.js'
+import * as Admin from './dashboard.admin.js'
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
   (!redirect
@@ -58,7 +57,7 @@ const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
 const PrivateRoute =  ({ component: Component, ...rest }) => (
         <Route {...rest} render={props => (
           Auth.isAuthenticated && rest.role.includes(Auth.role) ? (
-             <Component currentRole={Auth.role} {...rest}/>
+             <Component currentRole={Auth.role} {...rest} {...props}/>
           ) : (
                <div/>
             )
@@ -114,7 +113,6 @@ const styles = theme => ({
         width: 36,
         position: 'absolute',
     },
-
 
     footerTitle:{
         margin: '-2px 0 0 50px',
@@ -187,7 +185,8 @@ class Dashboard extends React.Component {
 
     state= {
         open: window.innerWidth > 600,
-        analytics: false
+        business: false,
+        admin: false
     }
 
     componentDidMount(){
@@ -199,9 +198,14 @@ class Dashboard extends React.Component {
                 that.setState({open: meta.userOpenMenu});
         }, _ => {})
 
-        when(() => ['business', 'admin'].includes(Auth.role) , _ => {
+        when(() => ['business'].includes(Auth.role) , _ => {
             if(that.mounted)
-                that.setState({analytics: true});
+                that.setState({business: true});
+        })
+
+        when(() => ['admin'].includes(Auth.role) , _ => {
+            if(that.mounted)
+                that.setState({admin: true});
         })
 
     }
@@ -223,7 +227,7 @@ class Dashboard extends React.Component {
         
         let {classes} = this.props;
 
-        let {analytics} = this.state;
+        let {business, admin} = this.state;
 
         return (
             <div className={classes.cardWrapper}>
@@ -252,7 +256,7 @@ class Dashboard extends React.Component {
                             </Typography>
                         </MenuItem>
                     </NavLink>
-                    <NavLink tabIndex='1' to={'/dashboard/profile'} className={classes.link} >
+                    { !admin && <NavLink tabIndex='1' to={'/dashboard/profile'} className={classes.link} >
                         <MenuItem selected={/dashboard\/profile/.test(this.props.location.pathname)} onClick={this.handleClose}>
                             <ListItemIcon className={classes.icon}>
                                 <Icon  className={classes.mainMenuIcon} >account_box</Icon>
@@ -261,8 +265,8 @@ class Dashboard extends React.Component {
                                 Profile
                             </Typography>
                         </MenuItem>
-                    </NavLink>
-                    <NavLink tabIndex='1' to={'/dashboard/history'} className={classes.link} >
+                    </NavLink>}
+                    { !admin && <NavLink tabIndex='1' to={'/dashboard/history'} className={classes.link} >
                         <MenuItem selected={/dashboard\/history/.test(this.props.location.pathname)} onClick={this.handleClose}>
                             <ListItemIcon className={classes.icon}>
                                 <Icon className={classes.mainMenuIcon} >access_time</Icon>
@@ -272,15 +276,15 @@ class Dashboard extends React.Component {
                             </Typography>
                             
                         </MenuItem>
-                    </NavLink>
-                    { analytics &&
-                        <NavLink tabIndex='1' to={'/dashboard/analytics'} className={classes.link} >
-                            <MenuItem selected={/dashboard\/analytics/.test(this.props.location.pathname)} onClick={this.handleClose}>
+                    </NavLink>}
+                    { admin &&
+                        <NavLink tabIndex='1' to={'/dashboard/requests'} className={classes.link} >
+                            <MenuItem selected={/dashboard\/requests/.test(this.props.location.pathname)} onClick={this.handleClose}>
                                 <ListItemIcon className={classes.icon}>
                                     <Icon className={classes.mainMenuIcon} >trending_up</Icon>
                                 </ListItemIcon>
                                 <Typography variant="display1" >
-                                    Analytics
+                                    Requests
                                 </Typography>
                                 
                             </MenuItem>
@@ -295,7 +299,7 @@ class Dashboard extends React.Component {
 
                 {this.state.open && <Typography component="div"  variant="body1"  className={classes.footerText + ' ' + classes.footerImageCover}> 
                     <a target="_blank" href="https://impleum.com"> <img className={classes.footerImage} src={IMP} /> </a> 
-                    <Typography ref='copyright' variant="body1" className={classes.footerTitle + ' ' + classes.footerText} > <span className={classes.footerAltColor}> {Api.getCoinName()}/BTC</span></Typography>
+                    <Typography ref='copyright' variant="body1" className={classes.footerTitle + ' ' + classes.footerText} > <span className={classes.footerAltColor}> {Api.getCoinName()}/USD</span></Typography>
                     <p className={classes.footerDesc} >0.86 <span className={classes.footerAltColor}>USD</span></p>
                 </Typography>}
                 
@@ -317,10 +321,16 @@ class Dashboard extends React.Component {
                 <PrivateRoute role={['user']} exact path="/dashboard/history" component={User.History} />
 
 
-                <PrivateRoute role={['business']} exact path="/dashboard" component={User.Common} /> 
-                <PrivateRoute role={['business']} exact path="/dashboard/analytics" component={Business.Analytics} /> 
+                <PrivateRoute role={['business']} exact path="/dashboard" component={Business.Dashboard} /> 
                 <PrivateRoute role={['business']} exact path="/dashboard/profile" component={Business.Profile} /> 
+                <PrivateRoute role={['business']} exact path="/dashboard/history" component={Business.History} />
+                <PrivateRoute role={['business']} exact path="/dashboard/analytics/:slug/:id" component={Business.Analytics} />
+
+
+                <PrivateRoute role={['admin']} exact path="/dashboard" component={Admin.Analytics} /> 
+                <PrivateRoute role={['admin']} exact path="/dashboard/requests" component={Admin.Requests} /> 
             </div>
+
             </div>
         )
     }

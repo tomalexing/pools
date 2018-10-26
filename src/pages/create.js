@@ -239,7 +239,7 @@ class Create extends React.Component{
                     <Typography variant="body1" className={classes.headerField} >If your want to create your quizzes or polls on Quizi platform, fill the form below.
                     </Typography>
 
-                    <form  onSubmit={this.send} noValidate autoComplete="off"> 
+                    <form onSubmit={this.send} noValidate autoComplete="off"> 
                         <TextField
                             id="name"
                             required

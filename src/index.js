@@ -49,6 +49,7 @@ const Dashboard = (props) => <Lazy {...props} load={() => import('./pages/dashbo
 const Contact = (props) => <Lazy {...props} load={() => import('./pages/contact')}/>
 const Create = (props) => <Lazy {...props} load={() => import('./pages/create')}/>
 const Landing = (props) => <Lazy {...props} load={() => import('./pages/landing')}/>
+const User = (props) => <Lazy {...props} load={() => import('./pages/user')}/>
 
 const Card = (props) => <Lazy {...props} load={() => import('./components/CardWrapper')}/>
 const OneCard = (props) => <Lazy {...props} load={() => import('./components/OneCard')}/>
@@ -214,6 +215,8 @@ render(<Router >
                     <Route path={'/contact'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><Contact /></App>}/>
 
                     <Route path={'/create'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><Create /></App>}/>
+
+                    <Route path={'/user'}  key={getUniqueKey()} component={() => <App nofooter={true}  fullscreen={true} ><User /></App>}/>
                     
                     <Route path={'/'} exact  key={getUniqueKey()} component={() =>  <App nofooter={true}  fullscreen={true}  landingscreen={true} ><Landing /></App>}/>
                     

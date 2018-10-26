@@ -50,7 +50,7 @@ class CardWrapper extends React.Component {
                 that.props.store.currentCard.reactClass.adjustStyle();
             }, false))
         }
-        
+
         when(() => !Auth.logging && !Auth.loadingUserData , () => {
             this.props.store && this.props.store.load().then(async current => {
                 
@@ -87,7 +87,7 @@ class CardWrapper extends React.Component {
         if(!this.props.store || this.props.store.allCardsNumber == 0 ){
              return(<div/>)
         }
-
+        
         if(!this.props.store.IsEnd && this.props.store.info && (this.props.store.info.blockedByUser || this.props.store.info.blockedEntity) ){
              return(
                 <div className={classes.notAvailable}>

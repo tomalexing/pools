@@ -9,7 +9,7 @@ import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 
-import { listener, getMonthName, roundeWithDec, loadScript, copy } from './../utils';
+import { listener, getMonthName, roundeWithDec, loadScript, copy, formatedTime } from './../utils';
 
 import {Route, Redirect, Link, withRouter} from 'react-router-dom';
 import {NavLink} from './../components/NavLink';
@@ -66,510 +66,8 @@ const PrivateRoute =  ({ component: Component, ...rest }) => (
         )} />)
 
 
-const stylesProfile = theme => ({
 
-    cardWrapper:{
-        display: 'flex',
-        flexWrap: 'wrap'
-    },
-    card:{
-        maxHeight: '100%',
-        zIndex: '100',
-        position: 'relative',
-        marginBottom: 40,
-        marginRight: 40,
-        borderRadius: '8px',
-        overflow: 'hidden',
-        maxWidth: '690px',
-        height: '100%',
-        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
-        '@media (max-width: 600px)':{
-            marginRight: 0,
-            minWidth: 690
-        }
-    },
-    header:{
-        color: 'white',
-        background: '#FC3868',
-        fontWeight: 100,
-        display: 'flex',
-        height: 40,
-        alignItems: 'center',
-        justifyContent: 'center',
-        '& $delimeter': {
-            background: 'rgba(0, 0, 0, 0.1)',
-            height: '100%',
-            width: 1,
-            marginLeft: 'auto'
-        },
-        '& $impNum':{
-            padding: '0 10px'
-        }
-    },
-    delimeter:{},
-    impNum:{},
-
-    cardBodyResult: {
-        padding: '23px 30px',
-        backgroundColor: '#474E65',
-        overflow: 'hidden'
-    },
-
-    row: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-    },
-
-    responseRow:{
-        '@media (max-width: 600px)':{
-            flexDirection: 'column',
-            alignItems: 'center',
-            flex: '1 0 66%'
-        }
-    },
-    col:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: 200,
-        height: 33,
-    },
-    btnResult: {
-        marginTop: 30,
-        borderRadius: 74
-    },
-    title: {
-        padding: '0 30px',
-    },
-    column:{
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-    headerResult: {
-        paddingBottom: '1rem'
-    },
-    noWrap:{
-        whiteSpace: 'nowrap',
-        textAlign: 'center'
-    },
-
-    account:{
-        display: 'flex',
-        flexDirection: 'row',
-        marginBottom: 22
-    },
-
-    accountPic:{
-        width: 80,
-        height: '100%',
-        objectFit: 'cover',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        '& img': {
-            width: '100%',
-            height: 'auto',
-        }
-    },
-    accountDetails:{
-        display: 'flex',
-        flexDirection: 'column',
-        marginLeft: 20, 
-    },
-    accountName:{
-        fontSize: 16,
-        fontWeight: 600
-    },
-
-    accountEmail:{
-        fontSize: 14,
-        fontWeight: 400
-    },
- 
-
-    divider: {
-        backgroundColor: "#bbc2d8"
-    },
-
-    headerField:{
-        margin: '20px 0 12px',
-        fontSize: 16,
-    },
-
-    bold:{
-        fontWeight: 600,
-    },
-
-    formInput:{
-        width: '100%',
-        color: '#ECEDF3',
-        '&:after, &:before': {
-            content: 'none'
-        },
-    },
-
-    formField:{
-        color: '#ECEDF3',
-        display: 'block',
-        width: 480,
-        '&:after, &:before': {
-            content: 'none'
-        },
-
-    },
-
-    submitBtn:{
-        float: 'right',
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    editBtn:{
-        float: 'right',
-        borderRadius: 74,
-    },
-
-    editBtnTypo:{
-        fontSize: 14,
-        fontWeight: 700
-    },
-
-    short:{
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
-        display: 'inlineBlock',
-        width: '100%'
-    },
-    
-    delBtn:{
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    captcha:{
-        display: 'flex',
-        '& > *':{
-            margin: 'auto'
-        }
-    },
-
-    getIMP: {
-        display: 'flex',
-        textDecoration: 'none',
-        marginTop: '34px',
-    },
-
-    getIMPmark: {
-        width: 21,
-        marginRight: '10px',
-    },
-
-    getIMPtext: {
-        fontSize: '13px'
-
-    },
-
-    disabled:{
-        color: '#ECEDF3'
-    }
-
-
-})
-
-const themeProfile = createMuiTheme( Object.assign(themeObject, {
-    typography: {
-        ...themeObject.typography,
-        display4: {
-             ...themeObject.typography.display4,
-            fontSize: '14px',
-        },
-        body1: {
-             ...themeObject.typography.body1,
-            fontSize: '14px',
-        },
-        display1:{
-             ...themeObject.typography.display1,
-            fontSize: '14px',
-        }
-    },
-    palette:{
-         ...themeObject.palette,
-        text: {
-            disabled: '#ECEDF3'    
-        }
-    }
-}));
-
-// Profile
-@withStyles(stylesProfile)
-@observer
-export class Profile extends React.Component{
-
-    constructor(props){
-        super(props);
-        this.user = null;
-        this.walletRef = React.createRef();
-
-
-        (async _ => {
-            await this.getUser()
-            this.getAnalytics();
-            this.getWallet();
-        }).bind(this)();
-
-
-    }
-
-    @observable analitics = {};
-    @observable loaded = false;
-    @observable wallet = '';
-
-    @action.bound
-    getUser = async _ => {
-        this.user = await new Promise(r => Api.auth().onAuthStateChanged(r)).catch(function(error) {
-            console.trace(error.stack);
-            console.log('User token is outdated. Relogin is required.')
-        });
-    }
-
-    @action.bound
-    getWallet = async _ => {
-
-        let idToken = await this.user.getIdToken();
-
-        let body = {
-            uid: Auth.uid,
-            token: idToken
-        };
-        let that = this;  
-
-        Api.getWallet().then(wallet => {
-            
-            if(!wallet)
-                Api.ourApi('createwallet', body).then(wallet => {
-               
-                    that.wallet = wallet
-                });
-
-            that.wallet = wallet
-        })  
-    }
-
-
-
-    @action.bound
-    getAnalytics = async _ => {
-    
-        let that = this;
-        if (this.user) {
-
-            let idToken = await this.user.getIdToken();
-            let fetchBody = {token: idToken, uid: Auth.uid};
-
-            that.balanceIncome = await Api.ourApi('getbalance', fetchBody);
-            
-            let {list:analitics, debug} = await Api.ourApi('getAnalytic', fetchBody);
-
-            that.analitics = analitics;
-            this.loaded = true;
-        }else{
-            await this.getUser();
-            this.getAnalytics();
-        }
-      
-    }
-
-
-    @computed
-    get balance(){
-        return this.balanceIncome;
-    }
-
-    @computed
-    get paid(){
-        return Object.entries(this.analitics).reduce((allpayoutsIMP ,[path, {overall, payoutsIMP, responses, title, reward, sharedReward, sharedCount, sharedPaidCount}]) => {
-            return allpayoutsIMP + payoutsIMP + sharedReward * sharedPaidCount
-        }, 0)
-    }
-
-    @computed
-    get blocked(){
-        return Object.entries(this.analitics).reduce((allblocked ,[path, {overall, payoutsIMP, responses, title, reward, sharedReward, sharedCount, sharedPaidCount, blockedIMP}]) => {
-            return allblocked + blockedIMP
-        }, 0)   
-    }
-
-    @computed
-    get available(){
-        let available = this.balance - this.blocked;
-        Object.values(this.analitics).map(({entry_path, entry_id}) => {
-           Api.setValueInCatalog('blockedEntity', available < 0, entry_path, entry_id);
-        });
-        return available;
-    }
-
-    getBalanceInfo(){
-
-        let {classes} = this.props;
-        
-        return (
-            <div className={classes.card}>
-                <div ref='header' className={classes.header}>
-                    <div className={classes.row}>
-                        <div style={{ alignItems: 'flex-start', width: '200px'}} className={classes.col}>
-                            <Typography  align="left" variant="display1" className={classes.bold}>
-                                Balance
-                            </Typography>
-                        </div>
-                    </div>
-                </div>
-
-                {this.loaded && 
-                <div className={classes.cardBodyResult}>
-                    <div className={classes.analitics}>
-                        <div className={classes.row} >
-
-                            <div style={{ alignItems: 'flex-start', width: '100px'}} className={classes.col}>
-                                <Typography  align="left" variant="display4" >
-                                    Available:
-                                </Typography>
-                            </div>
-                            <div style={{ alignItems: 'flex-end', width: '100px'}} className={classes.col}>
-                                <Typography variant="display4" className={classes.bold} >
-                                    {roundeWithDec(this.available)} {Api.getCoinName()}      
-                                </Typography>
-                            </div>
-            
-                        </div>  
-
-                        <div className={classes.row} >
-                           
-                            <div style={{ alignItems: 'flex-start', width: '100px'}} className={classes.col}>
-                                <Typography variant="display4" >
-                                    Blocked:
-                                </Typography>
-                            </div>
-                            <div style={{alignItems: 'flex-end', width: '100px'}} className={classes.col}>
-                                <Typography variant="display4" className={classes.bold} >
-                                    {roundeWithDec(this.blocked)} {Api.getCoinName()}      
-                                </Typography>
-                            </div>
-
-                        </div>  
-
-                        <div className={classes.row} >
-   
-                            <div style={{ alignItems: 'flex-start', width: '100px'}} className={classes.col}>
-                                <Typography variant="display4" >
-                                    Balance:
-                                </Typography>
-                            </div>
-
-                            <div style={{ alignItems: 'flex-end', width: '100px'}} className={classes.col}>
-                                <Typography variant="display4" className={classes.bold}>
-                                    {roundeWithDec(this.balance)} {Api.getCoinName()}      
-                                </Typography>
-                            </div>
-        
-                        </div>  
-                    </div>
-                    <div className={classes.row} >
-                        <Button variant="raised" color="secondary" className={classes.submitBtn} href={'/dashboard/profile'}>
-                            <Typography variant="button" >Add {Api.getCoinName()} </Typography>
-                        </Button>
-                    </div>  
-                </div>}
-
-                {!this.loaded && 
-                <div className={classes.cardBodyResult}>
-                    <div className={classes.analitics}>
-                        <div className={classes.row} >
-                            <div style={{ alignItems: 'center', width: '200px'}} className={classes.col}>
-                                <CircularProgress color="secondary" />
-                            </div>            
-                        </div>
-                    </div>
-                </div>}
-            </div>
-        )
-    }
-
-    @action.bound
-    copy = _ => {
-        copy(this.walletRef);
-    }
-
-
-    render(){
-        let {classes} = this.props;
-        
-        const Textarea = React.forwardRef((props, ref) => ( 
-            <TextField
-                inputRef={ref}
-                value={props.value}
-                onChange={_=>{}}
-                readOnly={'readonly'}
-                className={classes.formField}
-                type="text"
-                margin="normal"
-                InputProps={{
-                    className: classes.formInput
-                }}
-            />
-        ));
-
-        return( 
-            <MuiThemeProvider theme={themeProfile}>
-                <div className={classes.cardWrapper} >
-        
-                    <div className={classes.card}>
-                        <div ref='header' className={classes.header}>
-                            <Typography variant="display1" className={classes.title}>
-                                Business account
-                            </Typography>
-                            <span className={classes.delimeter}></span>
-
-                        </div>
-                        <div className={classes.cardBodyResult}>
-                            <div className={classes.account}>
-                                <div className={classes.accountPic}>
-                                    <img src={Auth.photoURL} />
-                                </div>
-                                <div className={classes.accountDetails}>
-                                    <Typography className={classes.accountName} variant="display4" gutterBottom>
-                                            {Auth.displayName}
-                                    </Typography>
-                        
-                                    <Typography className={classes.accountEmail} variant="display4" gutterBottom>
-                                            {Auth.email}
-                                    </Typography>
-                                </div>
-                            </div>
-                            <Divider className={classes.divider} />
-
-                            <Typography variant="display4" className={classes.headerField + ' ' + classes.bold} >Your Impleum wallet address:
-                            </Typography>
-                            
-                            <Textarea ref={this.walletRef} value={this.wallet} />
-
-                            <Button variant="raised" color="secondary" className={classes.submitBtn} onClick={this.copy}>
-                                <Typography variant="button" >Copy</Typography>
-                            </Button>
-                        </div>
-                    </div>
-
-                    {this.getBalanceInfo()}
-
-                </div>
-            </MuiThemeProvider>)
-    }
-}
-
-
-const stylesDashboard = theme => ({
+const stylesAnalytics = theme => ({
 
     cardWrapper:{
         display: 'flex',
@@ -878,14 +376,6 @@ const stylesDashboard = theme => ({
         position: 'absolute',
         top: 0,
         right: 0
-    },
-
-    menuItem: {
-        textDecoration: 'none'
-    },
-
-    menuLink: {
-        textDecoration: 'none'
     }
 })
 
@@ -907,10 +397,10 @@ const themeAnalytics = createMuiTheme( Object.assign(themeObject, {
     }
 }));
 
-// Dashboard
-@withStyles(stylesDashboard)
+// Analytics
+@withStyles(stylesAnalytics)
 @observer
-export class Dashboard extends React.Component{
+export class Analytics extends React.Component{
 
     constructor(props){
         super(props);
@@ -936,12 +426,12 @@ export class Dashboard extends React.Component{
 
             let idToken = await user.getIdToken();
 
-            let fetchBody = {token: idToken, uid: Auth.uid};
-            let {list:analitics, d} = await Api.ourApi('getAnalytic', fetchBody);
+            let fetchBody = {token: idToken};
+            let {list:analitics, d} = await Api.ourApi('getAnalytics', fetchBody);
 
-            //console.log(analitics, d)
+            console.log(analitics, d)
 
-            that.balanceIncome = await Api.ourApi('getbalance', fetchBody);
+            that.balanceIncome = await Api.ourApi('getallbalance', fetchBody);
 
             that.analitics = analitics;
         }
@@ -1106,7 +596,7 @@ export class Dashboard extends React.Component{
                 { this.getBalanceInfo() }
 
                 <div className={classes.addIMP}>
-                    <Link className={classes.addIMPLink} to='/dashboard/profile'></Link>
+                    <Link className={classes.addIMPLink} to='/contact'></Link>
                     <Typography  variant="body1" className={classes.addIMPTitle}>
                         Add {Api.getCoinName()}
                     </Typography>
@@ -1272,22 +762,14 @@ export class Dashboard extends React.Component{
                                                 full={false} zoom={false} 
                                             />  
 
-                                            <MenuItem selected={false} className={classes.menuItem} onClick={that.openEmbedModal(idx)}>
+                                            <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={that.openEmbedModal(idx)}>
                                                 <Typography variant="subheading" >
                                                     Embed code
                                                 </Typography>
                                             </MenuItem>
 
-                                            <NavLink tabIndex='1' to={`/dashboard/analytics${entry_path.replace('v1','')}`} className={classes.menuLink}>
-                                                <MenuItem selected={false} className={classes.menuItem}>
-                                                    <Typography variant="subheading" >
-                                                        Analytics
-                                                    </Typography>
-                                                </MenuItem>
-                                            </NavLink>
-
                                             <Share link={`${window.location.protocol}//${window.location.host}${entry_path.replace('/v1','')}`} >
-                                                <MenuItem selected={false} className={classes.menuItem} >
+                                                <MenuItem selected={false} className={classes.menuMobileItemSpacings} >
                                                     <Typography variant="subheading" >
                                                         Share
                                                     </Typography>
@@ -1313,17 +795,11 @@ export class Dashboard extends React.Component{
 
 
 
-const stylesHistory = theme => ({
+const stylesRequests = theme => ({
 
     cardWrapper:{
         display: 'flex',
         flexWrap: 'wrap'
-    },
-
-    container:{
-        display: 'flex',
-        alignItems: 'stretch',
-        flexDirection: 'column'
     },
 
     card:{
@@ -1657,157 +1133,421 @@ const stylesHistory = theme => ({
         height: '10px'
     },
 
+
+    titleTopBtn: {
+        marginBottom: '30px',  
+    },
+
     titleTop: {
         fontWeight: 700,
         letterSpacing: 1,
-        marginBottom: '30px'
+        opacity: .6,
+        transition: 'opacity .5s',      
+        '&.activeTab':{
+            opacity: 1,
+        },
+        '&:hover':{
+            opacity: .9
+        }
     },
+
+    container:{
+        display: 'flex',
+        alignItems: 'stretch',
+        flexDirection: 'column'
+    },
+
+    additionalTable: {
+        marginRight: 0,
+        alignSelf: 'flex-start'
+    }
 
 })
 
-// History
-@withStyles(stylesHistory)
+// Requests
+@withStyles(stylesRequests)
 @observer
-export class History extends React.Component{
+export class Requests extends React.Component{
 
     constructor(props){
         super(props);
-        this.getHistory();
+        this.getData();
     }
 
-    @observable histories = [];
+    @observable contacts = [];
+    @observable creates = [];
+    @observable subscriptions = [];
     @observable count = 0;
 
+    @observable tabs =  {    
+                            'showTab-0': {
+                                name: 'Contacts',
+                                show: true,
+                                data: [],
+                                contactDetails: []
+
+                            },
+                            'showTab-1': {
+                                name: 'Create New',
+                                show: false,
+                                data: []
+                            },
+                            'showTab-2': {
+                                name: 'Subscriptions',
+                                shaw: false,
+                                data: []
+                            }
+                        };
+
+
+
     @action.bound
-    getHistory = async _ => {
+    getData = async _ => {
         let body = {
             uid: Auth.uid
         };
 
-        let listtransactions = await Api.ourApi('listtransactions', body);
+        this.tabs['showTab-0'].data = await Api.getRequestsContact(body);
+        this.tabs['showTab-1'].data = await Api.getRequestsCreateNew(body);
+        this.tabs['showTab-2'].data = await Api.getRequestsSubscriptions(body);
 
-        if(listtransactions.status){
-            this.histories = listtransactions.transactions;
-        }
+        console.log(this.tabs['showTab-2'].data);
+        
+        this.showContact()();
 
-        let getblockcount = await Api.ourApi('getblockcount', {});
-        if(getblockcount.status){
-            this.count = getblockcount.count;
-        }
     }
 
+
+    @action.bound
+    changeTab = matchIndex => _ => {
+        Object.entries(this.tabs).map(([tabName, _], indexCollection) => {
+            this.tabs[tabName].show = indexCollection == matchIndex;
+        });
+    }
+
+    filterByTime = (arr) => {
+        return arr.sort((body1, body2)=> {
+            return Object.keys(body1[0].data.body).sort((d1, d2)=>{
+                    return d1 < d2
+                })[0] < Object.keys(body2[0].data.body).sort((d1, d2)=>{
+                    return d1 < d2
+                })[0]; });
+    }
+
+    @action.bound
+    showContact = id => e => {
+        e && e.preventDefault();
+
+        if(id){
+            var chosenContact = this.tabs['showTab-0'].data.filter(d => d[0].id == id);
+        }else{
+            var chosenContact = this.filterByTime(this.tabs['showTab-0'].data)
+        }
+        
+        if(chosenContact.length > 0)
+            this.tabs['showTab-0'].contactDetails = chosenContact[0][0].data.body;
+    }
+
+    @observable questionModal = {}
+    @action.bound
+    closeQuestionModal = id => () => {
+        this.questionModal[id] = false;
+    };
+    
+
     render(){
+        let that = this;
         let {classes} = this.props;
 
         return( 
-            <div className={classes.container} >
+            <div className={classes.container}>
 
-            <Typography variant="display4" className={classes.titleTop}>Deposits</Typography>
+            <div className={classes.cardWrapper}> {Object.values(this.tabs).map((tab, idx) => {
+                return <Button className={classes.titleTopBtn} color="primary" key={`${tab.name}Title`} onClick={that.changeTab(idx)} ><Typography variant="display4" className={cn(classes.titleTop, {'activeTab': that.tabs[`showTab-${idx}`].show})} >{tab.name}</Typography></Button>
+            })}</div>
 
-            <div className={classes.cardWrapper} >
-                <div className={classes.card}>
-                    <div ref='header' className={classes.header}>
-                        <div className={classes.row}>
-                            <div style={{width: '100px'}} className={classes.col}>
-                                <Typography  variant="display1" className={classes.bold}>
-                                    Block
-                                </Typography>
-                            </div>
-                            <span className={classes.delimeter}></span>
-                            <div className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
-                                    Amount, {Api.getCoinName()}
-                                </Typography>
-                            </div>
-                            <span className={classes.delimeter}></span>
-                            <div  className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
-                                    Date
-                                </Typography>
-                            </div>
-                            <span className={classes.delimeter}></span>
-                            <div style={{width: '155px'}} className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
-                                    Status
-                                </Typography>
-                            </div>
-            
-                            <span className={classes.delimeter}></span>
-                            <div style={{width: '150px'}} className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
-                                    Explorer
-                                </Typography>
+            { that.tabs['showTab-0'].show &&
+                <div className={classes.cardWrapper} >
+                    <div className={classes.card}>
+                        <div ref='header' className={classes.header}>
+                            <div className={classes.row}>
+                                <div className={classes.col}>
+                                    <Typography  variant="display1" className={classes.bold}>
+                                        Email
+                                    </Typography>
+                                </div>
+                                
+                                <span className={classes.delimeter}></span>
+
+                                <div style={{width: '150px'}} className={classes.col}>
+                                    <Typography variant="display1" className={classes.bold}>
+                                        Name
+                                    </Typography>
+                                </div>
+
+                                <span className={classes.delimeter}></span>
+
+                                <div style={{width: '150px'}} className={classes.col}>
+                                    <Typography variant="display1" className={classes.bold}>
+                                        Last
+                                    </Typography>
+                                </div>
+
+                                <span className={classes.delimeter}></span>
+
+                                <div style={{width: '50px'}} className={classes.col}>
+                                    <Typography variant="display1" className={classes.bold}>
+                                        #
+                                    </Typography>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className={classes.cardBodyResult}>
-                        <div className={classes.history}>
-                            
-                                {this.histories.map((history, idx, histories) => {
-                                    if(history.category != 'receive'){
-                                        return <div key={`history-${idx}`} />
-                                    }
-                                    let stamptime = new Date(history.timereceived * 1000);
-                                    return [<div key={`history-${idx}`} className={classes.row}>
-                                        
-                                        <div style={{width: '100px'}} className={classes.col}>
-                                            <Typography variant="display4">
-                                                {this.count - history.confirmations}
-                                            </Typography>
-                                        </div>  
-
-                                        <div className={classes.col}>
-                                            <Typography variant="display4">
-                                                {roundeWithDec(history.amount)}
-                                            </Typography>
-                                        </div>
-
-                                        <div className={classes.col}>
-                                            <Typography variant="display4">
-                                                {stamptime.getFullYear()}-{stamptime.getMonth().length > 1 ? `${stamptime.getMonth()}` : `0${stamptime.getMonth()}`}-{stamptime.getDate()} {stamptime.getHours().toString().length > 1 ? `${stamptime.getHours()}` : `0${stamptime.getHours()}`} : {stamptime.getMinutes().toString().length > 1 ? `${stamptime.getMinutes()}` : `0${stamptime.getMinutes()}`}
-                                            </Typography>
-                                        </div>
-
-                                        <div style={{width: '155px'}} className={cn(classes.col)} >
-
-                                            <div className={cn(classes.status)}>
-
-                                                <div className={cn(classes.label, {
-                                                    [classes.received]: history.confirmations >= 10,
-                                                    [classes.unconfirmed]: history.confirmations <= 1,
-                                                    [classes.processing]: history.confirmations > 1 && history.confirmations < 10
-                                                    })}></div>
-                                                    <Typography variant="display4">
-                                                        {history.confirmations >= 10 && 'received' }
-                                                        {history.confirmations <= 1  && 'unconfirmed' }
-                                                        {history.confirmations > 1 && history.confirmations < 10 && 'processing' } 
-                                                    </Typography>
-
+                        <div className={classes.cardBodyResult}>
+                            <div className={classes.history}>
+                                
+                                {that.filterByTime(that.tabs['showTab-0'].data)
+                                    .map((body, idx, contacts) => {
+                                        return [<div key={`contact-${idx}`} className={classes.row}>
+                                            
+                                            <div style={{'alignItems': 'flex-start'}} className={classes.col}>
+                                                <Typography style={{'textAlign': 'left'}} variant="display4">
+                                                    {body[0].id}
+                                                </Typography>
                                             </div>
 
-                                        </div>
+                                            <div  style={{width: '150px'}} className={classes.col} onClick={that.showContact(body[0].id)}>
+                                                <Typography variant="display4">
+                                                    {Object.entries(body[0].data.body).sort(([d1, _], [d2, __])=>{
+                                                        return d1 < d2
+                                                    })[0][1].name}
+                                                </Typography>
+                                            </div>
 
-                                        <div style={{width: '150px'}} className={classes.col}>
-                                            <Typography variant="display4" >
-                                                { history.txid && <a href={`https://explorer.impleum.com/tx/${history.txid}`}
-                                                    target="_blank" className={classes.explorer}><Icon>link</Icon>
-                                                </a>}
-                                            </Typography>
-                                        </div>
-                                    </div>,
-                                    histories.length - 1 !=  idx ? <Divider key={`historydiv-${idx}`} className={classes.divider} /> : <div key={`historydiv-${idx}`}/> ]
-                                    }
-                                )}
+                                            <div style={{width: '150px'}} className={classes.col}>
+                                                <Typography variant="display4">
+                                                    {formatedTime(Object.keys(body[0].data.body).sort((d1, d2)=>{
+                                                        return d1 < d2
+                                                    })[0])}
+                                                </Typography>
+                                            </div>
+
+                                            <div style={{width: '50px'}} className={classes.col} onClick={that.showContact(body[0].id)}>
+                                                <Typography style={{color: '#FC3868'}} variant="button">
+                                                    {Object.values(body[0].data.body).length}
+                                                </Typography>
+                                            </div>
+
+                                        </div>,
+                                        contacts.length - 1 !=  idx ? <Divider key={`contactdiv-${idx}`} className={classes.divider} /> : <div key={`contactdiv-${idx}`}/> ]
+                                        }
+                                    )}
+                                </div>
+                            </div>
                         </div>
+                    <div className={cn(classes.card, classes.additionalTable)}>
+                        <div ref='header' className={classes.header}>
+                            <div className={classes.row}>
 
-                    </div>
+                                <div style={{width: '150px'}} className={classes.col}>
+                                    <Typography variant="display1" className={classes.bold}>
+                                        Date
+                                    </Typography>
+                                </div>
+
+                                <span className={classes.delimeter}></span>
+
+                                <div style={{width: '100px'}} className={classes.col}>
+                                    <Typography variant="display1" className={classes.bold}>
+                                        Preview Msg
+                                    </Typography>
+                                </div>
+
+                                <span className={classes.delimeter}></span>
+
+                                <div style={{width: '50px'}} className={classes.col}>
+                                    <Typography variant="display1" className={classes.bold}>
+                                        Full
+                                    </Typography>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={classes.cardBodyResult}>
+                            <div className={classes.history}>
+                                
+                                {Object.entries(that.tabs['showTab-0'].contactDetails)
+                                    .sort(([d1, _], [d2, __]) => {
+                                            return d1 < d2
+                                    })
+                                    .map(([date, {question, name}], idx, contactDetails) => {
+                                        return [<div key={`contact-${idx}`} className={classes.row}>
+                                            
+
+                                            <div style={{width: '150px'}} className={classes.col}>
+                                                <Typography variant="display4">
+                                                    {formatedTime(date)}
+                                                </Typography>
+                                            </div>  
+
+                                            <div style={{width: '100px'}} className={classes.col}>
+                                                <Typography variant="display4">
+                                                    { question.substr(0, 5) }...
+                                                </Typography>
+                                            </div>
+
+                                            <div style={{width: '50px'}} className={classes.col}>
+                                                <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="raised" onClick={() => {this.questionModal[idx] = true;}}>
+                                                    <Icon>fullscreen</Icon>
+                                                </Button>
+                                                <SModal title="Question" body={
+                                                    <Typography ariant="display4">{question}</Typography>
+                                                } open={this.questionModal[idx] || false} close={this.closeQuestionModal(idx)} />
+                                            </div>
+
+                                        </div>,
+                                        contactDetails.length - 1 !=  idx ? <Divider key={`contactdiv-${idx}`} className={classes.divider} /> : <div key={`contactdiv-${idx}`}/> ]
+                                        }
+                                    )}
+                                </div>
+                            </div>
+                            
+                        </div>
                 </div>
-            </div>
+            }
+            { that.tabs['showTab-1'].show &&
+                <div className={classes.cardWrapper} >
+                    <div className={classes.card}>
+                        <div ref='header' className={classes.header}>
+                            <div className={classes.row}>
+                                <div className={classes.col}>
+                                    <Typography  variant="display1" className={classes.bold}>
+                                        Email
+                                    </Typography>
+                                </div>
+                                
+                                <span className={classes.delimeter}></span>
+
+                                <div style={{width: '150px'}} className={classes.col}>
+                                    <Typography variant="display1" className={classes.bold}>
+                                        Name
+                                    </Typography>
+                                </div>
+
+                                <span className={classes.delimeter}></span>
+
+                                <div style={{width: '150px'}} className={classes.col}>
+                                    <Typography variant="display1" className={classes.bold}>
+                                        Last
+                                    </Typography>
+                                </div>
+
+                                <span className={classes.delimeter}></span>
+
+                                <div style={{width: '50px'}} className={classes.col}>
+                                    <Typography variant="display1" className={classes.bold}>
+                                        #
+                                    </Typography>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={classes.cardBodyResult}>
+                            <div className={classes.history}>
+                                
+                                {that.filterByTime(that.tabs['showTab-1'].data)
+                                    .map((body, idx, contacts) => {
+                                        return [<div key={`contact-${idx}`} className={classes.row}>
+                                            
+                                            <div style={{'alignItems': 'flex-start'}} className={classes.col}>
+                                                <Typography style={{'textAlign': 'left'}} variant="display4">
+                                                    {body[0].id}
+                                                </Typography>
+                                            </div>
+
+                                            <div  style={{width: '150px'}} className={classes.col} onClick={that.showContact(body[0].id)}>
+                                                <Typography variant="display4">
+                                                    {Object.entries(body[0].data.body).sort(([d1, _], [d2, __])=>{
+                                                        return d1 < d2
+                                                    })[0][1].name}
+                                                </Typography>
+                                            </div>
+
+                                            <div style={{width: '150px'}} className={classes.col}>
+                                                <Typography variant="display4">
+                                                    {formatedTime(Object.keys(body[0].data.body).sort((d1, d2)=>{
+                                                        return d1 < d2
+                                                    })[0])}
+                                                </Typography>
+                                            </div>
+
+                                            <div style={{width: '50px'}} className={classes.col} >
+                                                <Typography variant="button">
+                                                    {Object.values(body[0].data.body).length}
+                                                </Typography>
+                                            </div>
+
+                                        </div>,
+                                        contacts.length - 1 !=  idx ? <Divider key={`contactdiv-${idx}`} className={classes.divider} /> : <div key={`contactdiv-${idx}`}/> ]
+                                        }
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            }
+            { that.tabs['showTab-2'].show &&
+                <div className={classes.cardWrapper} >
+                    <div className={classes.card}>
+                        <div ref='header' className={classes.header}>
+                            <div className={classes.row}>
+                                <div className={classes.col}>
+                                    <Typography  variant="display1" className={classes.bold}>
+                                        Email
+                                    </Typography>
+                                </div>
+                                
+                                <span className={classes.delimeter}></span>
+
+                                <div style={{width: '150px'}} className={classes.col}>
+                                    <Typography variant="display1" className={classes.bold}>
+                                        Date
+                                    </Typography>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div className={classes.cardBodyResult}>
+                            <div className={classes.history}>
+                                
+                                {that.tabs['showTab-2'].data
+                                    .map((body, idx, contacts) => {
+                                        return [<div key={`contact-${idx}`} className={classes.row}>
+                                            
+                                            <div style={{'alignItems': 'flex-start'}} className={classes.col}>
+                                                <Typography style={{'textAlign': 'left'}} variant="display4">
+                                                    {body[0].data.email}
+                                                </Typography>
+                                            </div>
+
+                                            <div  style={{width: '150px'}} className={classes.col} onClick={that.showContact(body[0].id)}>
+                                                <Typography variant="display4">
+                                                    {body[0].data.date && formatedTime(body[0].data.date)}
+                                                </Typography>
+                                            </div>
+                                        </div>,
+                                        contacts.length - 1 !=  idx ? <Divider key={`contactdiv-${idx}`} className={classes.divider} /> : <div key={`contactdiv-${idx}`}/> ]
+                                        }
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            }
         </div>)
     }
 }
 
-const stylesAnalytics = theme => ({
+
+
+const stylesAnalyticsClick = theme => ({
 
     cardWrapper:{
         display: 'flex',
@@ -2159,10 +1899,10 @@ const stylesAnalytics = theme => ({
 
 })
 
-// Analytics
-@withStyles(stylesAnalytics)
+// AnalyticsClick
+@withStyles(stylesAnalyticsClick)
 @observer
-export class Analytics extends React.Component{
+export class AnalyticsClick extends React.Component{
 
     constructor(props){
         super(props);
@@ -2248,4 +1988,3 @@ export class Analytics extends React.Component{
         </div>)
     }
 }
-

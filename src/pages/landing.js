@@ -83,20 +83,20 @@ import pa_db from './../assets/landing/pa_db.png';
 import pa_db2x from './../assets/landing/pa_db@2x.png';
 
 import {
-FacebookIcon,
-TwitterIcon,
-GooglePlusIcon,
-LinkedinIcon,
-PinterestIcon,
-VKIcon,
-OKIcon,
-TelegramIcon,
-WhatsappIcon,
-RedditIcon,
-TumblrIcon,
-MailruIcon,
-EmailIcon,
-LivejournalIcon,
+    FacebookIcon,
+    TwitterIcon,
+    GooglePlusIcon,
+    LinkedinIcon,
+    PinterestIcon,
+    VKIcon,
+    OKIcon,
+    TelegramIcon,
+    WhatsappIcon,
+    RedditIcon,
+    TumblrIcon,
+    MailruIcon,
+    EmailIcon,
+    LivejournalIcon,
 } from 'react-share';
 
 import InstaIcon from './../assets/insta.svg'
@@ -112,7 +112,8 @@ const styles = theme => ({
         background: '#fff',
         lineHeight: 1.4,
         overflowX: 'hidden',
-        touchAction: 'pan-y'
+        touchAction: 'pan-y',
+        '-webkit-overflow-scrolling': 'touch'
     },
     
     root: {
@@ -219,6 +220,7 @@ const styles = theme => ({
         '@media (max-width: 768px) and (min-width: 414px)': {
             paddingBottom: '160%',
         },
+
         '@media (max-width: 414px)': {
             paddingBottom: '200%',
         }

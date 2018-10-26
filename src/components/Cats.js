@@ -306,13 +306,20 @@ class Explore extends React.Component {
 
         }).then(cats => {
             cats.map(async item => {
-                let blockSomeOf = await Api.ourApi('checkentity', {id: item.id, path: item.link + '/v1'});
-                if(blockSomeOf.actions){
-                    Object.values(blockSomeOf.values).map(block => {
-                       Api.setValueInCatalog('blockedEntity', block.value, block.entry_path, block.entry_id);
-                    })
-                }
+                try{
+                    let blockSomeOf = await Api.ourApi('checkentity', {id: item.id, path: item.link + '/v1'});
+                    if(blockSomeOf.actions){
+                        Object.values(blockSomeOf.values).map(block => {
+                            Api.setValueInCatalog('blockedEntity', block.value, block.entry_path, block.entry_id);
+                        })
+                    }else{
+                        console.log(blockSomeOf)
+                    }
+                }catch(e) { console.trace(e.stack)}
+                 
             })
+        }).catch(_ => {
+             that.loading = false;
         })
     }
 
@@ -379,6 +386,8 @@ class Explore extends React.Component {
                 </aside>
                 <div className={classes.catsCard}>
                     {this.Cards.length == 0 && this.loading && <div className={classes.center}><CircularProgress color="secondary" /></div>}
+                    {this.Cards.length == 0 && !this.loading && <div className={classes.center}>
+                        <Typography variant="display1" >There are no quizzes or polles</Typography></div>}
                     {this.Cards.map((card, idx) => (<div key={`cats-${idx}`} className={classes.card}>
                         <header className={classes.header}>
 
@@ -415,8 +424,8 @@ class Explore extends React.Component {
                             <div className={classes.footer}>
 
                                 {card.number && <div className={classes.footerParamRow} >
-                                    <Icon className={classes.paramIcon}>offline_bolt</Icon> <Typography variant="display1" className={classes.param}>{card.number} cards</Typography>
-                                    <Icon className={classes.paramIcon}>layers</Icon> <Typography variant="display1" className={classes.param}>{roundeWithDec(card.number * card.reward)} {Api.getCoinName()}</Typography>
+                                    <Icon className={classes.paramIcon}>layers</Icon>  <Typography variant="display1" className={classes.param}>{card.number} cards</Typography>
+                                    <Icon className={classes.paramIcon}>offline_bolt</Icon> <Typography variant="display1" className={classes.param}>{roundeWithDec(card.number * card.reward)} {Api.getCoinName()}</Typography>
                                     <Icon className={classes.paramIcon}>share</Icon> <Typography variant="display1" className={classes.param}>{roundeWithDec(card.sharedReward)} {Api.getCoinName()}</Typography>
                                 </div>}
 

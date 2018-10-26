@@ -61,6 +61,10 @@ const styles = theme => ({
         borderRadius: 15
     },
 
+    label: {
+        lineHeight: '100%'
+    },
+
     paddingTop1: {
         paddingTop: theme.spacing.unit * 1
     },
@@ -280,7 +284,7 @@ class SimpleModal extends React.Component {
                 </div>
             }
             <div style={{height: '12px'}} />
-            <Button size={this.props.full?'large':'small'} variant="raised" color="secondary" className={classes.closeModal} onClick={this.closeModal}>Close</Button>
+            <Button size={this.props.full?'large':'small'} variant="raised" color="secondary" classes={{label: classes.label}} className={classes.closeModal} onClick={this.closeModal}>Close</Button>
           </div>
         </Modal>
       </div>

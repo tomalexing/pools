@@ -11,8 +11,12 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
-import logo from './../assets/quiz-logo.png';
-import logo2x from './../assets/quiz-logo2x.png';
+// import logo from './../assets/quiz-logo.png';
+// import logo2x from './../assets/quiz-logo2x.png';
+
+import logo from './../assets/quizi-beta.png';
+import logo2x from './../assets/quizi-beta2x.png';
+
 import { NavLink } from './NavLink';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 
@@ -54,7 +58,7 @@ const styles = theme => ({
         marginLeft: 'auto',
     },
 
-    mobileMenu:{
+    mobileMenu: {
         color: 'white',
         '@media (max-width: 600px)':{
             marginLeft: 'auto'
@@ -91,8 +95,8 @@ const styles = theme => ({
             backgroundColor: 'white',
             transition: 'opacity .3s ease-in-out'
         },
-
     },
+
     menuBtnSpacings: {
         display: 'block',
         textDecoration: 'none',

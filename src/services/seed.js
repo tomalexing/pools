@@ -1,4 +1,4 @@
-import fire from './../config'
+import fire, { configUsed } from './../config'
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { getUniqueKey  } from './../utils';
@@ -1147,7 +1147,6 @@ const quizzes2 = [
 ];
 
 
-
 function setQuizzes(){
     console.log("Add %s quizzes", quizzes.length)
     db.collection(`quizzes`).doc('mNrynOde7h2pec3R9rKe').get().then(function(doc) {
@@ -1165,7 +1164,7 @@ function setQuizzes(){
         desc: 'Discover popular answers to the most provocative questions.',
         img: './assets/polls.png',
         result: 'Your IQ is {{iqValue}}.',
-        addr: process.env.NODE_ENV === "production" ? 'q8TbAwAjRnSa38zVq5PQJCpKw0w1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
+        addr: configUsed.projectId == 'quiz-public-30d33' ? '5hgXl6iSachlbAvpyCA6ys8J9dQ2' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
       }, { merge: true });
       
       for(let i = 0; i < quizzes.length; i++){
@@ -1195,7 +1194,7 @@ function setQuizzes1(){
       desc: 'Impleum is a powerful and scalable path to develop DApps.',
       img: './assets/catalog/impleum.png',
       result: 'You gave {{number}} right answers.',
-      addr: process.env.NODE_ENV === "production" ? 'q8TbAwAjRnSa38zVq5PQJCpKw0w1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
+      addr: configUsed.projectId == 'quiz-public-30d33' ? 'ZeEfOr78vvfPNEyMi8AYYa3zKDl1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
     }, { merge: true });
 
     for(let i = 0; i < quizzes1.length; i++){
@@ -1243,7 +1242,7 @@ async function setQuizzes2(){
         You have nerves of steel! You laugh in the face of danger, believe in karma and practice meditation to the sound of broken hopes. The only thing that stands between you and the hacker is a red thread tied to a computer monitor. But for the sake of the Buddha, before it's too late, contact cybersecurity specialists.
       {{endIf}}
       `,
-      addr: process.env.NODE_ENV === "production" ? 'q8TbAwAjRnSa38zVq5PQJCpKw0w1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
+      addr: configUsed.projectId == 'quiz-public-30d33' ? 'xkebq2DzmweSipPAsggLkEi5D2k1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
     }, { merge: true });
 
     for(let i = 0; i < quizzes2.length; i++){
@@ -1255,6 +1254,35 @@ async function setQuizzes2(){
     }
 
 }
+
+// function setQuizzes3(){
+//   console.log("Add %s quizzes1", quizzes1.length)
+//   db.collection(`quizzes`).doc('1viTrmJfSqX8vIWVNjaV').get().then(function(doc) {
+//     db.collection(`quizzes`).doc(doc.id).set({
+//       id: '1viTrmJfSqX8vIWVNjaV',
+//       allCardsNumber: 4,
+//       dashOutput: "number",
+//       dashTitle: "Impleum Platform",
+//       reward: 0.1,
+//       sharedReward: 0.2,
+//       cat: 'Quizzes',
+//       title: 'Impleum Platform',
+//       linksite: 'impleum.com',
+//       desc: 'Impleum is a powerful and scalable path to develop DApps.',
+//       img: './assets/catalog/impleum.png',
+//       result: 'You gave {{number}} right answers.',
+//       addr: configUsed.projectId == 'quiz-public-30d33' ? 'ZeEfOr78vvfPNEyMi8AYYa3zKDl1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
+//     }, { merge: true });
+
+//     for(let i = 0; i < quizzes1.length; i++){
+//       console.log('quizzes ' + i)
+//       db.collection(`quizzes`).doc(doc.id).collection(`v1`).doc(quizzes1[i].id).set({
+//       ...quizzes3[i],
+//       timestamp: firebase.firestore.FieldValue.serverTimestamp()
+//       })
+//     }
+//   })
+// }
 
 
 function setPolls(){
@@ -1275,7 +1303,7 @@ function setPolls(){
         desc: 'Discover popular answers to the most provocative questions.',
         img: './assets/catalog/common.png',
         result: 'You answered {{number}} of 10 polls.',
-        addr: process.env.NODE_ENV === "production" ? 'q8TbAwAjRnSa38zVq5PQJCpKw0w1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
+        addr: configUsed.projectId == 'quiz-public-30d33' ? '5hgXl6iSachlbAvpyCA6ys8J9dQ2' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
       }, { merge: true });
 
       for(let i = 0; i < polls.length; i++){
@@ -1287,6 +1315,8 @@ function setPolls(){
       }
     })
 }
+
+
 
 
 async function setPolls1(){
@@ -1308,7 +1338,7 @@ async function setPolls1(){
     img: './assets/catalog/raters.png',
     result: 'You answered {{number}} of 10 polls.',
     appleStore: 'https://itunes.apple.com/us/app/raters-movie-lovers-network/id1258540735?mt=8',
-    addr: process.env.NODE_ENV === "production" ? 'q8TbAwAjRnSa38zVq5PQJCpKw0w1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
+    addr: configUsed.projectId == 'quiz-public-30d33' ? 'IOO5nv8jdmccxDsRSjfDN9CW5vZ2' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
   }, { merge: true });
 
   for(let i = 0; i < polls1.length; i++){
@@ -1340,7 +1370,7 @@ async function setPolls2(){
     img: './assets/catalog/ratersComics.png',
     result: 'You answered {{number}} of 10 polls.',
     appleStore: 'https://itunes.apple.com/us/app/raters-movie-lovers-network/id1258540735?mt=8',
-    addr: process.env.NODE_ENV === "production" ? 'q8TbAwAjRnSa38zVq5PQJCpKw0w1' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
+    addr: configUsed.projectId == 'quiz-public-30d33' ? 'IOO5nv8jdmccxDsRSjfDN9CW5vZ2' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
   }, { merge: true });
 
   for(let i = 0; i < polls2.length; i++){
@@ -1354,9 +1384,40 @@ async function setPolls2(){
 }
 
 
+function setPolls3(){
+  console.log("Add %s polles", polls.length)
+
+  db.collection(`polls`).doc('5yiBa8tZK2esO2lZdiXt').get().then(function(doc) {
+
+    db.collection(`polls`).doc(doc.id).set({
+      id: '5yiBa8tZK2esO2lZdiXt',
+      allCardsNumber: 10,
+      dashOutput: 'number',
+      dashTitle: 'Common poll',
+      reward: 0.05,
+      sharedReward: 0.1,
+      cat: 'Polls',
+      title: 'Common poll',
+      linksite: 'quizi.io',
+      desc: 'Discover popular answers to the most provocative questions.',
+      img: './assets/catalog/common.png',
+      result: 'You answered {{number}} of 10 polls.',
+      addr: configUsed.projectId == 'quiz-public-30d33' ? '5hgXl6iSachlbAvpyCA6ys8J9dQ2' : 'DuM7gyrZZAgETr6Txa492NFUEiE2'
+    }, { merge: true });
+
+    for(let i = 0; i < polls.length; i++){
+      console.log('polls ' + i)
+      db.collection(`polls`).doc(doc.id).collection(`v1`).doc(polls[i].id).set({
+      ...withOutQuantity( polls[i] ),
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true })
+    }
+  })
+}
+
 
 function setCats(){
-  console.log("Add categories.");
+    console.log("Add categories.");
 
     db.collection('categories').doc('polls').set({
       type: 'cat',
@@ -1367,7 +1428,7 @@ function setCats(){
       btn: 'Explore polls',
       link: 'polls',
       cardtype: 'Poll',
-      collections: ['common','movies'] 
+      collections: ['common','movies']
     })
     
     db.collection('categories').doc('quizzes').set({
@@ -1446,6 +1507,22 @@ function setCats(){
       sharedReward: 0.5, 
     })
 
+    db.collection('categories/polls/common').doc('Ss6AUInwvPJ014JddLYq').set({
+      id: '5yiBa8tZK2esO2lZdiXt',
+      type: 'term',
+      title: 'Common poll',
+      linksite: 'quizi.io',
+      desc: 'Discover popular answers to the most provocative questions.',
+      cardtype: 'Poll',
+      number: 10,
+      btn: 'Take poll',
+      slug: 'polls/common',
+      img: './assets/catalog/common.png',
+      link: `/polls/5yiBa8tZK2esO2lZdiXt`,
+      reward: 0.05,
+      sharedReward: 0.1, 
+    })
+
     db.collection('categories/polls/movies').doc('oTFTncqMYa315ydrQUCD').set({
       id: 'ga2Y4kgp7kHOxu2IF4dl',
       type: 'term',
@@ -1477,11 +1554,12 @@ function setCats(){
       reward: 0.1,
       sharedReward: 0.5, 
     })
-  }
+
+}
     
 function setCatMenu(){
 
-    console.log("Add categories.")
+    console.log("Add categories menu.")
     db.collection('catsMenu').doc('v1').set({
       polls: {
           name :'Polls',
@@ -1536,9 +1614,10 @@ function withOutQuantity(obj){
 // setPolls();
 // setPolls1();
 // setPolls2();
+// setPolls3();
 // setQuizzes(); 
 // setQuizzes1();
 // setQuizzes2();
-// setCats();
+//   setCats();
 
-// setCatMenu();
+//  setCatMenu();

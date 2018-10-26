@@ -117,7 +117,7 @@ function changeScoresPolls(slug ,id, {l,r}){
 
 
 function getUserById(id){
-    if(!id) return db.collection(userPoint).doc
+    if(!id) return db.collection(userPoint)
     return db.collection(userPoint).doc(id);
 }
 
@@ -359,6 +359,31 @@ function saveReferral(place, slug, id){
 }
 
 
+function loadReferral(slug, id){
+
+    if(!slug || !id) return Promise.resolve();
+
+    let ref = db.collection( slug ).doc( id );        
+    return new Promise(resolve => {
+        ref.get().then(doc => {
+
+            if(doc.exists){
+                let docDate = doc.data()
+                if('referral' in docDate){
+                    resolve(docDate.referral);
+                }else{
+                    resolve()
+                }
+            }else{
+                resolve()
+            }
+        })
+  
+    })
+
+}
+
+
 function deleteUserData(id){
 
     if(!id && !Auth.uid) return Promise.resolve();
@@ -410,17 +435,19 @@ function getHistory(id, out){
     if(out instanceof Array){
 
         let userRef = db.collection(userPoint).doc(id);
+
         userRef.onSnapshot(doc => {
             if(doc.exists){
                 let docDate = doc.data();
                 out.length = 0;
+                
                 if('withdraw' in docDate){
                     for( let [key, value] of Object.entries(docDate.withdraw)){
-                        out.push({date:key,...value})
+                        out.push({date: key, ...value});
                     }
                 }
             }
-        })
+        });
 
     }else{
 
@@ -608,6 +635,46 @@ async function ourApi(path, fetchBody) {
     });
 }
 
+async function getRequestsContact({uid}){
+
+    if (!uid) return Promise.resolve([]);
+
+    return new Promise(async resolve => {
+        let contactRef = await db.collection('contact');
+        let contacts = await contactRef.get();
+        contacts = contacts.docs.map(contact => {
+            return [{id: contact.id, data: contact.data()}];
+        });
+        return resolve(contacts);
+    })
+}
+
+async function getRequestsCreateNew({uid}){
+    if (!uid) return Promise.resolve([]);
+
+    return new Promise(async resolve => {
+        let createRef = await db.collection('createNew');
+        let creates = await createRef.get();
+        creates = creates.docs.map(create => {
+            return [{id: create.id, data: create.data()}];
+        });
+        return resolve(creates);
+    })
+}
+
+async function getRequestsSubscriptions({uid}){
+    if (!uid) return Promise.resolve([]);
+
+    return new Promise(async resolve => {
+        let subscriptionsRef = await db.collection('subscriptions');
+        let subscriptions = await subscriptionsRef.get();
+        subscriptions = subscriptions.docs.map(subscription => {
+            return [{id: subscription.id, data: subscription.data()}];
+        });
+        return resolve(subscriptions);
+    })
+}
+
 const Api = {
     getCard,
    // getQuizzesIds,
@@ -636,8 +703,12 @@ const Api = {
     checkCaptcha,
     getRole,
     saveReferral,
+    loadReferral,
     getBalance,
     setValueInCatalog,
-    ourApi
+    ourApi,
+    getRequestsContact,
+    getRequestsCreateNew,
+    getRequestsSubscriptions
 }
 export default Api;

@@ -798,6 +798,16 @@ export const copy = (function(window, document, navigator) {
   return copy
 })(window, document, navigator);
 
+
+
+export const formatedTime = (date) => {
+  let dateInstance = new Date(date); 
+  return `${dateInstance.getFullYear()} -
+          ${dateInstance.getMonth().length > 1 ? dateInstance.getMonth() : `0${dateInstance.getMonth()}`} -
+          ${dateInstance.getDate()}  
+          ${dateInstance.getHours().toString().length > 1 ? dateInstance.getHours() : `0${dateInstance.getHours()}`}:${dateInstance.getMinutes().toString().length > 1 ? dateInstance.getMinutes() : `0${dateInstance.getMinutes()}`}`;
+}
+
 util.copy = copy
 util.listener = listener
 util.requestAnimationFramePromise = requestAnimationFramePromise
@@ -821,5 +831,6 @@ util.ScrollRestortion = ScrollRestortion
 util.getTabTime = getTabTime
 util.parseMustache = parseMustache
 util.metaContent = metaContent
+util.formatedTime = formatedTime
 
 export default util

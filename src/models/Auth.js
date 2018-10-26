@@ -90,6 +90,8 @@ class Auth {
 
   @action
   init = () => {
+
+    let _self = this;
     if( typeof window.localStorage === 'undefined' ) return 
     this.isAuthenticated = !!window.localStorage.getItem('accessToken');
     this.accessToken = window.localStorage.getItem('accessToken');;
@@ -98,11 +100,18 @@ class Auth {
     this.email = window.localStorage.getItem('email');
     this.uid = window.localStorage.getItem('uid');
     this.role = window.localStorage.getItem('role');
-    let _self = this;
+
     Api.getRole(this.uid).then(r => {
-      _self.role = ROLES( r )
+      _self.role = ROLES( r );
       window.localStorage.setItem('role', _self.role);
-    })
+    });
+
+    Api.auth().onAuthStateChanged((user) => {
+      if(_self.isAuthenticated && !user){
+        _self.signout();
+      }
+    });
+
     this.loadingUserData = true;
     let that = this;
     Api.loadUserData({id: this.uid, forceLoad: true }).then(_ => {

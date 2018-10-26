@@ -351,9 +351,9 @@ export class Common extends React.Component{
                 ).then( _ => {
                     return Promise.all( Object.entries(slugs).map(([slug, _]) => {
                         return Api.getAdditionlCardInfo(slug).then(info => {
-                                if(!info || !info.cat) return
+                                if(!info || !info.cat) return undefined;
 
-                                if(slugOfCardUpdatedFromShare === slug){                              
+                                if(slugOfCardUpdatedFromShare === slug){                          
                                     that.socTitle = info.title;
                                     that.socDescription = info.desc;
                                     that.socImage = info.img;
@@ -364,6 +364,7 @@ export class Common extends React.Component{
                                 
                                 return CardsModel.isLiked(slug);
                             }).then(isLiked => {
+                                if(isLiked === undefined) return;
                                 Object.assign(that.cardsInProcessAndFinished, {[slug]: Object.assign({},that.cardsInProcessAndFinished[slug], {isLiked: isLiked})})
                             })
                     }))
@@ -792,7 +793,6 @@ export class Profile extends React.Component{
                             return CardsModel.isLiked(slug);
 
                             }).then(isLiked => {
-                                
                                 Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{isLiked: isLiked})})
                             })
                     }))
@@ -812,15 +812,15 @@ export class Profile extends React.Component{
                         addToTotal = Math.min(( prog['progress'].number ), prog['info'].allCardsNumber) * prog['info'].reward;
                     }
 
-                    that.withdrawDetail[`${prog['info'].id}`] = { amount: addToTotal, addr: prog['info'].addr, isLiked: prog['isLiked'], sharedReward: prog['info'].sharedReward };
+                    that.withdrawDetail[`${prog['info'].id}`] = { amount: addToTotal, addr: prog['info'].addr, isLiked: prog['isLiked'], sharedReward: prog['info'].sharedReward, reward: prog['info'].reward };
                     
                     return acc += addToTotal + (prog['isLiked'] ? prog['info'].sharedReward : 0);
-                    
 
-                    }, -amountWithdrawn)) 
+                    }, -amountWithdrawn))
                 })
 
             }, _ => {})
+
 
             this.calculatingProgress = false;
 
@@ -891,8 +891,13 @@ export class Profile extends React.Component{
         Object.entries(newObj).map(([key, value]) => {
             diff[key] = Object.assign(newObj[key]);
             
-            if( oldObj[key] && !isNaN( oldObj[key]['amount']) ){
-                diff[key]['amount'] =  newObj[key]['amount'] - oldObj[key]['amount'];
+            if( oldObj[key] && !isNaN( oldObj[key]['amount']) ){ 
+                if( oldObj[key]['amount'] ){
+                    oldObj[key]['amount'] < 0;
+                    diff[key]['amount'] =  newObj[key]['amount']
+                }else{
+                    diff[key]['amount'] =  newObj[key]['amount'] - oldObj[key]['amount'];
+                }
             }
         })
         return diff;
@@ -928,22 +933,26 @@ export class Profile extends React.Component{
                 token: idToken,
                 totalIMP: that.totalIMP,
                 wallet: that.wallet,
-                diffWithdrawDetail
+                diffWithdrawDetail,
+                id: Auth.uid
             };
 
             that.paying = true;
 
-            let resp = await Api.ourApi(`transaction`, fetchBody);
+            // let resp = await Api.ourApi(`transaction`, fetchBody);
 
-            if(resp.status == false) {
+            //if(resp.status == false) {
+            if(true) {
                 that.paying = false;
+                //if(resp.message)
+                    that.errorMassage = 'There is a problem with withdrawals, our highly skilled monkeys are working on it. Sorry about that. Problem will be resolved as soon as possible. Really.';
                 return that.isErrorModalOpened = true;
             }
 
-            Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken, resp, that.withdrawDetail ).then( amount => {
-                that.getProgress();
-                that.paying = false;
-            })           
+            // Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken, resp, that.withdrawDetail ).then( amount => {
+            //     that.getProgress();
+            //     that.paying = false;
+            // })           
         
         }
     }
@@ -959,6 +968,8 @@ export class Profile extends React.Component{
     closeConformModal = () => {
         this.conformModal = false;
     };
+    
+    @observable errorMassage = 'Maybe is being problems with connection. Try again later.';
 
     render(){
         let {classes} = this.props;
@@ -1029,7 +1040,7 @@ export class Profile extends React.Component{
 
                     {this.paying && <CircularProgress size={30} color="secondary"/>}
 
-                    { this.enteder && <Button variant="raised" disabled={this.totalIMP <= 0} color="secondary" className={classes.submitBtn} onClick={this.payoff}>
+                    { false && this.enteder && <Button variant="raised" disabled={this.totalIMP <= 0} color="secondary" className={classes.submitBtn} onClick={this.payoff}>
                         <Typography variant="button" >Payout</Typography>
                     </Button>}
 
@@ -1040,7 +1051,7 @@ export class Profile extends React.Component{
                         </Typography>
                     </a>
 
-                    <SModal title="Something went wrong" body="Maybe is being problems with connection. Try again later." open={this.isErrorModalOpened} close={this.closeErrorModal}/>  
+                    <SModal title="Something went wrong" body={this.errorMassage} open={this.isErrorModalOpened} close={this.closeErrorModal}/>  
                     
                     <SModal title="Verification" width="auto" body={<div className={classes.captcha} ref="captcha" id="captcha"></div>} open={this.openCaptcha} close={this.closeCaptchaModal}/> 
 
