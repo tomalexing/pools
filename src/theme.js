@@ -31,6 +31,9 @@ export default {
         },
         text: {
             disabled: '#ECEDF3'    
+        },
+        white: {
+            color: "rgba(255, 255, 255, 1)"
         }
     },
     typography: {

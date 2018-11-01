@@ -477,9 +477,15 @@ export class Common extends React.Component{
                                                     <Icon className={classes.statusIconWarning} >warning</Icon>
                                                     <Typography variant="title" >Not finished</Typography> 
                                             </div>}
-                                            { info.cat == 'Quizzes' && <div className={classes.noWrap}>
+                                            { info.cat == 'Quizzes' && progress && progress.final && <div className={classes.noWrap}>
                                                 <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small"  style={{textDecoration: 'none'}} href={slug.replace('/v1','')} >
                                                         <Typography variant="button" className={classes.toResult}>View result</Typography> 
+                                                </Button>
+                                            </div>}
+
+                                            { info.cat == 'Quizzes' && (!progress || !progress.final) && <div className={classes.noWrap}>
+                                                <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small"  style={{textDecoration: 'none'}} href={slug.replace('/v1','')} >
+                                                        <Typography variant="button" className={classes.toResult}>Proceed</Typography> 
                                                 </Button>
                                             </div>}
                                         

@@ -48,7 +48,16 @@ import IMP from './../assets/IMP.svg';
 
 import info from './../assets/info.svg';
 
-import Explore  from './Explore.js';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import TableHead from '@material-ui/core/TableHead';
+import EnhancedTable from './../components/Table/TableWrapper';
+
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
   (!redirect
@@ -377,7 +386,7 @@ const stylesAnalytics = theme => ({
         top: 0,
         right: 0
     },
-    
+
     menuItem: {
         textDecoration: 'none'
     },
@@ -825,7 +834,7 @@ const stylesRequests = theme => ({
         marginBottom: 40,
         marginRight: 40,
         borderRadius: '8px',
-        overflow: 'hidden',
+        overflow: 'auto',
         maxWidth: '100%',
         width: 'auto',
         boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
@@ -1176,12 +1185,25 @@ const stylesRequests = theme => ({
     additionalTable: {
         marginRight: 0,
         alignSelf: 'flex-start'
+    },
+
+    pagination: {
+        color: 'white'
+    },
+
+    tableBackground: {
+        backgroundColor: theme.background.default
+    },
+
+    noWrap: {
+        whiteSpace: 'nowrap'
     }
 
 })
 
+
 // Requests
-@withStyles(stylesRequests)
+@withStyles(stylesRequests, { withTheme: true })
 @observer
 export class Requests extends React.Component{
 
@@ -1195,26 +1217,26 @@ export class Requests extends React.Component{
     @observable subscriptions = [];
     @observable count = 0;
 
-    @observable tabs =  {    
-                            'showTab-0': {
-                                name: 'Contacts',
-                                show: true,
-                                data: [],
-                                contactDetails: []
+    @observable tabs =  
+    {    
+        'showTab-0': {
+            name: 'Contacts',
+            show: true,
+            data: [],
+            contactDetails: []
 
-                            },
-                            'showTab-1': {
-                                name: 'Create New',
-                                show: false,
-                                data: []
-                            },
-                            'showTab-2': {
-                                name: 'Subscriptions',
-                                shaw: false,
-                                data: []
-                            }
-                        };
-
+        },
+        'showTab-1': {
+            name: 'Create New',
+            show: false,
+            data: []
+        },
+        'showTab-2': {
+            name: 'Subscriptions',
+            shaw: false,
+            data: []
+        }
+    };
 
 
     @action.bound
@@ -1226,11 +1248,8 @@ export class Requests extends React.Component{
         this.tabs['showTab-0'].data = await Api.getRequestsContact(body);
         this.tabs['showTab-1'].data = await Api.getRequestsCreateNew(body);
         this.tabs['showTab-2'].data = await Api.getRequestsSubscriptions(body);
-
-        console.log(this.tabs['showTab-2'].data);
         
         this.showContact()();
-
     }
 
 
@@ -1243,11 +1262,11 @@ export class Requests extends React.Component{
 
     filterByTime = (arr) => {
         return arr.sort((body1, body2)=> {
-            return Object.keys(body1[0].data.body).sort((d1, d2)=>{
-                    return d1 < d2
-                })[0] < Object.keys(body2[0].data.body).sort((d1, d2)=>{
-                    return d1 < d2
-                })[0]; });
+            return new Date(Object.keys(body2[0].data.body).sort((d1, d2)=>{
+                    return new Date(d2) - new Date(d1) 
+                })[0]) - new Date(Object.keys(body1[0].data.body).sort((d1, d2)=>{
+                    return new Date(d2) - new Date(d1) 
+                })[0]); });
     }
 
     @action.bound
@@ -1264,12 +1283,19 @@ export class Requests extends React.Component{
             this.tabs['showTab-0'].contactDetails = chosenContact[0][0].data.body;
     }
 
-    @observable questionModal = {}
+    @observable questionModal = {};
+
     @action.bound
     closeQuestionModal = id => () => {
         this.questionModal[id] = false;
+        this.forceUpdate();
     };
-    
+
+    @action.bound
+    showQuestionModal = id => () => {
+        this.questionModal[id] = true;
+        this.forceUpdate();
+    };
 
     render(){
         let that = this;
@@ -1285,281 +1311,199 @@ export class Requests extends React.Component{
             { that.tabs['showTab-0'].show &&
                 <div className={classes.cardWrapper} >
                     <div className={classes.card}>
-                        <div ref='header' className={classes.header}>
-                            <div className={classes.row}>
-                                <div className={classes.col}>
-                                    <Typography  variant="display1" className={classes.bold}>
-                                        Email
-                                    </Typography>
-                                </div>
-                                
-                                <span className={classes.delimeter}></span>
 
-                                <div style={{width: '150px'}} className={classes.col}>
-                                    <Typography variant="display1" className={classes.bold}>
-                                        Name
-                                    </Typography>
-                                </div>
-
-                                <span className={classes.delimeter}></span>
-
-                                <div style={{width: '150px'}} className={classes.col}>
-                                    <Typography variant="display1" className={classes.bold}>
-                                        Last
-                                    </Typography>
-                                </div>
-
-                                <span className={classes.delimeter}></span>
-
-                                <div style={{width: '50px'}} className={classes.col}>
-                                    <Typography variant="display1" className={classes.bold}>
-                                        #
-                                    </Typography>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={classes.cardBodyResult}>
-                            <div className={classes.history}>
-                                
-                                {that.filterByTime(that.tabs['showTab-0'].data)
-                                    .map((body, idx, contacts) => {
-                                        return [<div key={`contact-${idx}`} className={classes.row}>
-                                            
-                                            <div style={{'alignItems': 'flex-start'}} className={classes.col}>
-                                                <Typography style={{'textAlign': 'left'}} variant="display4">
-                                                    {body[0].id}
+                        <EnhancedTable
+                            orderBy = {'last'}
+                            data = {that.tabs['showTab-0'].data.map(row =>  {
+                                return {
+                                    'email': row[0].id,
+                                    'name': Object.entries(row[0].data.body).sort(([d1, _], [d2, __])=>{
+                                                return d1 < d2
+                                            })[0][1].name,
+                                    'last': formatedTime(Object.keys(row[0].data.body).sort((d1, d2)=>{
+                                                return new Date(d2) - new Date(d1)
+                                            })[0]),
+                                    'number': Object.values(row[0].data.body).length        
+                    
+                                }
+                            })}
+                            headerColumns = {[
+                                { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
+                                { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
+                                { id: 'last', numeric: true, disablePadding: false, label: 'Last' },
+                                { id: 'number', numeric: true, disablePadding: false, label: '#' },
+                            ]}
+                            innerTable = {(row) => {
+                                return(
+                                    <TableRow key={row.email}>
+                                        <TableCell component="th" scope="row">
+                                            <Typography  variant="display4">
+                                                {row.email}
+                                            </Typography>
+                                        </TableCell>   
+                                        <TableCell>
+                                            <Typography className={classes.noWrap} variant="display4">
+                                                {row.name}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell numeric>
+                                            <Typography className={classes.noWrap} variant="display4">
+                                                {row.last}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell numeric > 
+                                            <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="raised" onClick={that.showContact(row.email)}>
+                                                <Typography style={{color: '#FC3868'}} variant="button"  >
+                                                    {row.number}
                                                 </Typography>
-                                            </div>
-
-                                            <div  style={{width: '150px'}} className={classes.col} onClick={that.showContact(body[0].id)}>
-                                                <Typography variant="display4">
-                                                    {Object.entries(body[0].data.body).sort(([d1, _], [d2, __])=>{
-                                                        return d1 < d2
-                                                    })[0][1].name}
-                                                </Typography>
-                                            </div>
-
-                                            <div style={{width: '150px'}} className={classes.col}>
-                                                <Typography variant="display4">
-                                                    {formatedTime(Object.keys(body[0].data.body).sort((d1, d2)=>{
-                                                        return d1 < d2
-                                                    })[0])}
-                                                </Typography>
-                                            </div>
-
-                                            <div style={{width: '50px'}} className={classes.col} onClick={that.showContact(body[0].id)}>
-                                                <Typography style={{color: '#FC3868'}} variant="button">
-                                                    {Object.values(body[0].data.body).length}
-                                                </Typography>
-                                            </div>
-
-                                        </div>,
-                                        contacts.length - 1 !=  idx ? <Divider key={`contactdiv-${idx}`} className={classes.divider} /> : <div key={`contactdiv-${idx}`}/> ]
-                                        }
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            }}
+                        />
+          
+                    </div>
                     <div className={cn(classes.card, classes.additionalTable)}>
-                        <div ref='header' className={classes.header}>
-                            <div className={classes.row}>
 
-                                <div style={{width: '150px'}} className={classes.col}>
-                                    <Typography variant="display1" className={classes.bold}>
-                                        Date
-                                    </Typography>
-                                </div>
-
-                                <span className={classes.delimeter}></span>
-
-                                <div style={{width: '100px'}} className={classes.col}>
-                                    <Typography variant="display1" className={classes.bold}>
-                                        Preview Msg
-                                    </Typography>
-                                </div>
-
-                                <span className={classes.delimeter}></span>
-
-                                <div style={{width: '50px'}} className={classes.col}>
-                                    <Typography variant="display1" className={classes.bold}>
-                                        Full
-                                    </Typography>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={classes.cardBodyResult}>
-                            <div className={classes.history}>
-                                
-                                {Object.entries(that.tabs['showTab-0'].contactDetails)
-                                    .sort(([d1, _], [d2, __]) => {
-                                            return d1 < d2
-                                    })
-                                    .map(([date, {question, name}], idx, contactDetails) => {
-                                        return [<div key={`contact-${idx}`} className={classes.row}>
-                                            
-
-                                            <div style={{width: '150px'}} className={classes.col}>
-                                                <Typography variant="display4">
-                                                    {formatedTime(date)}
-                                                </Typography>
-                                            </div>  
-
-                                            <div style={{width: '100px'}} className={classes.col}>
-                                                <Typography variant="display4">
-                                                    { question.substr(0, 5) }...
-                                                </Typography>
-                                            </div>
-
-                                            <div style={{width: '50px'}} className={classes.col}>
-                                                <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="raised" onClick={() => {this.questionModal[idx] = true;}}>
-                                                    <Icon>fullscreen</Icon>
-                                                </Button>
-                                                <SModal title="Question" body={
-                                                    <Typography ariant="display4">{question}</Typography>
-                                                } open={this.questionModal[idx] || false} close={this.closeQuestionModal(idx)} />
-                                            </div>
-
-                                        </div>,
-                                        contactDetails.length - 1 !=  idx ? <Divider key={`contactdiv-${idx}`} className={classes.divider} /> : <div key={`contactdiv-${idx}`}/> ]
-                                        }
-                                    )}
-                                </div>
-                            </div>
-                            
-                        </div>
+                         <EnhancedTable
+                            orderBy = {'date'}
+                            rowsPerPage = {2}
+                            data = {Object.entries(that.tabs['showTab-0'].contactDetails).map(([date, {question, name}]) =>  {
+                                return {
+                                    'date': date,
+                                    'preview': question.substr(0, 15),
+                                    'full': question,
+                                }
+                            })}
+                            headerColumns = {[
+                                { id: 'date', numeric: true, disablePadding: false, label: 'Date' },
+                                { id: 'preview', numeric: false, disablePadding: false, label: 'Preview Msg' },
+                                { id: 'full', numeric: false, disablePadding: false, label: 'Full' },
+           
+                            ]}
+                            innerTable = {(row, idx) => {
+                                return(
+                                    <TableRow key={idx}>
+                                        <TableCell component="th" scope="row" numeric>
+                                            <Typography className={classes.noWrap} variant="display4">
+                                                {formatedTime(row.date)}
+                                            </Typography>
+                                        </TableCell>                          
+                                        <TableCell >
+                                            <Typography className={classes.noWrap} variant="display4">
+                                                { row.preview }...
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="raised" onClick={that.showQuestionModal(idx)}>
+                                                <Icon>fullscreen</Icon>
+                                            </Button>
+                                            <SModal title="Question" body={
+                                                <Typography ariant="display4">{row.full}</Typography>
+                                            } open={that.questionModal[idx] || false} close={that.closeQuestionModal(idx)} />
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            }}
+                        />
+                    </div>
                 </div>
             }
             { that.tabs['showTab-1'].show &&
                 <div className={classes.cardWrapper} >
                     <div className={classes.card}>
-                        <div ref='header' className={classes.header}>
-                            <div className={classes.row}>
-                                <div className={classes.col}>
-                                    <Typography  variant="display1" className={classes.bold}>
-                                        Email
-                                    </Typography>
-                                </div>
-                                
-                                <span className={classes.delimeter}></span>
-
-                                <div style={{width: '150px'}} className={classes.col}>
-                                    <Typography variant="display1" className={classes.bold}>
-                                        Name
-                                    </Typography>
-                                </div>
-
-                                <span className={classes.delimeter}></span>
-
-                                <div style={{width: '150px'}} className={classes.col}>
-                                    <Typography variant="display1" className={classes.bold}>
-                                        Last
-                                    </Typography>
-                                </div>
-
-                                <span className={classes.delimeter}></span>
-
-                                <div style={{width: '50px'}} className={classes.col}>
-                                    <Typography variant="display1" className={classes.bold}>
-                                        #
-                                    </Typography>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={classes.cardBodyResult}>
-                            <div className={classes.history}>
-                                
-                                {that.filterByTime(that.tabs['showTab-1'].data)
-                                    .map((body, idx, contacts) => {
-                                        return [<div key={`contact-${idx}`} className={classes.row}>
-                                            
-                                            <div style={{'alignItems': 'flex-start'}} className={classes.col}>
-                                                <Typography style={{'textAlign': 'left'}} variant="display4">
-                                                    {body[0].id}
-                                                </Typography>
-                                            </div>
-
-                                            <div  style={{width: '150px'}} className={classes.col} onClick={that.showContact(body[0].id)}>
-                                                <Typography variant="display4">
-                                                    {Object.entries(body[0].data.body).sort(([d1, _], [d2, __])=>{
-                                                        return d1 < d2
-                                                    })[0][1].name}
-                                                </Typography>
-                                            </div>
-
-                                            <div style={{width: '150px'}} className={classes.col}>
-                                                <Typography variant="display4">
-                                                    {formatedTime(Object.keys(body[0].data.body).sort((d1, d2)=>{
-                                                        return d1 < d2
-                                                    })[0])}
-                                                </Typography>
-                                            </div>
-
-                                            <div style={{width: '50px'}} className={classes.col} >
-                                                <Typography variant="button">
-                                                    {Object.values(body[0].data.body).length}
-                                                </Typography>
-                                            </div>
-
-                                        </div>,
-                                        contacts.length - 1 !=  idx ? <Divider key={`contactdiv-${idx}`} className={classes.divider} /> : <div key={`contactdiv-${idx}`}/> ]
-                                        }
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                        <EnhancedTable
+                            orderBy = {'last'}
+                            data = {that.tabs['showTab-1'].data.map(row =>  {
+                                return {
+                                    'email': row[0].id,
+                                    'name': Object.entries(row[0].data.body).sort(([d1, _], [d2, __])=>{
+                                                return d1 < d2
+                                            })[0][1].name,
+                                    'last': formatedTime(Object.keys(row[0].data.body).sort((d1, d2)=>{
+                                                return new Date(d2) - new Date(d1)
+                                            })[0]),
+                                    'number': Object.values(row[0].data.body).length        
+                    
+                                }
+                            })}
+                            headerColumns = {[
+                                { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
+                                { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
+                                { id: 'last', numeric: true, disablePadding: false, label: 'Last' },
+                                { id: 'number', numeric: true, disablePadding: false, label: '#' },
+                            ]}
+                            innerTable = {(row) => {
+                                return(
+                                    <TableRow key={row.email}>
+                                        <TableCell component="th" scope="row">
+                                            <Typography  variant="display4">
+                                                {row.email}
+                                            </Typography>
+                                        </TableCell>   
+                                        <TableCell>
+                                            <Typography className={classes.noWrap} variant="display4">
+                                                {row.name}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell numeric>
+                                            <Typography className={classes.noWrap} variant="display4">
+                                                {row.last}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell numeric > 
+                                            <Typography style={{color: '#FC3868'}} variant="button"  >
+                                                {row.number}
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            }}
+                        />
+                    </div>
                 </div>
             }
             { that.tabs['showTab-2'].show &&
                 <div className={classes.cardWrapper} >
                     <div className={classes.card}>
-                        <div ref='header' className={classes.header}>
-                            <div className={classes.row}>
-                                <div className={classes.col}>
-                                    <Typography  variant="display1" className={classes.bold}>
-                                        Email
-                                    </Typography>
-                                </div>
-                                
-                                <span className={classes.delimeter}></span>
-
-                                <div style={{width: '150px'}} className={classes.col}>
-                                    <Typography variant="display1" className={classes.bold}>
-                                        Date
-                                    </Typography>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className={classes.cardBodyResult}>
-                            <div className={classes.history}>
-                                
-                                {that.tabs['showTab-2'].data
-                                    .map((body, idx, contacts) => {
-                                        return [<div key={`contact-${idx}`} className={classes.row}>
-                                            
-                                            <div style={{'alignItems': 'flex-start'}} className={classes.col}>
-                                                <Typography style={{'textAlign': 'left'}} variant="display4">
-                                                    {body[0].data.email}
-                                                </Typography>
-                                            </div>
-
-                                            <div  style={{width: '150px'}} className={classes.col} onClick={that.showContact(body[0].id)}>
-                                                <Typography variant="display4">
-                                                    {body[0].data.date && formatedTime(body[0].data.date)}
-                                                </Typography>
-                                            </div>
-                                        </div>,
-                                        contacts.length - 1 !=  idx ? <Divider key={`contactdiv-${idx}`} className={classes.divider} /> : <div key={`contactdiv-${idx}`}/> ]
-                                        }
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                        <EnhancedTable
+                            orderBy = {'date'}
+                            rowsPerPage = {10}
+                            data = {that.tabs['showTab-2'].data.map(row =>  {
+                                return {
+                                    'email': row[0].data.email,
+                                    'date' : row[0].data.date && formatedTime(row[0].data.date)
+                                }
+                            })}
+                            headerColumns = {[
+                                { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
+                                { id: 'date', numeric: true, disablePadding: false, label: 'Date' },
+                            ]}
+                            innerTable = {(row) => {
+                                return(
+                                    <TableRow key={row.email}>
+                                        <TableCell component="th" scope="row">
+                                            <Typography  variant="display4">
+                                                {row.email}
+                                            </Typography>
+                                        </TableCell>   
+                                        <TableCell numeric > 
+                                            <Typography variant="display4" >
+                                                {row.date}
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            }}
+                        />
+                    </div>
                 </div>
             }
         </div>)
     }
 }
+
 
 
 
