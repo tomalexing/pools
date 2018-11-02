@@ -282,16 +282,16 @@ const stylesProfile = theme => ({
 const themeProfile = createMuiTheme( Object.assign(themeObject, {
     typography: {
         ...themeObject.typography,
-        display4: {
-             ...themeObject.typography.display4,
+        h1: {
+             ...themeObject.typography.h1,
             fontSize: '14px',
         },
-        body1: {
-             ...themeObject.typography.body1,
+        body2: {
+             ...themeObject.typography.body2,
             fontSize: '14px',
         },
-        display1:{
-             ...themeObject.typography.display1,
+        h4:{
+             ...themeObject.typography.h4,
             fontSize: '14px',
         }
     },
@@ -420,7 +420,7 @@ export class Profile extends React.Component{
                 <div ref='header' className={classes.header}>
                     <div className={classes.row}>
                         <div style={{ alignItems: 'flex-start', width: '200px'}} className={classes.col}>
-                            <Typography  align="left" variant="display1" className={classes.bold}>
+                            <Typography  align="left" variant="h4" className={classes.bold}>
                                 Balance
                             </Typography>
                         </div>
@@ -433,12 +433,12 @@ export class Profile extends React.Component{
                         <div className={classes.row} >
 
                             <div style={{ alignItems: 'flex-start', width: '100px'}} className={classes.col}>
-                                <Typography  align="left" variant="display4" >
+                                <Typography  align="left" variant="h1" >
                                     Available:
                                 </Typography>
                             </div>
                             <div style={{ alignItems: 'flex-end', width: '100px'}} className={classes.col}>
-                                <Typography variant="display4" className={classes.bold} >
+                                <Typography variant="h1" className={classes.bold} >
                                     {roundeWithDec(this.available)} {Api.getCoinName()}      
                                 </Typography>
                             </div>
@@ -448,12 +448,12 @@ export class Profile extends React.Component{
                         <div className={classes.row} >
                            
                             <div style={{ alignItems: 'flex-start', width: '100px'}} className={classes.col}>
-                                <Typography variant="display4" >
+                                <Typography variant="h1" >
                                     Blocked:
                                 </Typography>
                             </div>
                             <div style={{alignItems: 'flex-end', width: '100px'}} className={classes.col}>
-                                <Typography variant="display4" className={classes.bold} >
+                                <Typography variant="h1" className={classes.bold} >
                                     {roundeWithDec(this.blocked)} {Api.getCoinName()}      
                                 </Typography>
                             </div>
@@ -463,13 +463,13 @@ export class Profile extends React.Component{
                         <div className={classes.row} >
    
                             <div style={{ alignItems: 'flex-start', width: '100px'}} className={classes.col}>
-                                <Typography variant="display4" >
+                                <Typography variant="h1" >
                                     Balance:
                                 </Typography>
                             </div>
 
                             <div style={{ alignItems: 'flex-end', width: '100px'}} className={classes.col}>
-                                <Typography variant="display4" className={classes.bold}>
+                                <Typography variant="h1" className={classes.bold}>
                                     {roundeWithDec(this.balance)} {Api.getCoinName()}      
                                 </Typography>
                             </div>
@@ -527,7 +527,7 @@ export class Profile extends React.Component{
         
                     <div className={classes.card}>
                         <div ref='header' className={classes.header}>
-                            <Typography variant="display1" className={classes.title}>
+                            <Typography variant="h4" className={classes.title}>
                                 Business account
                             </Typography>
                             <span className={classes.delimeter}></span>
@@ -539,18 +539,18 @@ export class Profile extends React.Component{
                                     <img src={Auth.photoURL} />
                                 </div>
                                 <div className={classes.accountDetails}>
-                                    <Typography className={classes.accountName} variant="display4" gutterBottom>
+                                    <Typography className={classes.accountName} variant="h1" gutterBottom>
                                             {Auth.displayName}
                                     </Typography>
                         
-                                    <Typography className={classes.accountEmail} variant="display4" gutterBottom>
+                                    <Typography className={classes.accountEmail} variant="h1" gutterBottom>
                                             {Auth.email}
                                     </Typography>
                                 </div>
                             </div>
                             <Divider className={classes.divider} />
 
-                            <Typography variant="display4" className={classes.headerField + ' ' + classes.bold} >Your Impleum wallet address:
+                            <Typography variant="h1" className={classes.headerField + ' ' + classes.bold} >Your Impleum wallet address:
                             </Typography>
                             
                             <Textarea ref={this.walletRef} value={this.wallet} />
@@ -826,9 +826,6 @@ const stylesDashboard = theme => ({
         textAlign: 'center'
     },
 
-    menuBtn:{
-        color: 'white',
-    },
 
     link:{
         color: 'white'
@@ -886,22 +883,31 @@ const stylesDashboard = theme => ({
 
     menuLink: {
         textDecoration: 'none'
-    }
+    },
+
+    menuBtn:{
+        width: 48,
+        height: 48
+    },
+
+    menuBtnIcon:{
+        color: 'white'
+    },
 })
 
 const themeAnalytics = createMuiTheme( Object.assign(themeObject, {
     typography: {
         ...themeObject.typography,
-        display4: {
-             ...themeObject.typography.display4,
+        h1: {
+             ...themeObject.typography.h1,
             fontSize: '14px',
         },
-        body1: {
-             ...themeObject.typography.body1,
+        body2: {
+             ...themeObject.typography.body2,
             fontSize: '14px',
         },
-        display1:{
-             ...themeObject.typography.display1,
+        h4:{
+             ...themeObject.typography.h4,
             fontSize: '14px',
         }
     }
@@ -1018,19 +1024,19 @@ export class Dashboard extends React.Component{
                     <div ref='header' className={classes.header}>
                         <div className={classes.row} style={{padding: '0 10px'}}>
                             <div style={{ width: '100px'}} className={classes.col}>
-                                <Typography  align="left" variant="display1" className={classes.bold}>
+                                <Typography  align="left" variant="h4" className={classes.bold}>
                                     Available
                                 </Typography>
                             </div>
                             <span className={classes.delimeter}></span>
                             <div style={{ alignItems: 'center', width: '100px'}} className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
+                                <Typography variant="h4" className={classes.bold}>
                                     Blocked
                                 </Typography>
                             </div>
                             <span className={classes.delimeter}></span>
                             <div style={{ width: '100px'}} className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
+                                <Typography variant="h4" className={classes.bold}>
                                     Balance
                                 </Typography>
                             </div>
@@ -1041,19 +1047,19 @@ export class Dashboard extends React.Component{
                             <div className={classes.row} style={{padding: '0 10px'}}>
 
                                 <div style={{ width: '100px'}} className={classes.col}>
-                                    <Typography variant="display4" >
+                                    <Typography variant="h1" >
                                         {roundeWithDec(this.available)} {Api.getCoinName()}      
                                     </Typography>
                                 </div>
 
                                 <div style={{width: '100px'}} className={classes.col}>
-                                    <Typography variant="display4" >
+                                    <Typography variant="h1" >
                                         {roundeWithDec(this.blocked)} {Api.getCoinName()}      
                                     </Typography>
                                 </div>
 
                                 <div style={{ width: '100px'}} className={classes.col}>
-                                    <Typography variant="display4" >
+                                    <Typography variant="h1" >
                                         {roundeWithDec(this.balance)} {Api.getCoinName()}      
                                     </Typography>
                                 </div>
@@ -1107,7 +1113,7 @@ export class Dashboard extends React.Component{
 
                 <div className={classes.addIMP}>
                     <Link className={classes.addIMPLink} to='/dashboard/profile'></Link>
-                    <Typography  variant="body1" className={classes.addIMPTitle}>
+                    <Typography  variant="body2" className={classes.addIMPTitle}>
                         Add {Api.getCoinName()}
                     </Typography>
                 </div>
@@ -1116,25 +1122,25 @@ export class Dashboard extends React.Component{
                 <div ref='header' className={classes.header}>
                     <div className={classes.row}>
                         <div style={{ alignItems: 'flex-start', width: '180px'}} className={classes.col}>
-                            <Typography  align="left" variant="display1" className={classes.bold}>
+                            <Typography  align="left" variant="h4" className={classes.bold}>
                                 Title
                             </Typography>
                         </div>
                         <span className={classes.delimeter}></span>
                         <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 On/Off
                             </Typography>
                         </div>
                         <span className={classes.delimeter}></span>
                         <div style={{width: '80px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 Embed only
                             </Typography>
                         </div>
                         <span className={classes.delimeter}></span>
                         <div style={{width: '120px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 Reward / Share Reward
                             </Typography>
                         </div>
@@ -1142,7 +1148,7 @@ export class Dashboard extends React.Component{
                         <span className={classes.delimeter}></span>
 
                         <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 Responses / Shares
                             </Typography>
                         </div>
@@ -1150,14 +1156,14 @@ export class Dashboard extends React.Component{
                         <span className={classes.delimeter}></span>
 
                         <div style={{width: '150px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 Payouts / Shares
                             </Typography>
                         </div> 
                         
                         <span className={classes.delimeter}></span>
                         <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 Blocked
                             </Typography>
                         </div>
@@ -1165,14 +1171,14 @@ export class Dashboard extends React.Component{
                         <span className={classes.delimeter}></span>
 
                         <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 Spent
                             </Typography>
                         </div>
 
                         <span className={classes.delimeter}></span>
                         <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 More
                             </Typography>
                         </div>
@@ -1184,7 +1190,7 @@ export class Dashboard extends React.Component{
                                 return [<div key={`history-${idx}`} className={classes.row}>
 
                                     <div style={{ alignItems: 'flex-start', width: '180px'}} className={classes.col}>
-                                        <Typography className={cn({[classes.short]:true, [classes.firstCol]: true})} variant="display4" >
+                                        <Typography className={cn({[classes.short]:true, [classes.firstCol]: true})} variant="h1" >
                                             <Link to={entry_path.replace('v1','')} className={classes.link} style={{textDecoration: 'none'}}>
                                                 <span style={{ paddingRight: '10px'}}> {title} </span>
                                             </Link>
@@ -1208,31 +1214,31 @@ export class Dashboard extends React.Component{
                                     </div>
 
                                     <div style={{width: '120px'}} className={classes.col}>
-                                        <Typography variant="display4" >
+                                        <Typography variant="h1" >
                                             {roundeWithDec(reward)} / {roundeWithDec(sharedReward)} {Api.getCoinName()}                                        
                                         </Typography>
                                     </div>
 
                                     <div style={{width: '100px'}} className={classes.col}>
-                                        <Typography variant="display4" >
+                                        <Typography variant="h1" >
                                             {responses} / {sharedCount}
                                         </Typography>
                                     </div>
 
                                     <div style={{width: '150px'}} className={classes.col}>
-                                        <Typography variant="display4" >
+                                        <Typography variant="h1" >
                                             {roundeWithDec(payoutsIMP)} / {roundeWithDec(sharedReward * sharedPaidCount)} {Api.getCoinName()}        
                                         </Typography>
                                     </div>
 
                                     <div style={{width: '100px'}} className={classes.col}>
-                                        <Typography variant="display4" >
+                                        <Typography variant="h1" >
                                             {roundeWithDec(blockedIMP)} {Api.getCoinName()}    
                                         </Typography>
                                     </div>
 
                                     <div style={{width: '100px'}} className={classes.col}>
-                                        <Typography variant="display4" >
+                                        <Typography variant="h1" >
                                             {roundeWithDec(payoutsIMP + sharedReward * sharedPaidCount + blockedIMP)} {Api.getCoinName()}         
                                         </Typography>
                                     </div> 
@@ -1242,8 +1248,9 @@ export class Dashboard extends React.Component{
                                             aria-label="More"
                                             aria-haspopup="true"
                                             aria-owns={that.anchorEl[idx] ? `menu#${idx}` : null}
+                                            className={classes.menuBtn}
                                             onClick={that.handleMenuClick(idx)}>
-                                            <Icon className={classes.menuBtn}>more_horiz</Icon>
+                                            <Icon className={classes.menuBtnIcon}>more_horiz</Icon>
                                         </IconButton>
                                         <Menu
                                             id={`menu#${idx}`}
@@ -1273,14 +1280,14 @@ export class Dashboard extends React.Component{
                                             />  
 
                                             <MenuItem selected={false} className={classes.menuItem} onClick={that.openEmbedModal(idx)}>
-                                                <Typography variant="subheading" >
+                                                <Typography variant="subtitle1" >
                                                     Embed code
                                                 </Typography>
                                             </MenuItem>
 
                                             <NavLink tabIndex='1' to={`/dashboard/analytics${entry_path.replace('v1','')}`} className={classes.menuLink}>
                                                 <MenuItem selected={false} className={classes.menuItem}>
-                                                    <Typography variant="subheading" >
+                                                    <Typography variant="subtitle1" >
                                                         Analytics
                                                     </Typography>
                                                 </MenuItem>
@@ -1288,7 +1295,7 @@ export class Dashboard extends React.Component{
 
                                             <Share link={`${window.location.protocol}//${window.location.host}${entry_path.replace('/v1','')}`} >
                                                 <MenuItem selected={false} className={classes.menuItem} >
-                                                    <Typography variant="subheading" >
+                                                    <Typography variant="subtitle1" >
                                                         Share
                                                     </Typography>
                                                 </MenuItem>  
@@ -1702,39 +1709,39 @@ export class History extends React.Component{
         return( 
             <div className={classes.container} >
 
-            <Typography variant="display4" className={classes.titleTop}>Deposits</Typography>
+            <Typography variant="h1" className={classes.titleTop}>Deposits</Typography>
 
             <div className={classes.cardWrapper} >
                 <div className={classes.card}>
                     <div ref='header' className={classes.header}>
                         <div className={classes.row}>
                             <div style={{width: '100px'}} className={classes.col}>
-                                <Typography  variant="display1" className={classes.bold}>
+                                <Typography  variant="h4" className={classes.bold}>
                                     Block
                                 </Typography>
                             </div>
                             <span className={classes.delimeter}></span>
                             <div className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
+                                <Typography variant="h4" className={classes.bold}>
                                     Amount, {Api.getCoinName()}
                                 </Typography>
                             </div>
                             <span className={classes.delimeter}></span>
                             <div  className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
+                                <Typography variant="h4" className={classes.bold}>
                                     Date
                                 </Typography>
                             </div>
                             <span className={classes.delimeter}></span>
                             <div style={{width: '155px'}} className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
+                                <Typography variant="h4" className={classes.bold}>
                                     Status
                                 </Typography>
                             </div>
             
                             <span className={classes.delimeter}></span>
                             <div style={{width: '150px'}} className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
+                                <Typography variant="h4" className={classes.bold}>
                                     Explorer
                                 </Typography>
                             </div>
@@ -1751,19 +1758,19 @@ export class History extends React.Component{
                                     return [<div key={`history-${idx}`} className={classes.row}>
                                         
                                         <div style={{width: '100px'}} className={classes.col}>
-                                            <Typography variant="display4">
+                                            <Typography variant="h1">
                                                 {this.count - history.confirmations}
                                             </Typography>
                                         </div>  
 
                                         <div className={classes.col}>
-                                            <Typography variant="display4">
+                                            <Typography variant="h1">
                                                 {roundeWithDec(history.amount)}
                                             </Typography>
                                         </div>
 
                                         <div className={classes.col}>
-                                            <Typography variant="display4">
+                                            <Typography variant="h1">
                                                 {stamptime.getFullYear()}-{stamptime.getMonth().length > 1 ? `${stamptime.getMonth()}` : `0${stamptime.getMonth()}`}-{stamptime.getDate()} {stamptime.getHours().toString().length > 1 ? `${stamptime.getHours()}` : `0${stamptime.getHours()}`} : {stamptime.getMinutes().toString().length > 1 ? `${stamptime.getMinutes()}` : `0${stamptime.getMinutes()}`}
                                             </Typography>
                                         </div>
@@ -1777,7 +1784,7 @@ export class History extends React.Component{
                                                     [classes.unconfirmed]: history.confirmations <= 1,
                                                     [classes.processing]: history.confirmations > 1 && history.confirmations < 10
                                                     })}></div>
-                                                    <Typography variant="display4">
+                                                    <Typography variant="h1">
                                                         {history.confirmations >= 10 && 'received' }
                                                         {history.confirmations <= 1  && 'unconfirmed' }
                                                         {history.confirmations > 1 && history.confirmations < 10 && 'processing' } 
@@ -1788,7 +1795,7 @@ export class History extends React.Component{
                                         </div>
 
                                         <div style={{width: '150px'}} className={classes.col}>
-                                            <Typography variant="display4" >
+                                            <Typography variant="h1" >
                                                 { history.txid && <a href={`https://explorer.impleum.com/tx/${history.txid}`}
                                                     target="_blank" className={classes.explorer}><Icon>link</Icon>
                                                 </a>}
@@ -2190,14 +2197,14 @@ export class Analytics extends React.Component{
         return( 
             <div className={classes.container} >
 
-            <Typography variant="display4" className={classes.titleTop}>Responses</Typography>
+            <Typography variant="h1" className={classes.titleTop}>Responses</Typography>
 
             <div className={classes.cardWrapper} >
                 <div className={classes.card}>
                     <div ref='header' className={classes.header}>
                         <div className={classes.row}>
                             <div className={classes.col}>
-                                <Typography  variant="display1" className={classes.bold}>
+                                <Typography  variant="h4" className={classes.bold}>
                                     Catalog(site)
                                 </Typography>
                             </div>
@@ -2205,7 +2212,7 @@ export class Analytics extends React.Component{
                             <span className={classes.delimeter}></span>
 
                             <div className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
+                                <Typography variant="h4" className={classes.bold}>
                                     Results(site)
                                 </Typography>
                             </div>
@@ -2213,7 +2220,7 @@ export class Analytics extends React.Component{
                             <span className={classes.delimeter}></span>
                             
                             <div className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
+                                <Typography variant="h4" className={classes.bold}>
                                     Results(app)
                                 </Typography>
                             </div>
@@ -2224,19 +2231,19 @@ export class Analytics extends React.Component{
                         <div className={classes.history}>
                             <div className={classes.row}>
                                 <div className={classes.col}>
-                                    <Typography variant="display4">
+                                    <Typography variant="h1">
                                         {this.referrals && this.referrals.catalog || 0}
                                     </Typography>
                                 </div> 
 
                                 <div className={classes.col}>
-                                    <Typography variant="display4">
+                                    <Typography variant="h1">
                                         {this.referrals && this.referrals.congratulations || 0}
                                     </Typography>
                                 </div>  
 
                                 <div className={classes.col}>
-                                    <Typography variant="display4">
+                                    <Typography variant="h1">
                                         {this.referrals && this.referrals.appleStore || 0}
                                     </Typography>
                                 </div>

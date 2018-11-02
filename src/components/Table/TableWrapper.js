@@ -54,7 +54,8 @@ const EnhancedTableStyles = theme => ({
 
     noWrap: {
         whiteSpace: 'nowrap'
-    }
+    },
+
 })
 
 @withStyles(EnhancedTableStyles, { withTheme: true })
@@ -163,25 +164,25 @@ export default class EnhancedTable extends React.Component {
                     </TableRow>
                 )}
                 </TableBody>
-                <TableFooter>
-                <TableRow>
-                    <TablePagination
-                        classes={{
-                            input: classes.pagination,
-                            select: classes.pagination,
-                            selectIcon: classes.pagination,
-                            caption: classes.pagination
-                        }}
-                        colSpan={3}
-                        count={data.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onChangePage={this.handleChangePage}
-                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                        ActionsComponent={EnhancedTablePagination}
-                    />
-                </TableRow>
-                </TableFooter>
+                {!this.props.notShowPagination && <TableFooter>
+                        <TableRow>
+                            <TablePagination
+                                classes={{
+                                    input: classes.pagination,
+                                    select: classes.pagination,
+                                    selectIcon: classes.pagination,
+                                    caption: classes.pagination
+                                }}
+                                colSpan={3}
+                                count={data.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onChangePage={this.handleChangePage}
+                                onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                                ActionsComponent={EnhancedTablePagination}
+                            />
+                        </TableRow>
+                </TableFooter> }
             </Table>)
     }
 

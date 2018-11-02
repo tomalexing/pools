@@ -228,7 +228,7 @@ class Create extends React.Component{
        
             <div className={classes.card}>
                 <div ref='header' className={classes.header}>
-                    <Typography variant="display1" className={classes.title}>
+                    <Typography variant="h4" className={classes.title}>
                         Create
                     </Typography>
                     <span className={classes.delimeter}></span>
@@ -236,7 +236,7 @@ class Create extends React.Component{
                 </div>
                 <div className={classes.cardBodyResult}>
                     
-                    <Typography variant="body1" className={classes.headerField} >If your want to create your quizzes or polls on Quizi platform, fill the form below.
+                    <Typography variant="body2" className={classes.headerField} >If your want to create your quizzes or polls on Quizi platform, fill the form below.
                     </Typography>
 
                     <form onSubmit={this.send} noValidate autoComplete="off"> 
@@ -278,7 +278,7 @@ class Create extends React.Component{
                             onChange={this.comfirm('confirmEmail')}
 
                             />
-                            <Typography variant="body1" className={classes.font12  + ' ' + classes.paddingTop1}>
+                            <Typography variant="body2" className={classes.font12  + ' ' + classes.paddingTop1}>
                                 I agree to receive emails from Quizi
                             </Typography>
 
@@ -289,16 +289,16 @@ class Create extends React.Component{
                     </form>
                     
                     <Grow in={this.sent} timeout={1000}>
-                        <Typography color="secondary" variant="body1">Your request has been sent, we will get in touch with you soon.</Typography>
+                        <Typography color="secondary" variant="body2">Your request has been sent, we will get in touch with you soon.</Typography>
                     </Grow>
                     <Grow in={this.entername} timeout={1000}>
-                        <Typography color="secondary" variant="body1">Please, enter name.</Typography>
+                        <Typography color="secondary" variant="body2">Please, enter name.</Typography>
                     </Grow>
                     <Grow in={this.enteremail} timeout={1000}>
-                        <Typography color="secondary" variant="body1">Please, enter correct email.</Typography>
+                        <Typography color="secondary" variant="body2">Please, enter correct email.</Typography>
                     </Grow>
                     <Grow in={this.enterquestion} timeout={1000}>
-                        <Typography color="secondary" variant="body1">Please, enter your question.</Typography>
+                        <Typography color="secondary" variant="body2">Please, enter your question.</Typography>
                     </Grow>
                 </div>
             </div>

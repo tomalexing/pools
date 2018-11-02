@@ -265,7 +265,7 @@ class SimpleModal extends React.Component {
           onClose={this.closeModal}
         >
           <div style={getModalStyle(this.props)} className={cx(classes.paper, classes.paddingBottom3,{[classes.full]: this.props.full})}>
-            <Typography variant="display1" id="simple-modal-title">
+            <Typography variant="h4" id="simple-modal-title">
                 {this.props.title}
             </Typography>
             {this.props.zoom ? 
@@ -278,7 +278,7 @@ class SimpleModal extends React.Component {
                     </div>
                 :
                 <div>
-                    <Typography variant="subheading" id="simple-modal-description">
+                    <Typography variant="subtitle1" id="simple-modal-description">
                         {this.props.body}
                     </Typography>
                 </div>

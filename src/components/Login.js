@@ -328,11 +328,11 @@ class Login extends React.Component {
             onClose={this.closeLoginModal}
             >
             <div style={this.getModalStyle()} className={classes.paper + ' ' + classes.paddingBottom3}>
-                <Typography variant="display1" id="login-modal-title">
+                <Typography variant="h4" id="login-modal-title">
                     Login/registration
                 </Typography>
                 <div id="login-modal-description"> 
-                    <Typography variant="body1" className={classes.font14 + ' ' + classes.paddingTop1 + ' ' +  classes.paddingBottom1 } >
+                    <Typography variant="body2" className={classes.font14 + ' ' + classes.paddingTop1 + ' ' +  classes.paddingBottom1 } >
                         You can login / register with Quizi via social networks
                     </Typography>
                     <Button  variant="raised" color="secondary" className={classes.facebook } disabled={!(this.terms && this.email)} classes={{disabled:classes.disabled}} onClick={this.loginWithFb}>Facebook</Button>
@@ -345,7 +345,7 @@ class Login extends React.Component {
                         onChange={this.checkbox('terms')}
 
                         />
-                        <Typography variant="body1" className={classes.font12  + ' ' + classes.paddingTop1}>
+                        <Typography variant="body2" className={classes.font12  + ' ' + classes.paddingTop1}>
                             I agree to Quizi’s <Link style={{color: '#FC3868', textDecoration: 'none'}} to={'/term-of-use'} >Terms of Use</Link> and <Link style={{color: '#FC3868', textDecoration: 'none'}} to={'/privacy-policy'} >Privacy Policy</Link>
                         </Typography>
 
@@ -358,7 +358,7 @@ class Login extends React.Component {
                         onChange={this.checkbox('email')}
 
                         />
-                        <Typography variant="body1" className={classes.font12  + ' ' + classes.paddingTop1}>
+                        <Typography variant="body2" className={classes.font12  + ' ' + classes.paddingTop1}>
                             I agree to receive emails from Quizi
                         </Typography>
 

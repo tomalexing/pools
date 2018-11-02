@@ -144,7 +144,7 @@ class Cookies extends React.Component {
     return (this.isCookiesSet || this.embed ? <div className={classes.cover}/> :
       <div ref='body' className={classes.cover} style={{zIndex: 10000}}>
             <div className={classes.disclaimer}> 
-            <Typography variant="display4" style={{fontSize: 14}}>Our website uses cookies to make your browsing experience better. By using our website you agree to our use of cookies. <Link style={{color: '#FD819F'}} to="/privacy-policy#cookies">Learn more</Link></Typography></div>
+            <Typography variant="h1" style={{fontSize: 14}}>Our website uses cookies to make your browsing experience better. By using our website you agree to our use of cookies. <Link style={{color: '#FD819F'}} to="/privacy-policy#cookies">Learn more</Link></Typography></div>
         <div className={classes.ctrlArea}> 
             <Button color="primary" style={{minWidth: 150}} variant="outlined" className={classes.btn} onClick={this.close}> Deny cookies</Button>
             <Button color="secondary" variant="raised" onClick={this.saveIt} className={classes.btn}> Got it </Button>

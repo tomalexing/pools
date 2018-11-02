@@ -40,7 +40,7 @@ import Login from './components/Login';
 import { when } from 'mobx';
 
 
-injectTapEventPlugin();
+// injectTapEventPlugin();
 
 const Term = (props) => <Lazy {...props} load={() => import('./pages/term-of-use')}/>
 const Privacy = (props) => <Lazy {...props} load={() => import('./pages/privacy-policy')}/>

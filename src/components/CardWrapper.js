@@ -91,7 +91,7 @@ class CardWrapper extends React.Component {
         if(!this.props.store.IsEnd && this.props.store.info && (this.props.store.info.blockedByUser || this.props.store.info.blockedEntity) ){
              return(
                 <div className={classes.notAvailable}>
-                    <Typography variant="display2" >Time's up</Typography> 
+                    <Typography variant="h3" >Time's up</Typography> 
                 </div> 
              )
         }

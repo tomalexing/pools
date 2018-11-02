@@ -594,7 +594,7 @@ class Poll extends React.Component {
         }
         return (
             [<div key="body" ref="body" className={classes.pollBody}>
-                <Typography variant="headline" gutterBottom  className={classes.question}>
+                <Typography variant="h5" gutterBottom  className={classes.question}>
                     {poll.question}
                 </Typography>
                 <div className={classes.answers}>
@@ -654,18 +654,18 @@ class Poll extends React.Component {
                 </div>
             </div>,
             <div key="footer" ref="footer" className={classes.footer}>
-                    {poll.number > 1 &&  <Button className={classes.footerBtn} variant="raised" color="secondary" side="small" onClick={this.prev} >
+                    {poll.number > 1 &&  <Button className={classes.footerBtn} variant="contained" color="secondary" side="small" onClick={this.prev} >
                         <Icon className={classes.leftIcon}>navigate_before</Icon>
                         Prev
                     </Button>}
 
                     <div className={classes.space}> </div>
                     
-                    {poll.number < this.props.store.allCardsNumber && <Button className={classes.footerBtn + ' ' + classes.footerLeft} variant="raised" color="secondary"  side="small" onClick={this.next} >Next
+                    {poll.number < this.props.store.allCardsNumber && <Button className={classes.footerBtn + ' ' + classes.footerLeft} variant="contained" color="secondary"  side="small" onClick={this.next} >Next
                         <Icon className={classes.rightIcon}>navigate_next</Icon>
                     </Button>}
 
-                    {poll.number === this.props.store.allCardsNumber && <Button  className={classes.footerBtn + ' ' + classes.footerRight} variant="raised" color="secondary"  side="small" onClick={this.finish} >
+                    {poll.number === this.props.store.allCardsNumber && <Button  className={classes.footerBtn + ' ' + classes.footerRight} variant="contained" color="secondary"  side="small" onClick={this.finish} >
                         Finish 
                         <Icon className={classes.rightIcon}>done</Icon>
                     </Button>}

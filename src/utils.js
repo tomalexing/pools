@@ -39,24 +39,24 @@ export class LazyImage extends React.Component {
 
   load(props) {
     try {
-      
-    if(typeof props.load  === 'string'){
-      (() => import(`${props.load}`))().then((src) => {
+    let that = this;
+      if(typeof props.load  === 'string'){
+        (() => import(`${props.load}`))().then((src) => {
+          if(that._isMounted)
+            that.setState({src: src.default, loaded:true})
+          if(typeof props.loaded == 'function')
+            props.loaded()
+        })
+
+        return
+      } 
+
+      props.load().then((src) => {
         if(this._isMounted)
-          this.setState({src, loaded:true})
+        this.setState({src: src.default, loaded:true})
         if(typeof props.loaded == 'function')
           props.loaded()
       })
-
-      return
-    } 
-
-    props.load().then((src) => {
-      if(this._isMounted)
-      this.setState({src, loaded:true})
-      if(typeof props.loaded == 'function')
-        props.loaded()
-    })
 
     } catch (error) {
       this.load(props)

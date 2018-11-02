@@ -3,32 +3,34 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "3.0.0",
-    "firebase": "5.4.1",
-    "firebase-tools": "4.2.0",
+    "@material-ui/core": "^3.3.2",
+    "firebase": "^5.5.7",
+    "firebase-tools": "^6.0.1",
     "material-ui": "^1.0.0-beta.47",
-    "mobx": "5.1.0",
-    "mobx-react": "5.2.5",
-    "mobx-react-devtools": "6.0.3",
+    "mobx": "^5.5.2",
+    "mobx-react": "^5.3.6",
+    "mobx-react-devtools": "^6.0.3",
     "mz": "^2.7.0",
     "npm-run-all": "^4.1.2",
-    "react": "16.4.2",
+    "react": "^16.6.0",
     "react-addons-css-transition-group": "^15.6.2",
     "react-app-rewire-mobx": "^1.0.8",
     "react-app-rewire-typescript": "^2.0.2",
-    "react-dom": "16.4.2",
+    "react-dom": "^16.6.0",
     "react-pinch-zoom-pan": "^1.4.5",
     "react-router-dom": "^4.2.2",
     "react-router-hash-link": "^1.2.0",
-    "react-share": "2.3.1",
+    "react-share": "^2.3.1",
     "react-tap-event-plugin": "^3.0.2",
-    "typescript": "^3.0.3"
+    "typescript": "^3.1.6"
   },
   "devDependencies": {
-    "firebase-admin": "6.0.0",
-    "jsdom": "^12.0.0",
-    "react-app-rewired": "1.5.2",
-    "react-scripts": "1.1.5",
+    "@babel/plugin-proposal-decorators": "^7.1.2",
+    "customize-cra": "^0.2.1",
+    "firebase-admin": "^6.1.0",
+    "jsdom": "^13.0.0",
+    "react-app-rewired": "^1.6.2",
+    "react-scripts": "^2.1.1",
     "react-snapshot": "^1.3.0",
     "react-static-generator": "^0.1.2"
   },
@@ -45,5 +47,11 @@
       "/"
     ],
     "outputPath": "dist"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

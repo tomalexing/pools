@@ -210,7 +210,7 @@ const stylesAnalytics = theme => ({
     },
 
     formInput:{
-        width: '100%',
+        width: '90%',
         '&:after, &:hover:before': {
             borderBottomColor: '#FC3868 !important'
         },
@@ -333,10 +333,6 @@ const stylesAnalytics = theme => ({
         textAlign: 'center'
     },
 
-    menuBtn:{
-        color: 'white',
-    },
-
     link:{
         color: 'white'
     },
@@ -346,33 +342,6 @@ const stylesAnalytics = theme => ({
         paddingLeft: '20px'
     },
     
-    dropdown:{
-//        marginTop: '40px !important',
-        width: '200px',
-        borderRadius: '8px'
-    },
-
-    textarea:{
-        width: '100%',
-        height: '112px'
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        maxWidth: '88%',
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
     nopadding: {
         padding: 0
     },
@@ -393,22 +362,31 @@ const stylesAnalytics = theme => ({
 
     menuLink: {
         textDecoration: 'none'
-    }
+    },
+
+    menuBtn:{
+        width: 48,
+        height: 48
+    },
+
+    menuBtnIcon:{
+        color: 'white'
+    },
 })
 
 const themeAnalytics = createMuiTheme( Object.assign(themeObject, {
     typography: {
         ...themeObject.typography,
-        display4: {
-             ...themeObject.typography.display4,
+        h1: {
+             ...themeObject.typography.h1,
             fontSize: '14px',
         },
-        body1: {
-             ...themeObject.typography.body1,
+        body2: {
+             ...themeObject.typography.body2,
             fontSize: '14px',
         },
-        display1:{
-             ...themeObject.typography.display1,
+        h4:{
+             ...themeObject.typography.h4,
             fontSize: '14px',
         }
     }
@@ -525,19 +503,19 @@ export class Analytics extends React.Component{
                     <div ref='header' className={classes.header}>
                         <div className={classes.row} style={{padding: '0 10px'}}>
                             <div style={{ width: '100px'}} className={classes.col}>
-                                <Typography  align="left" variant="display1" className={classes.bold}>
+                                <Typography  align="left" variant="h4" className={classes.bold}>
                                     Available
                                 </Typography>
                             </div>
                             <span className={classes.delimeter}></span>
                             <div style={{ alignItems: 'center', width: '100px'}} className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
+                                <Typography variant="h4" className={classes.bold}>
                                     Blocked
                                 </Typography>
                             </div>
                             <span className={classes.delimeter}></span>
                             <div style={{ width: '100px'}} className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
+                                <Typography variant="h4" className={classes.bold}>
                                     Balance
                                 </Typography>
                             </div>
@@ -548,19 +526,19 @@ export class Analytics extends React.Component{
                             <div className={classes.row} style={{padding: '0 10px'}}>
 
                                 <div style={{ width: '100px'}} className={classes.col}>
-                                    <Typography variant="display4" >
+                                    <Typography variant="h1" >
                                         {roundeWithDec(this.available)} {Api.getCoinName()}      
                                     </Typography>
                                 </div>
 
                                 <div style={{width: '100px'}} className={classes.col}>
-                                    <Typography variant="display4" >
+                                    <Typography variant="h1" >
                                         {roundeWithDec(this.blocked)} {Api.getCoinName()}      
                                     </Typography>
                                 </div>
 
                                 <div style={{ width: '100px'}} className={classes.col}>
-                                    <Typography variant="display4" >
+                                    <Typography variant="h1" >
                                         {roundeWithDec(this.balance)} {Api.getCoinName()}      
                                     </Typography>
                                 </div>
@@ -623,25 +601,25 @@ export class Analytics extends React.Component{
                 <div ref='header' className={classes.header}>
                     <div className={classes.row}>
                         <div style={{ alignItems: 'flex-start', width: '180px'}} className={classes.col}>
-                            <Typography  align="left" variant="display1" className={classes.bold}>
+                            <Typography  align="left" variant="h4" className={classes.bold}>
                                 Title
                             </Typography>
                         </div>
                         <span className={classes.delimeter}></span>
                         <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 On/Off
                             </Typography>
                         </div>
                         <span className={classes.delimeter}></span>
                         <div style={{width: '80px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 Embed only
                             </Typography>
                         </div>
                         <span className={classes.delimeter}></span>
                         <div style={{width: '120px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 Reward / Share Reward
                             </Typography>
                         </div>
@@ -649,7 +627,7 @@ export class Analytics extends React.Component{
                         <span className={classes.delimeter}></span>
 
                         <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 Responses / Shares
                             </Typography>
                         </div>
@@ -657,14 +635,14 @@ export class Analytics extends React.Component{
                         <span className={classes.delimeter}></span>
 
                         <div style={{width: '150px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 Payouts / Shares
                             </Typography>
                         </div> 
                         
                         <span className={classes.delimeter}></span>
                         <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 Blocked
                             </Typography>
                         </div>
@@ -672,14 +650,14 @@ export class Analytics extends React.Component{
                         <span className={classes.delimeter}></span>
 
                         <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 Spent
                             </Typography>
                         </div>
 
                         <span className={classes.delimeter}></span>
                         <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                 More
                             </Typography>
                         </div>
@@ -691,7 +669,7 @@ export class Analytics extends React.Component{
                                 return [<div key={`history-${idx}`} className={classes.row}>
 
                                     <div style={{ alignItems: 'flex-start', width: '180px'}} className={classes.col}>
-                                        <Typography className={cn({[classes.short]:true, [classes.firstCol]: true})} variant="display4" >
+                                        <Typography className={cn({[classes.short]:true, [classes.firstCol]: true})} variant="h1" >
                                             <Link to={entry_path.replace('v1','')} className={classes.link} style={{textDecoration: 'none'}}>
                                                 <span style={{ paddingRight: '10px'}}> {title} </span>
                                             </Link>
@@ -715,31 +693,31 @@ export class Analytics extends React.Component{
                                     </div>
 
                                     <div style={{width: '120px'}} className={classes.col}>
-                                        <Typography variant="display4" >
+                                        <Typography variant="h1" >
                                             {roundeWithDec(reward)} / {roundeWithDec(sharedReward)} {Api.getCoinName()}                                        
                                         </Typography>
                                     </div>
 
                                     <div style={{width: '100px'}} className={classes.col}>
-                                        <Typography variant="display4" >
+                                        <Typography variant="h1" >
                                             {responses} / {sharedCount}
                                         </Typography>
                                     </div>
 
                                     <div style={{width: '150px'}} className={classes.col}>
-                                        <Typography variant="display4" >
+                                        <Typography variant="h1" >
                                             {roundeWithDec(payoutsIMP)} / {roundeWithDec(sharedReward * sharedPaidCount)} {Api.getCoinName()}        
                                         </Typography>
                                     </div>
 
                                     <div style={{width: '100px'}} className={classes.col}>
-                                        <Typography variant="display4" >
+                                        <Typography variant="h1" >
                                             {roundeWithDec(blockedIMP)} {Api.getCoinName()}    
                                         </Typography>
                                     </div>
 
                                     <div style={{width: '100px'}} className={classes.col}>
-                                        <Typography variant="display4" >
+                                        <Typography variant="h1" >
                                             {roundeWithDec(payoutsIMP + sharedReward * sharedPaidCount + blockedIMP)} {Api.getCoinName()}         
                                         </Typography>
                                     </div> 
@@ -749,8 +727,9 @@ export class Analytics extends React.Component{
                                             aria-label="More"
                                             aria-haspopup="true"
                                             aria-owns={that.anchorEl[idx] ? `menu#${idx}` : null}
+                                            className={classes.menuBtn}
                                             onClick={that.handleMenuClick(idx)}>
-                                            <Icon className={classes.menuBtn}>more_horiz</Icon>
+                                            <Icon className={classes.menuBtnIcon}>more_horiz</Icon>
                                         </IconButton>
                                         <Menu
                                             id={`menu#${idx}`}
@@ -780,14 +759,14 @@ export class Analytics extends React.Component{
                                             />  
 
                                             <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={that.openEmbedModal(idx)}>
-                                                <Typography variant="subheading" >
+                                                <Typography variant="subtitle1" >
                                                     Embed code
                                                 </Typography>
                                             </MenuItem>
 
                                             <NavLink tabIndex='1' to={`/dashboard/analytics${entry_path.replace('v1','')}`} className={classes.menuLink}>
                                                 <MenuItem selected={false} className={classes.menuItem}>
-                                                    <Typography variant="subheading" >
+                                                    <Typography variant="subtitle1" >
                                                         Analytics
                                                     </Typography>
                                                 </MenuItem>
@@ -795,7 +774,7 @@ export class Analytics extends React.Component{
 
                                             <Share link={`${window.location.protocol}//${window.location.host}${entry_path.replace('/v1','')}`} >
                                                 <MenuItem selected={false} className={classes.menuMobileItemSpacings} >
-                                                    <Typography variant="subheading" >
+                                                    <Typography variant="subtitle1" >
                                                         Share
                                                     </Typography>
                                                 </MenuItem>  
@@ -840,324 +819,9 @@ const stylesRequests = theme => ({
         boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
     },
 
-    header:{
-        color: 'white',
-        background: '#FC3868',
-        fontWeight: 100,
-        display: 'flex',
-        height: 40,
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        overflow: 'hidden',
-        '& $delimeter': {
-            background: 'rgba(0, 0, 0, 0.1)',
-            height: '100px',
-            width: 1,
-            margin: '-50px 0'
-        },
-        '& $impNum':{
-            padding: '0 10px'
-        }
-    },
-    
-    delimeter:{},
-    impNum:{},
-
-    cardBodyResult: {
-        padding: '12px 0px',
-        backgroundColor: '#474E65',
-        overflow: 'hidden'
-    },
-
-    row: {
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        padding: '0 30px',
-        width: '100%'
-    },
-
-    col: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: 200,
-        height: 33,
-        flexShrink: 0,
-    },
-
-    btnResult: {
-        marginTop: 30,
-        borderRadius: 74
-    },
-
-    title: {
-        padding: '0 30px',
-    },
-
-    column:{
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-
-    headerResult: {
-        paddingBottom: '1rem'
-    },
-
-    noWrap:{
-        whiteSpace: 'nowrap',
-        textAlign: 'center'
-    },
-
-    center:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    analitics:{
-        display: 'flex',
-        flexDirection: 'column',
-    },
-
-    walletSetWrapper:{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: '100%',
-        overflow: 'hidden',
-        width: 480,
-        marginBottom: 7,
-        marginTop: 29
-    },
-
-    walletSet:{
-        width: 'calc(100% - 65px)',
-        display: 'inline-block',
-    },
-    
-    divider: {
-        margin: '7px 30px',
-        backgroundColor: "#bbc2d8"
-    },
-
-    headerField:{
-        margin: '20px 0 12px',
-        fontSize: 16,
-    },
-
-    bold:{
-        fontWeight: 600,
-        textAlign: 'center'
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
-    submitBtn:{
-        float: 'right',
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    editBtn:{
-        float: 'right',
-        borderRadius: 74,
-    },
-
-    editBtnTypo:{
-        fontSize: 14,
-        fontWeight: 700
-    },
-
-    short:{
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
-        display: 'inline-block',
-        width: '100%'
-    },
-
-    firstCol:{
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        transition: 'color .5s',
-        '&:hover': {
-            color: '#FC3868',
-            cursor: 'pointer',
-        }
-    },
-    
-    delBtn:{
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    explorer: {
-        verticalAlign: 'middle',
-        lineHeight: '100%',
-        fontSize: 30,
-        color: 'white'
-    },
-
-    addIMP:{
-        height: '100px',
-        width: '100px',
-        zIndex: '100',
-        position: 'relative',
-        marginBottom: 40,
-        marginRight: 40,
-        marginLeft: 5,
-        borderRadius: '8px',
-        overflow: 'hidden', 
-        backgroundColor: '#b1b4bd',
-        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
-        '@media (max-width: 600px)':{
-            marginRight: 0
-        }
-    },
-
-    addIMPLink:{
-        display: 'block',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        backgroundColor: '#d8d9dd',
-        height: '56px',
-        width: '56px',
-        margin: '14px auto 4px',
-        position: 'relative',
-        transition: 'boxShadow .5s',
-        '&:hover': {
-            boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.1)',
-        },
-        '&:before': {
-            content: '\'\'',
-            position: 'absolute',
-            left: '8px',
-            top: '50%',
-            width: '40px',
-            height: '5px',
-            borderRadius: '14px',
-            overflow: 'hidden',
-            backgroundColor: '#506880',   
-            transform: 'translateY(-50%)' 
-        },
-
-        '&:after':{
-            content: '\'\'',
-            position: 'absolute',
-            left: '50%',
-            top: '8px',
-            height: '40px',
-            width: '5px',
-            borderRadius: '14px',
-            overflow: 'hidden',
-            backgroundColor: '#506880',   
-            transform: 'translateX(-50%)' 
-        }
-    },
-
-    addIMPTitle: {
-        textAlign: 'center'
-    },
-
-    menuBtn:{
-        color: 'white',
-    },
-
-    link:{
-        color: 'white'
-    },
-
-    busi:{
-        display: 'inline-block',
-        paddingLeft: '20px'
-    },
-    
-    dropdown:{
-//        marginTop: '40px !important',
-        width: '200px',
-        borderRadius: '8px'
-    },
-
-    textarea:{
-        width: '100%',
-        height: '112px'
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        maxWidth: '88%',
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
     nopadding: {
         padding: 0
     },
-
-    textAreaWrappper: {
-        position: 'relative'
-    },
-
-    copyEmbedCode:{
-        position: 'absolute',
-        top: 0,
-        right: 0
-    },
-
-    unconfirmed:{
-        background: '#FC3868'
-    },
-
-    received:{
-        background: '#34E8C0'
-    },
-
-    processing:{
-        background: '#329CF4'
-    },
-
-    status:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-
-    label:{
-        padding: '3px 5px',
-        borderRadius: '6px',
-        textAlign: 'center',
-        margin: '3px 10px 0',
-        width: '10px',
-        height: '10px'
-    },
-
 
     titleTopBtn: {
         marginBottom: '30px',  
@@ -1305,7 +969,7 @@ export class Requests extends React.Component{
             <div className={classes.container}>
 
             <div className={classes.cardWrapper}> {Object.values(this.tabs).map((tab, idx) => {
-                return <Button className={classes.titleTopBtn} color="primary" key={`${tab.name}Title`} onClick={that.changeTab(idx)} ><Typography variant="display4" className={cn(classes.titleTop, {'activeTab': that.tabs[`showTab-${idx}`].show})} >{tab.name}</Typography></Button>
+                return <Button className={classes.titleTopBtn} color="primary" key={`${tab.name}Title`} onClick={that.changeTab(idx)} ><Typography variant="h1" className={cn(classes.titleTop, {'activeTab': that.tabs[`showTab-${idx}`].show})} >{tab.name}</Typography></Button>
             })}</div>
 
             { that.tabs['showTab-0'].show &&
@@ -1331,23 +995,23 @@ export class Requests extends React.Component{
                                 { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
                                 { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
                                 { id: 'last', numeric: true, disablePadding: false, label: 'Last' },
-                                { id: 'number', numeric: true, disablePadding: false, label: '#' },
+                                { id: 'number', center: true, notAbleSort: true, disablePadding: false, label: '#' },
                             ]}
                             innerTable = {(row) => {
                                 return(
                                     <TableRow key={row.email}>
                                         <TableCell component="th" scope="row">
-                                            <Typography  variant="display4">
+                                            <Typography  variant="h1">
                                                 {row.email}
                                             </Typography>
                                         </TableCell>   
                                         <TableCell>
-                                            <Typography className={classes.noWrap} variant="display4">
+                                            <Typography className={classes.noWrap} variant="h1">
                                                 {row.name}
                                             </Typography>
                                         </TableCell>
                                         <TableCell numeric>
-                                            <Typography className={classes.noWrap} variant="display4">
+                                            <Typography className={classes.noWrap} variant="h1">
                                                 {row.last}
                                             </Typography>
                                         </TableCell>
@@ -1368,7 +1032,7 @@ export class Requests extends React.Component{
 
                          <EnhancedTable
                             orderBy = {'date'}
-                            rowsPerPage = {2}
+                            rowsPerPage = {5}
                             data = {Object.entries(that.tabs['showTab-0'].contactDetails).map(([date, {question, name}]) =>  {
                                 return {
                                     'date': date,
@@ -1377,7 +1041,7 @@ export class Requests extends React.Component{
                                 }
                             })}
                             headerColumns = {[
-                                { id: 'date', numeric: true, disablePadding: false, label: 'Date' },
+                                { id: 'date', numeric: false, disablePadding: false, label: 'Date' },
                                 { id: 'preview', numeric: false, disablePadding: false, label: 'Preview Msg' },
                                 { id: 'full', numeric: false, disablePadding: false, label: 'Full' },
            
@@ -1385,13 +1049,13 @@ export class Requests extends React.Component{
                             innerTable = {(row, idx) => {
                                 return(
                                     <TableRow key={idx}>
-                                        <TableCell component="th" scope="row" numeric>
-                                            <Typography className={classes.noWrap} variant="display4">
+                                        <TableCell component="th" scope="row" >
+                                            <Typography className={classes.noWrap} variant="h1">
                                                 {formatedTime(row.date)}
                                             </Typography>
                                         </TableCell>                          
                                         <TableCell >
-                                            <Typography className={classes.noWrap} variant="display4">
+                                            <Typography className={classes.noWrap} variant="h1">
                                                 { row.preview }...
                                             </Typography>
                                         </TableCell>
@@ -1400,7 +1064,7 @@ export class Requests extends React.Component{
                                                 <Icon>fullscreen</Icon>
                                             </Button>
                                             <SModal title="Question" body={
-                                                <Typography ariant="display4">{row.full}</Typography>
+                                                <Typography ariant="h1">{row.full}</Typography>
                                             } open={that.questionModal[idx] || false} close={that.closeQuestionModal(idx)} />
                                         </TableCell>
                                     </TableRow>
@@ -1438,17 +1102,17 @@ export class Requests extends React.Component{
                                 return(
                                     <TableRow key={row.email}>
                                         <TableCell component="th" scope="row">
-                                            <Typography  variant="display4">
+                                            <Typography  variant="h1">
                                                 {row.email}
                                             </Typography>
                                         </TableCell>   
                                         <TableCell>
-                                            <Typography className={classes.noWrap} variant="display4">
+                                            <Typography className={classes.noWrap} variant="h1">
                                                 {row.name}
                                             </Typography>
                                         </TableCell>
                                         <TableCell numeric>
-                                            <Typography className={classes.noWrap} variant="display4">
+                                            <Typography className={classes.noWrap} variant="h1">
                                                 {row.last}
                                             </Typography>
                                         </TableCell>
@@ -1484,12 +1148,12 @@ export class Requests extends React.Component{
                                 return(
                                     <TableRow key={row.email}>
                                         <TableCell component="th" scope="row">
-                                            <Typography  variant="display4">
+                                            <Typography  variant="h1">
                                                 {row.email}
                                             </Typography>
                                         </TableCell>   
                                         <TableCell numeric > 
-                                            <Typography variant="display4" >
+                                            <Typography variant="h1" >
                                                 {row.date}
                                             </Typography>
                                         </TableCell>
@@ -1527,321 +1191,13 @@ const stylesAnalyticsClick = theme => ({
         marginBottom: 40,
         marginRight: 40,
         borderRadius: '8px',
-        overflow: 'hidden',
+        overflow: 'auto',
         maxWidth: '100%',
         width: 'auto',
         boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
     },
 
-    header:{
-        color: 'white',
-        background: '#FC3868',
-        fontWeight: 100,
-        display: 'flex',
-        height: 40,
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        overflow: 'hidden',
-        '& $delimeter': {
-            background: 'rgba(0, 0, 0, 0.1)',
-            height: '100px',
-            width: 1,
-            margin: '-50px 0'
-        },
-        '& $impNum':{
-            padding: '0 10px'
-        }
-    },
-    
-    delimeter:{},
-    impNum:{},
-
-    cardBodyResult: {
-        padding: '12px 0px',
-        backgroundColor: '#474E65',
-        overflow: 'hidden'
-    },
-
-    row: {
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        padding: '0 30px',
-        width: '100%'
-    },
-
-    col: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: 200,
-        height: 33,
-        flexShrink: 0,
-    },
-
-    btnResult: {
-        marginTop: 30,
-        borderRadius: 74
-    },
-
-    title: {
-        padding: '0 30px',
-    },
-
-    column:{
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-
-    headerResult: {
-        paddingBottom: '1rem'
-    },
-
-    noWrap:{
-        whiteSpace: 'nowrap',
-        textAlign: 'center'
-    },
-
-    center:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    analitics:{
-        display: 'flex',
-        flexDirection: 'column',
-    },
-
-    walletSetWrapper:{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: '100%',
-        overflow: 'hidden',
-        width: 480,
-        marginBottom: 7,
-        marginTop: 29
-    },
-
-    walletSet:{
-        width: 'calc(100% - 65px)',
-        display: 'inline-block',
-    },
-    
-    divider: {
-        margin: '7px 30px',
-        backgroundColor: "#bbc2d8"
-    },
-
-    headerField:{
-        margin: '20px 0 12px',
-        fontSize: 16,
-    },
-
-    bold:{
-        fontWeight: 600,
-        textAlign: 'center'
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
-    submitBtn:{
-        float: 'right',
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    editBtn:{
-        float: 'right',
-        borderRadius: 74,
-    },
-
-    editBtnTypo:{
-        fontSize: 14,
-        fontWeight: 700
-    },
-
-    short:{
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
-        display: 'inline-block',
-        width: '100%'
-    },
-
-    firstCol:{
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        transition: 'color .5s',
-        '&:hover': {
-            color: '#FC3868',
-            cursor: 'pointer',
-        }
-    },
-    
-    delBtn:{
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    explorer: {
-        verticalAlign: 'middle',
-        lineHeight: '100%',
-        fontSize: 30,
-        color: 'white'
-    },
-
-    addIMP:{
-        height: '100px',
-        width: '100px',
-        zIndex: '100',
-        position: 'relative',
-        marginBottom: 40,
-        marginRight: 40,
-        marginLeft: 5,
-        borderRadius: '8px',
-        overflow: 'hidden', 
-        backgroundColor: '#b1b4bd',
-        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
-        '@media (max-width: 600px)':{
-            marginRight: 0
-        }
-    },
-
-    addIMPLink:{
-        display: 'block',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        backgroundColor: '#d8d9dd',
-        height: '56px',
-        width: '56px',
-        margin: '14px auto 4px',
-        position: 'relative',
-        transition: 'boxShadow .5s',
-        '&:hover': {
-            boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.1)',
-        },
-        '&:before': {
-            content: '\'\'',
-            position: 'absolute',
-            left: '8px',
-            top: '50%',
-            width: '40px',
-            height: '5px',
-            borderRadius: '14px',
-            overflow: 'hidden',
-            backgroundColor: '#506880',   
-            transform: 'translateY(-50%)' 
-        },
-
-        '&:after':{
-            content: '\'\'',
-            position: 'absolute',
-            left: '50%',
-            top: '8px',
-            height: '40px',
-            width: '5px',
-            borderRadius: '14px',
-            overflow: 'hidden',
-            backgroundColor: '#506880',   
-            transform: 'translateX(-50%)' 
-        }
-    },
-
-    addIMPTitle: {
-        textAlign: 'center'
-    },
-
-    menuBtn:{
-        color: 'white',
-    },
-
-    link:{
-        color: 'white'
-    },
-
-    busi:{
-        display: 'inline-block',
-        paddingLeft: '20px'
-    },
-    
-    dropdown:{
-//        marginTop: '40px !important',
-        width: '200px',
-        borderRadius: '8px'
-    },
-
-    textarea:{
-        width: '100%',
-        height: '112px'
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        maxWidth: '88%',
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
-    nopadding: {
-        padding: 0
-    },
-
-    textAreaWrappper: {
-        position: 'relative'
-    },
-
-    copyEmbedCode:{
-        position: 'absolute',
-        top: 0,
-        right: 0
-    },
-
-    unconfirmed:{
-        background: '#FC3868'
-    },
-
-    received:{
-        background: '#34E8C0'
-    },
-
-    processing:{
-        background: '#329CF4'
-    },
-
-    status:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-
+ 
     label:{
         padding: '3px 5px',
         borderRadius: '6px',
@@ -1856,6 +1212,15 @@ const stylesAnalyticsClick = theme => ({
         letterSpacing: 1,
         marginBottom: '30px'
     },
+
+    borderOff: {
+        border: 'none'
+    },
+
+    center: {
+        textAlign: 'center',
+        padding: '4px 24px 4px 24px'
+    }
 
 })
 
@@ -1890,59 +1255,47 @@ export class AnalyticsClick extends React.Component{
         return( 
             <div className={classes.container} >
 
-            <Typography variant="display4" className={classes.titleTop}>Responses</Typography>
+            <Typography variant="h1" className={classes.titleTop}>Responses</Typography>
 
             <div className={classes.cardWrapper} >
                 <div className={classes.card}>
-                    <div ref='header' className={classes.header}>
-                        <div className={classes.row}>
-                            <div className={classes.col}>
-                                <Typography  variant="display1" className={classes.bold}>
-                                    Catalog(site)
-                                </Typography>
-                            </div>
-
-                            <span className={classes.delimeter}></span>
-
-                            <div className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
-                                    Results(site)
-                                </Typography>
-                            </div>
-
-                            <span className={classes.delimeter}></span>
-                            
-                            <div className={classes.col}>
-                                <Typography variant="display1" className={classes.bold}>
-                                    Results(app)
-                                </Typography>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div className={classes.cardBodyResult}>
-                        <div className={classes.history}>
-                            <div className={classes.row}>
-                                <div className={classes.col}>
-                                    <Typography variant="display4">
-                                        {this.referrals && this.referrals.catalog || 0}
-                                    </Typography>
-                                </div> 
-
-                                <div className={classes.col}>
-                                    <Typography variant="display4">
-                                        {this.referrals && this.referrals.congratulations || 0}
-                                    </Typography>
-                                </div>  
-
-                                <div className={classes.col}>
-                                    <Typography variant="display4">
-                                        {this.referrals && this.referrals.appleStore || 0}
-                                    </Typography>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <EnhancedTable
+                        rowsPerPage = {1}
+                        notShowPagination = {true}
+                        data = {
+                            [{
+                                'r0' : this.referrals && this.referrals.catalog || 0,
+                                'r1' : this.referrals && this.referrals.congratulations || 0,
+                                'r2' : this.referrals && this.referrals.appleStore || 0
+                            }]
+                        }
+                        headerColumns = {[
+                            { id: 'r0', center: true, notAbleSort: true, label: 'Catalog(site)' },
+                            { id: 'r1', center: true, notAbleSort: true, label: 'Results(site)' },
+                            { id: 'r2', center: true, notAbleSort: true, label: 'Results(app)' },
+                        ]}
+                        innerTable = {(row, idx) => {   
+                            return(
+                                <TableRow key={idx}>
+                                    <TableCell className={cn(classes.borderOff, classes.center)} component="th" scope="row" >
+                                        <Typography  variant="h1">
+                                            {row.r0}
+                                        </Typography>
+                                    </TableCell>   
+                                    <TableCell className={cn(classes.borderOff, classes.center)} > 
+                                        <Typography variant="h1" >
+                                            {row.r1}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell className={cn(classes.borderOff, classes.center)} > 
+                                        <Typography variant="h1" >
+                                            {row.r2}
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        }}
+                    />
                 </div>
             </div>
         </div>)

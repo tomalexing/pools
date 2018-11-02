@@ -291,7 +291,7 @@ class ResultCard extends React.Component {
 
         return (this.finalCard ? <div style={{height: '100%'}}>
                     <div ref='header' className={classes.header}>
-                        <Typography variant="display1">
+                        <Typography variant="h4">
                             Congratulations!
                         </Typography>
                     </div>
@@ -306,13 +306,13 @@ class ResultCard extends React.Component {
                                     { this.finalCard.info.img && <LazyImage className={classes.resImage} load={this.finalCard.info.img}/>}
                                 </div> 
                                 <div className={classes.col2}>
-                                    <Typography variant="title" className={classes.resTitle}>{this.finalCard.info.title}</Typography>
-                                        <a className={classes.linksite} onClick={Api.saveReferral('congratulations', this.props.cardSlug.substr(1), this.finalCard.info.id)} href={`http://${this.finalCard.info.linksite}`} target="_blank" ><Typography variant="display1" className={classes.linksite}>{this.finalCard.info.linksite}</Typography></a>
-                                    <Typography variant="body1" className={classes.description}>{this.finalCard.info.desc}</Typography>
+                                    <Typography variant="h6" className={classes.resTitle}>{this.finalCard.info.title}</Typography>
+                                        <a className={classes.linksite} onClick={Api.saveReferral('congratulations', this.props.cardSlug.substr(1), this.finalCard.info.id)} href={`http://${this.finalCard.info.linksite}`} target="_blank" ><Typography variant="h4" className={classes.linksite}>{this.finalCard.info.linksite}</Typography></a>
+                                    <Typography variant="body2" className={classes.description}>{this.finalCard.info.desc}</Typography>
                                     <div className={classes.btnsRow} style={{marginTop: 6}}>
                                         {this.finalCard.info && !(this.finalCard.info.blockedByUser || this.finalCard.info.blockedEntity) && <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small" onClick={this.again} >Take again
                                         </Button>}
-                                        {this.finalCard.info && !(this.finalCard.info.blockedByUser || this.finalCard.info.blockedEntity) && !this.props.embed && <Typography variant="body1" style={{margin:"0 20px"}}>or</Typography> }
+                                        {this.finalCard.info && !(this.finalCard.info.blockedByUser || this.finalCard.info.blockedEntity) && !this.props.embed && <Typography variant="body2" style={{margin:"0 20px"}}>or</Typography> }
                                         {!this.props.embed && 
                                             <div>
                                                 { this.finalCard.info.cat == 'Polls' && <Typography variant="button"> <Link className={classes.btnResultSmaller} color="secondary"  side="small" to={'/categories/polls'} > View more polls</Link> </Typography>}
@@ -325,22 +325,22 @@ class ResultCard extends React.Component {
                             <div className={classes.space}/>
                             <div className={classes.row + ' ' + classes.responseRow}>
                                 <div className={classes.col2 + ' ' + classes.column}>
-                                    <Typography variant="body1" gutterBottom className={classes.resHeader}>
+                                    <Typography variant="body2" gutterBottom className={classes.resHeader}>
                                         Results:
                                     </Typography>
                                     <div>
-                                        <Typography variant="body1" dangerouslySetInnerHTML={{__html: parseMustache(this.finalCard.info.result, {[ this.finalCard.info.dashOutput ]: this.finalCard.progress[this.finalCard.info.dashOutput]}) }} >
+                                        <Typography variant="body2" dangerouslySetInnerHTML={{__html: parseMustache(this.finalCard.info.result, {[ this.finalCard.info.dashOutput ]: this.finalCard.progress[this.finalCard.info.dashOutput]}) }} >
                                         </Typography>
 
                                         { this.finalCard.info.appleStore &&  <a onClick={Api.saveReferral('appleStore', this.props.cardSlug.substr(1), this.finalCard.info.id)} className={classes.store} target="_blank" href={this.finalCard.info.appleStore}><img srcSet={`${appleStore2x} 2x, ${appleStore} 1x`} src={appleStore}/></a>}
                                     </div>
                                     <div className={classes.share}> 
                                         {!this.isLiked &&
-                                        <Typography variant="body1" className={classes.resHeader}>
+                                        <Typography variant="body2" className={classes.resHeader}>
                                             Share and get +0.5 {Api.getCoinName()}:
                                         </Typography>}
                                         {this.isLiked &&
-                                        <Typography variant="body1" className={classes.resHeader}>
+                                        <Typography variant="body2" className={classes.resHeader}>
                                             Share with your friends:
                                         </Typography>}
                                         <Share update={this.loadFinal} cardSlug={this.props.cardSlug} title={this.finalCard.info.title} description={this.finalCard.info.desc} image={this.finalCard.info.img}/>
@@ -348,12 +348,12 @@ class ResultCard extends React.Component {
                                 </div>
                                 <div className={classes.vertdevider} />
                                 <div className={classes.col1  + ' ' + classes.column}>
-                                    <Typography variant="body1" gutterBottom className={classes.resHeader + " " + classes.center}>
+                                    <Typography variant="body2" gutterBottom className={classes.resHeader + " " + classes.center}>
                                         Your reward:
                                     </Typography>
                                     <div className={classes.Imp}>
-                                        <Typography variant="display2" > { this.finalCard.progress &&  roundeWithDec(this.finalCard.progress.number * this.finalCard.info.reward) }  </Typography>
-                                        <Typography variant="display1" className={classes.ImpAddon} >{ this.finalCard.progress && Api.getCoinName()}</Typography>
+                                        <Typography variant="h3" > { this.finalCard.progress &&  roundeWithDec(this.finalCard.progress.number * this.finalCard.info.reward) }  </Typography>
+                                        <Typography variant="h4" className={classes.ImpAddon} >{ this.finalCard.progress && Api.getCoinName()}</Typography>
                                     </div>
                                     
                                     { !Auth.isAuthenticated && !this.props.embed && <div className={classes.col}>
@@ -376,7 +376,7 @@ class ResultCard extends React.Component {
                 :
                 <div>
                 <div className={classes.header}>
-                        <Typography variant="display1">
+                        <Typography variant="h4">
                             Congratulations!
                         </Typography>
                     </div>

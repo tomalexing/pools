@@ -173,7 +173,12 @@ const styles = theme => ({
     
     mainMenuIcon: {
         color: 'white'
-    }
+    },
+
+    menuBtn:{
+        width: 48,
+        height: 48
+    },
 
 })
 
@@ -211,7 +216,7 @@ class Dashboard extends React.Component {
 
         this.loadCBPrice();
 
-    }
+    }   
 
     loadCBPrice = async _ => {
         try {
@@ -262,7 +267,7 @@ class Dashboard extends React.Component {
                             <ListItemIcon className={classes.icon}>
                                 <Icon  className={classes.mainMenuIcon} >dashboard</Icon>
                             </ListItemIcon>
-                            <Typography variant="display1" >
+                            <Typography variant="h4" >
                                 Dashboard
                             </Typography>
                         </MenuItem>
@@ -272,7 +277,7 @@ class Dashboard extends React.Component {
                             <ListItemIcon className={classes.icon}>
                                 <Icon  className={classes.mainMenuIcon} >account_box</Icon>
                             </ListItemIcon>
-                            <Typography variant="display1" >
+                            <Typography variant="h4" >
                                 Profile
                             </Typography>
                         </MenuItem>
@@ -282,7 +287,7 @@ class Dashboard extends React.Component {
                             <ListItemIcon className={classes.icon}>
                                 <Icon className={classes.mainMenuIcon} >access_time</Icon>
                             </ListItemIcon>
-                            <Typography variant="display1" >
+                            <Typography variant="h4" >
                                 History
                             </Typography>
                             
@@ -294,7 +299,7 @@ class Dashboard extends React.Component {
                                 <ListItemIcon className={classes.icon}>
                                     <Icon className={classes.mainMenuIcon} >trending_up</Icon>
                                 </ListItemIcon>
-                                <Typography variant="display1" >
+                                <Typography variant="h4" >
                                     Requests
                                 </Typography>
                                 
@@ -303,21 +308,21 @@ class Dashboard extends React.Component {
                 </MenuList>
                 <div className={classes.footer}>
 
-                <IconButton onClick={this.toogle}>
+                <IconButton className={classes.menuBtn} onClick={this.toogle}>
                     { !this.state.open ? <Icon className={classes.mainMenuIcon} >chevron_right</Icon> : <Icon   className={classes.mainMenuIcon} >chevron_left</Icon>}
                 </IconButton>
                 
 
-                {this.state.open && <Typography component="div"  variant="body1"  className={classes.footerText + ' ' + classes.footerImageCover}> 
+                {this.state.open && <Typography component="div"  variant="body2"  className={classes.footerText + ' ' + classes.footerImageCover}> 
                     <a target="_blank" href="https://impleum.com"> <img className={classes.footerImage} src={IMP} /> </a> 
-                    <Typography ref='copyright' variant="body1" className={classes.footerTitle + ' ' + classes.footerText} > <span className={classes.footerAltColor}> {Api.getCoinName()}/BTC</span></Typography>
+                    <Typography ref='copyright' variant="body2" className={classes.footerTitle + ' ' + classes.footerText} > <span className={classes.footerAltColor}> {Api.getCoinName()}/BTC</span></Typography>
                     <p className={classes.footerDesc} > {price} <span className={classes.footerAltColor}>BTC</span></p>
                 </Typography>}
                 
-                {this.state.open && <Typography ref='copyright' variant="body1" className={classes.menuBtnSpacings + ' ' + classes.footerText} >
+                {this.state.open && <Typography ref='copyright' variant="body2" className={classes.menuBtnSpacings + ' ' + classes.footerText} >
                     Copyright © 2018 Quizi.
                 </Typography>}
-                {this.state.open && <Typography ref='copyright' variant="body1" className={classes.menuBtnSpacings + ' ' + classes.footerText} >
+                {this.state.open && <Typography ref='copyright' variant="body2" className={classes.menuBtnSpacings + ' ' + classes.footerText} >
                     All Rights Reserved.
                 </Typography>}
                 
@@ -340,7 +345,7 @@ class Dashboard extends React.Component {
 
                 <PrivateRoute role={['admin']} exact path="/dashboard" component={Admin.Analytics} /> 
                 <PrivateRoute role={['admin']} exact path="/dashboard/requests" component={Admin.Requests} /> 
-                <PrivateRoute role={['admin']} exact path="/dashboard/analytics/:slug/:id" component={Business.Analytics} />
+                <PrivateRoute role={['admin']} exact path="/dashboard/analytics/:slug/:id" component={Admin.AnalyticsClick} />
 
             </div>
 

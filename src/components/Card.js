@@ -195,8 +195,8 @@ class Card extends React.Component {
     debounce = (func, time) => {
         var timeOut = null;
 
-        return _ => {
-            let context = this, args = arguments;
+        return ( ...args ) => {
+            let context = this;
             let letter = _ => {
                 timeOut = null;
                 func.apply(context, args)
@@ -516,7 +516,7 @@ class Card extends React.Component {
                         ref='header'
                         className={classes.header}>
                         <span className={classes.delimeter}></span>
-                        <Typography variant="display1" className={classes.prog}>  
+                        <Typography variant="h4" className={classes.prog}>  
                             {card.number} /  {this.props.store.allCardsNumber}
                         </Typography>
                         

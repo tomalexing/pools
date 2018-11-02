@@ -281,14 +281,14 @@ class Subscribe extends React.Component {
         
                     <div className={classes.card}>
                         <div ref='header' className={classes.header}>
-                            <Typography variant="display1" className={classes.title}>
+                            <Typography variant="h4" className={classes.title}>
                                 Subscribe
                             </Typography>
                             <span className={classes.delimeter}></span>
 
                         </div>
                         <div className={classes.cardBodyResult}>
-                            <Typography variant="body1" className={classes.headerField} >Subscribe to our news and updates.  No spam, only useful information.
+                            <Typography variant="body2" className={classes.headerField} >Subscribe to our news and updates. No spam, only useful information.
                             </Typography>
 
                             <form className={classes.form} onSubmit={this.onSubmit} noValidate autoComplete="off">
@@ -307,18 +307,19 @@ class Subscribe extends React.Component {
                                 />
                                 <div className={classes.agree}>
                                 
-                                        <Checkbox
-                                        checked={this.confirmEmail}
-                                        value="email"
-                                        onChange={this.comfirm('confirmEmail')}
+                                    <Checkbox
+                                    checked={this.confirmEmail}
+                                    value="email"
+                                    onChange={this.comfirm('confirmEmail')}
 
-                                        />
-                                        <Typography variant="body1" className={classes.font12  + ' ' + classes.paddingTop1}>
-                                            I agree to receive emails from Quizi
-                                        </Typography>
+                                    />
+                                    
+                                    <Typography variant="body2" className={classes.font12  + ' ' + classes.paddingTop1}>
+                                        I agree to receive emails from Quizi
+                                    </Typography>
 
                                 </div>
-                                <Button type="submit"  color="secondary" variant="raised" disabled={!this.confirmEmail} className={classes.submitBtn}>
+                                <Button type="submit"  color="secondary" variant="contained" disabled={!this.confirmEmail} className={classes.submitBtn}>
                                     Subscribe
                                 </Button>
                             </form>
@@ -332,13 +333,13 @@ class Subscribe extends React.Component {
                     onClose={this.handleClose}
                     >
                     <div style={this.getModalStyle()} className={classes.paper}>
-                    <Typography variant="display1" id="Subscribe-modal-title">
-                        {this.title}
-                    </Typography>
-                    <Typography variant="body1" id="Subscribe-modal-description">
-                        {this.description}
-                    </Typography>
-                    <Button size="small" variant="raised" color="secondary" className={classes.closeModal} onClick={this.handleClose}>close</Button>
+                        <Typography variant="h4" id="Subscribe-modal-title">
+                            {this.title}
+                        </Typography>
+                        <Typography variant="body2" id="Subscribe-modal-description">
+                            {this.description}
+                        </Typography>
+                        <Button size="small" variant="contained" color="secondary" className={classes.closeModal} onClick={this.handleClose}>close</Button>
                     </div>
                 </Modal>
              </div>

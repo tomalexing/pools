@@ -306,7 +306,7 @@ class Quiz extends React.Component {
         return (
         <div ref="container" className={classes.quizBody}>
             <div ref="body" >
-                <Typography variant="headline" gutterBottom  className={classes.question}>
+                <Typography variant="h5" gutterBottom  className={classes.question}>
                     <div ref="title" dangerouslySetInnerHTML={{__html:Quiz.question}} />
                 </Typography>
                 <div ref="answer" className={classes.answersWrapper}>

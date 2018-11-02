@@ -8,6 +8,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import TableHead from '@material-ui/core/TableHead';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
+import * as cn from 'classnames';
 
 const EnhancedTableHeadStyles = theme => ({
     root: {
@@ -20,7 +21,20 @@ const EnhancedTableHeadStyles = theme => ({
 
     borderOff: {
         border: 'none'
+    },
+
+    center: {
+      textAlign: 'center',
+      padding: '4px 24px 4px 24px'
+    },
+
+    dilimiter: {
+      '&:not(:last-child)': {
+        borderRight: '1px solid rgba(0, 0, 0, 0.1)'
+      }
     }
+
+    
 });
 
 @withStyles(EnhancedTableHeadStyles, { withTheme: true })
@@ -42,9 +56,11 @@ export default class EnhancedTableHead extends React.Component {
                   numeric={row.numeric}
                   padding={row.disablePadding ? 'none' : 'default'}
                   sortDirection={orderBy === row.id ? order : false}
-                  className={classes.borderOff}
-                >
-                  <Tooltip
+                  className={cn(classes.dilimiter, classes.borderOff, {[classes.center]: row.center})}
+                > 
+
+                  {!row.notAbleSort ? 
+                  (<Tooltip
                     title="Sort"
                     placement={row.numeric ? 'bottom-end' : 'bottom-start'}
                     enterDelay={300}
@@ -55,11 +71,16 @@ export default class EnhancedTableHead extends React.Component {
                       onClick={this.createSortHandler(row.id)}
                       style={{color: 'white'}}
                     >
-                      <Typography  variant="display1" style={{weight: 'bold'}}> 
+                      <Typography  variant="h4" style={{weight: 'bold'}}> 
                             {row.label}
                       </Typography>
                     </TableSortLabel>
-                  </Tooltip>
+                  </Tooltip>)
+                  :(
+                    <Typography  variant="h4" style={{weight: 'bold'}}> 
+                      {row.label}
+                    </Typography>
+                  )}
                 </TableCell>
               );
             }, this)}

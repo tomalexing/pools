@@ -51,7 +51,12 @@ const styles = theme => ({
         }
     },
     menuBtn:{
-        color: 'white',
+        width: 48,
+        height: 48
+    },
+
+    menuBtnIcon:{
+        color: 'white'
     },
 
     startMenu: {
@@ -255,8 +260,9 @@ class Header extends React.Component {
                 aria-label="More"
                 aria-owns={this.anchorEl ? 'long-menu' : null}
                 aria-haspopup="true"
-                onClick={this.handleClick}>
-                <Icon className={classes.menuBtn}>more_horiz</Icon>
+                onClick={this.handleClick}
+                className={classes.menuBtn}>
+                <Icon className={classes.menuBtnIcon}>more_horiz</Icon>
                 </IconButton>
                 <Menu
                     id="long-menu"
@@ -271,7 +277,7 @@ class Header extends React.Component {
                 >
                     <NavLink tabIndex='1' to={'/term-of-use'} className={classes.menuMobileLinkSpacings} >
                         <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={this.handleClose}>
-                            <Typography variant="subheading" >
+                            <Typography variant="subtitle1" >
                                 Terms of Use
                             </Typography>
                             </MenuItem>
@@ -279,7 +285,7 @@ class Header extends React.Component {
 
                     <NavLink tabIndex='1' to={'/privacy-policy'} className={classes.menuMobileLinkSpacings} >
                         <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={this.handleClose}>
-                            <Typography variant="subheading" >
+                            <Typography variant="subtitle1" >
                                 Privacy Policy
                             </Typography>
                             </MenuItem>
@@ -287,7 +293,7 @@ class Header extends React.Component {
 
                     <NavLink tabIndex='1' to={'/subscribe'} className={classes.menuMobileLinkSpacings} >
                         <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={this.handleClose}>
-                            <Typography variant="subheading" >
+                            <Typography variant="subtitle1" >
                                 Subscribe
                             </Typography>
                             </MenuItem>
@@ -295,7 +301,7 @@ class Header extends React.Component {
 
                     <NavLink tabIndex='1' to={'/create'} className={classes.menuMobileLinkSpacings} >
                         <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={this.handleClose}>
-                            <Typography variant="subheading" >
+                            <Typography variant="subtitle1" >
                                 Create Quiz or Poll
                             </Typography>
                         </MenuItem>
@@ -303,14 +309,14 @@ class Header extends React.Component {
 
                     <NavLink tabIndex='1' to={'/contact'} className={classes.menuMobileLinkSpacings} >
                         <MenuItem selected={false} className={cx(classes.menuMobileItemSpacings, { [classes.removeBorder]: !Auth.isAuthenticated})} onClick={this.handleClose}>
-                            <Typography variant="subheading" >
+                            <Typography variant="subtitle1" >
                                 Contact us
                             </Typography>
                         </MenuItem>
                     </NavLink>
                     
                     {Auth.isAuthenticated && <MenuItem selected={false} className={classes.menuMobileBtnSpacings}  onClick={this.logout}>
-                        <Typography variant="subheading" >
+                        <Typography variant="subtitle1" >
                             Logout
                         </Typography> 
                     </MenuItem>}

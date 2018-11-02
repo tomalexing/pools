@@ -15,6 +15,10 @@ const EnhancedTablePaginationStyles = theme => ({
         color: theme.palette.white.color,
         marginLeft: theme.spacing.unit * 2.5,
     },
+    menuBtn:{
+      width: 48,
+      height: 48
+    }
 });
 
 @withStyles(EnhancedTablePaginationStyles, { withTheme: true })
@@ -47,6 +51,7 @@ export default class EnhancedTablePagination extends React.Component {
             color="secondary"
             onClick={this.handleFirstPageButtonClick}
             disabled={page === 0}
+            className={classes.menuBtn}
             aria-label="First Page"
           >
             <Icon>first_page</Icon>
@@ -56,6 +61,7 @@ export default class EnhancedTablePagination extends React.Component {
             onClick={this.handleBackButtonClick}
             disabled={page === 0}
             aria-label="Previous Page"
+            className={classes.menuBtn}
           >
             <Icon>keyboard_arrow_left</Icon> 
           </IconButton>
@@ -64,6 +70,7 @@ export default class EnhancedTablePagination extends React.Component {
             onClick={this.handleNextButtonClick}
             disabled={page >= Math.ceil(count / rowsPerPage) - 1}
             aria-label="Next Page"
+            className={classes.menuBtn}
           >
            <Icon>keyboard_arrow_right</Icon>
           </IconButton>
@@ -72,6 +79,7 @@ export default class EnhancedTablePagination extends React.Component {
             onClick={this.handleLastPageButtonClick}
             disabled={page >= Math.ceil(count / rowsPerPage) - 1}
             aria-label="Last Page"
+            className={classes.menuBtn}
           >
             <Icon>last_page</Icon> 
           </IconButton>

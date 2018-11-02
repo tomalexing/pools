@@ -23,7 +23,7 @@ class User extends React.Component {
     @observable data = [];
 
     render(){
-
+        
         return(<div style={{'background': 'white', 'height': '100%', 'width': '100%', 'overflow': 'auto', 'padding': '33px'}} >
                 {this.data.map((d, idx) => {
                     return (<div style={{'line-height': '1.4em', 'display': 'flex'}} >

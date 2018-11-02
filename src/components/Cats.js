@@ -358,7 +358,7 @@ class Explore extends React.Component {
             return( [
                     <NavLink tabIndex='1' to={`${opt.pathname}/${menuItem.slug}`} className={classes.linkmenu} >
                         <MenuItem className={cn({[classes.nested] : opt.nested, [`nested-${opt.level}`]: opt.nested})}>
-                            <Typography variant="display1">
+                            <Typography variant="h4">
                                 {menuItem.name}
                             </Typography>
                         </MenuItem>
@@ -377,7 +377,7 @@ class Explore extends React.Component {
         return (
             <div className={classes.catsWraper}>
                 <aside className={cn(classes.catsMenu, {[`${classes.catsMenuOpen}`]: this.openMenu})}>
-                    <Typography variant="display1" onClick={this.toogleMenu} className={classes.catsTitle}>Categories</Typography>
+                    <Typography variant="h4" onClick={this.toogleMenu} className={classes.catsTitle}>Categories</Typography>
                     <MenuList className={classes.catsMenuInner}>
                         { Object.values(this.Menu).map(menuItem => {
                             return that.catHTML([menuItem])
@@ -387,7 +387,7 @@ class Explore extends React.Component {
                 <div className={classes.catsCard}>
                     {this.Cards.length == 0 && this.loading && <div className={classes.center}><CircularProgress color="secondary" /></div>}
                     {this.Cards.length == 0 && !this.loading && <div className={classes.center}>
-                        <Typography variant="display1" >There are no quizzes or polles</Typography></div>}
+                        <Typography variant="h4" >There are no quizzes or polles</Typography></div>}
                     {this.Cards.map((card, idx) => (<div key={`cats-${idx}`} className={classes.card}>
                         <header className={classes.header}>
 
@@ -404,34 +404,34 @@ class Explore extends React.Component {
                             
                             { card.link && <Link className={classes.progressStatus} style={{textDecoration: 'none'}} to={card.link.startsWith('/') ?  card.link : locationStrip + '/' + card.link}> 
                                 
-                                { card.cardtype == 'Quiz' && that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="display4">Completed</Typography> }
-                                { card.cardtype == 'Quiz' && that.cardsProgress[card.link + '/v1'] && !that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="display4">Not finished</Typography> }
-                                { card.cardtype == 'Poll' && that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="display4">Completed 100%</Typography> }
-                                { card.cardtype == 'Poll' && that.cardsProgress[card.link + '/v1'] && !that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="display4">In progress {that.cardsProgress[card.link + '/v1']['Progress'].number * 100 / card.number}%</Typography> }
+                                { card.cardtype == 'Quiz' && that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="h1">Completed</Typography> }
+                                { card.cardtype == 'Quiz' && that.cardsProgress[card.link + '/v1'] && !that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="h1">Not finished</Typography> }
+                                { card.cardtype == 'Poll' && that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="h1">Completed 100%</Typography> }
+                                { card.cardtype == 'Poll' && that.cardsProgress[card.link + '/v1'] && !that.cardsProgress[card.link + '/v1']['Progress'].final &&  <Typography variant="h1">In progress {that.cardsProgress[card.link + '/v1']['Progress'].number * 100 / card.number}%</Typography> }
 
                             </Link> }
 
                         </header>
                         <article className={classes.article}>
 
-                            { card.link && <Link style={{textDecoration: 'none'}}  to={card.link.startsWith('/') ? card.link : locationStrip + '/' + card.link}><Typography variant="title" className={classes.title}>{card.title}</Typography></Link> }
+                            { card.link && <Link style={{textDecoration: 'none'}}  to={card.link.startsWith('/') ? card.link : locationStrip + '/' + card.link}><Typography variant="h6" className={classes.title}>{card.title}</Typography></Link> }
 
-                            { !card.link && <Typography variant="title" className={classes.title}>{card.title}</Typography> }
+                            { !card.link && <Typography variant="h6" className={classes.title}>{card.title}</Typography> }
 
-                            <a style={{textDecoration: 'none'}} onClick={Api.saveReferral('catalog',card.slug,card.id)} href={`http://${card.linksite}`} target="_blank" ><Typography variant="display1" className={classes.link}>{card.linksite}</Typography></a>
+                            <a style={{textDecoration: 'none'}} onClick={Api.saveReferral('catalog',card.slug,card.id)} href={`http://${card.linksite}`} target="_blank" ><Typography variant="h4" className={classes.link}>{card.linksite}</Typography></a>
 
-                            <Typography variant="body1" className={classes.description}>{card.desc}</Typography>
+                            <Typography variant="body2" className={classes.description}>{card.desc}</Typography>
                             <div className={classes.footer}>
 
                                 {card.number && <div className={classes.footerParamRow} >
-                                    <Icon className={classes.paramIcon}>layers</Icon>  <Typography variant="display1" className={classes.param}>{card.number} cards</Typography>
-                                    <Icon className={classes.paramIcon}>offline_bolt</Icon> <Typography variant="display1" className={classes.param}>{roundeWithDec(card.number * card.reward)} {Api.getCoinName()}</Typography>
-                                    <Icon className={classes.paramIcon}>share</Icon> <Typography variant="display1" className={classes.param}>{roundeWithDec(card.sharedReward)} {Api.getCoinName()}</Typography>
+                                    <Icon className={classes.paramIcon}>layers</Icon>  <Typography variant="h4" className={classes.param}>{card.number} cards</Typography>
+                                    <Icon className={classes.paramIcon}>offline_bolt</Icon> <Typography variant="h4" className={classes.param}>{roundeWithDec(card.number * card.reward)} {Api.getCoinName()}</Typography>
+                                    <Icon className={classes.paramIcon}>share</Icon> <Typography variant="h4" className={classes.param}>{roundeWithDec(card.sharedReward)} {Api.getCoinName()}</Typography>
                                 </div>}
 
-                               { card.link && (!that.cardsProgress[card.link + '/v1'] || !that.cardsProgress[card.link + '/v1']['Progress'].final) && <Link className={classes.btnlink} to={card.link.startsWith('/') ? card.link : locationStrip + '/' + card.link }><Button className={classes.btn} variant="raised" color="secondary" side="small" >{card.btn}</Button></Link>}
-                               { card.link && that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].final && <Link className={classes.btnlink} to={card.link.startsWith('/') ? card.link : locationStrip + '/' + card.link }><Button className={classes.btn} variant="raised" color="secondary" side="small" >Take again</Button></Link>}
-                               { !card.link && <div className={classes.btnlink} ><Button to={card.link} className={classes.btn} variant="raised" disabled color="secondary" side="small" >Coming Soon</Button></div>}
+                               { card.link && (!that.cardsProgress[card.link + '/v1'] || !that.cardsProgress[card.link + '/v1']['Progress'].final) && <Link className={classes.btnlink} to={card.link.startsWith('/') ? card.link : locationStrip + '/' + card.link }><Button className={classes.btn} variant="contained" color="secondary" side="small" >{card.btn}</Button></Link>}
+                               { card.link && that.cardsProgress[card.link + '/v1'] && that.cardsProgress[card.link + '/v1']['Progress'].final && <Link className={classes.btnlink} to={card.link.startsWith('/') ? card.link : locationStrip + '/' + card.link }><Button className={classes.btn} variant="contained" color="secondary" side="small" >Take again</Button></Link>}
+                               { !card.link && <div className={classes.btnlink} ><Button to={card.link} className={classes.btn} variant="contained" disabled color="secondary" side="small" >Coming Soon</Button></div>}
                             </div>
                         </article>
                         </div>))}

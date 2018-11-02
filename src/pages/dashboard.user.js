@@ -417,13 +417,13 @@ export class Common extends React.Component{
         return( 
             <div className={classes.cardWrapper} >
             {Array.from(this.catsAvailable).length == 0 && this.loaded && <div>
-                <Typography variant="display4" className={classes.catTitle}>You don't finish anything yet.</Typography>
+                <Typography variant="h1" className={classes.catTitle}>You don't finish anything yet.</Typography>
                 <Explore/>
                 </div>}
             {Array.from(this.catsAvailable).length == 0 && !this.loaded && <CircularProgress color="secondary" />}
 
             { Array.from(this.catsAvailable).map((cat, idx) => {
-                return <Button className={classes.catTitleBtn} color="primary" key={`${cat}Title`} onClick={that.changeTab(idx)} ><Typography variant="display4" className={cx(classes.catTitle, {'activeTab' :that.state[`showTab-${idx}`]})} >{cat}</Typography></Button>
+                return <Button className={classes.catTitleBtn} color="primary" key={`${cat}Title`} onClick={that.changeTab(idx)} ><Typography variant="h1" className={cx(classes.catTitle, {'activeTab' :that.state[`showTab-${idx}`]})} >{cat}</Typography></Button>
             })}
 
             { Array.from(this.catsAvailable).map((cat, idx) => {
@@ -435,30 +435,30 @@ export class Common extends React.Component{
                                         <div ref='header' className={classes.header}>
                                             <Link style={{textDecoration: 'none'}} to={slug.replace('/v1','')} >
                                                 <Tooltip  title={info.dashTitle} placement="top">
-                                                    <Typography variant="display1" className={classes.title}>{info.dashTitle}</Typography> 
+                                                    <Typography variant="h4" className={classes.title}>{info.dashTitle}</Typography> 
                                                 </Tooltip>
                                             </Link>
 
                                             <span className={classes.delimeter}></span>
 
-                                            { info.cat == 'Polls' &&  <Typography variant="display1" className={classes.impNum}>  
+                                            { info.cat == 'Polls' &&  <Typography variant="h4" className={classes.impNum}>  
                                                 {progress && roundeWithDec(progress.number * info.reward)} {Api.getCoinName()}
                                             </Typography> }
 
-                                            { info.cat == 'Quizzes' && progress.final &&  <Typography variant="display1" className={classes.impNum}>  
+                                            { info.cat == 'Quizzes' && progress.final &&  <Typography variant="h4" className={classes.impNum}>  
                                                 {progress && roundeWithDec(progress.number * info.reward)} {Api.getCoinName()}
                                             </Typography> }
 
-                                            { info.cat == 'Quizzes' && !progress.final && <Typography variant="display1" className={cx(classes.impNum, classes.impNumNotFinished)}>  
+                                            { info.cat == 'Quizzes' && !progress.final && <Typography variant="h4" className={cx(classes.impNum, classes.impNumNotFinished)}>  
                                                 - {Api.getCoinName()}
                                             </Typography> }
                                         </div>
 
                                         <div className={classes.cardBodyResult}>
 
-                                            {info && (info.blockedByUser || info.blockedEntity) && <div className={classes.unavailable}> <Typography className={classes.unavailableText} variant="display4"> Unavailable</Typography> </div>}
+                                            {info && (info.blockedByUser || info.blockedEntity) && <div className={classes.unavailable}> <Typography className={classes.unavailableText} variant="h1"> Unavailable</Typography> </div>}
                                             
-                                            {info && info.allCardsNumber > 0  &&  <Typography variant="display2" className={classes.noWrap}>
+                                            {info && info.allCardsNumber > 0  &&  <Typography variant="h3" className={classes.noWrap}>
                                                 {info.cat == 'Polls' && info.dashOutput === 'number' && `${Math.floor( progress[info.dashOutput] * 100/ info.allCardsNumber)}%` /* Bad Design */ }
                 
                                                 { /* info.cat == 'Quizzes' && info.dashOutput === 'number' && `${progress[info.dashOutput]} / ${info.allCardsNumber}` */}
@@ -471,11 +471,11 @@ export class Common extends React.Component{
 
                                             { info.cat == 'Quizzes' && progress.final && <div className={classes.noWrap}>
                                                 <Icon className={classes.statusIconCheck} >check_circle</Icon>  
-                                                <Typography variant="title" >Completed</Typography> 
+                                                <Typography variant="h6" >Completed</Typography> 
                                             </div>}
                                             { info.cat == 'Quizzes' && !progress.final && <div className={classes.noWrap}>
                                                     <Icon className={classes.statusIconWarning} >warning</Icon>
-                                                    <Typography variant="title" >Not finished</Typography> 
+                                                    <Typography variant="h6" >Not finished</Typography> 
                                             </div>}
                                             { info.cat == 'Quizzes' && progress && progress.final && <div className={classes.noWrap}>
                                                 <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small"  style={{textDecoration: 'none'}} href={slug.replace('/v1','')} >
@@ -495,11 +495,11 @@ export class Common extends React.Component{
                                             { info.cat == 'Quizzes' && <div className={classes.space2}></div>}
                                             <div className={classes.share}>
                                                 {!isLiked &&
-                                                <Typography variant="body1" gutterBottom className={classes.resHeader}>
+                                                <Typography variant="body2" gutterBottom className={classes.resHeader}>
                                                     Share and get +0.5 {Api.getCoinName()}:
                                                 </Typography>}
                                                 {isLiked &&
-                                                <Typography gutterBottom variant="body1" className={classes.resHeader}>
+                                                <Typography gutterBottom variant="body2" className={classes.resHeader}>
                                                     Share with your friends:
                                                 </Typography>}
                                                 <Share link={`${window.location.protocol}//${window.location.host}${slug.replace('/v1','')}`} update={this.getProgress} cardSlug={slug} title={this.socTitle} description={this.socDescription} image={this.socImage}/>
@@ -509,7 +509,7 @@ export class Common extends React.Component{
                             }) }
                             <div key={`create-${idx}`} className={cx(classes.createCard, cat.toLowerCase())}>
                                 <Link className={classes.createLink} to='/contact'></Link>
-                                <Typography gutterBottom variant="body1" className={classes.createTitle}>
+                                <Typography gutterBottom variant="body2" className={classes.createTitle}>
                                     Create your own {cat.toLowerCase()}
                                 </Typography>
                             </div>
@@ -1007,7 +1007,7 @@ export class Profile extends React.Component{
        
             <div className={classes.card}>
                 <div ref='header' className={classes.header}>
-                    <Typography variant="display1" className={classes.title}>
+                    <Typography variant="h4" className={classes.title}>
                         Profile
                     </Typography>
                     <span className={classes.delimeter}></span>
@@ -1019,22 +1019,22 @@ export class Profile extends React.Component{
                             <img src={Auth.photoURL} />
                         </div>
                         <div className={classes.accountDetails}>
-                            <Typography className={classes.accountName} variant="body1" gutterBottom>
+                            <Typography className={classes.accountName} variant="body2" gutterBottom>
                                     {Auth.displayName}
                             </Typography>
                    
-                            <Typography className={classes.accountEmail} variant="body1" gutterBottom>
+                            <Typography className={classes.accountEmail} variant="body2" gutterBottom>
                                     {Auth.email}
                             </Typography>
                         </div>
                         <div className={classes.accountImp}>
-                            <Typography variant="display1" className={classes.accountImpVal} > { roundeWithDec(this.totalIMP) } </Typography>
-                            <Typography variant="display1" className={classes.accountImpAddon} >{Api.getCoinName()}</Typography>
+                            <Typography variant="h4" className={classes.accountImpVal} > { roundeWithDec(this.totalIMP) } </Typography>
+                            <Typography variant="h4" className={classes.accountImpAddon} >{Api.getCoinName()}</Typography>
                         </div>
                     </div>
                     <Divider className={classes.divider} />
 
-                    <Typography variant="body1" className={classes.headerField + ' ' + classes.bold} >Your Impleum wallet address:
+                    <Typography variant="body2" className={classes.headerField + ' ' + classes.bold} >Your Impleum wallet address:
                     </Typography>
                     { !this.enteder && <form onSubmit={this.setEntered} noValidate autoComplete="off"> 
                         <TextField
@@ -1058,10 +1058,10 @@ export class Profile extends React.Component{
                         </Button>}
 
                     { this.enteder &&  <div className={classes.walletSetWrapper} >
-                            <Typography variant="body1" className={classes.walletSet} >{this.wallet}</Typography>
+                            <Typography variant="body2" className={classes.walletSet} >{this.wallet}</Typography>
                             <Button color="primary" size="small" className={classes.editBtn} onClick={this.edit}>
                                 <Icon>create</Icon>    
-                                <Typography  className={classes.editBtnTypo}  variant="body1">Edit</Typography>
+                                <Typography  className={classes.editBtnTypo}  variant="body2">Edit</Typography>
                             </Button>
                         </div>}
 
@@ -1073,7 +1073,7 @@ export class Profile extends React.Component{
 
                     <a href="https://impleum.com/wallet/" target="_blank" className={classes.getIMP}>
                         <img className={classes.getIMPmark} src={info} />  
-                        <Typography className={classes.getIMPtext} variant="body1">
+                        <Typography className={classes.getIMPtext} variant="body2">
                                 Get Impleum wallet here
                         </Typography>
                     </a>
@@ -1086,7 +1086,7 @@ export class Profile extends React.Component{
             </div>
             { /* <div className={classes.card}>
                 <div ref='header' className={classes.header}>
-                    <Typography variant="display1" className={classes.title}>
+                    <Typography variant="h4" className={classes.title}>
                         My Data
                     </Typography>
                     <span className={classes.delimeter}></span>
@@ -1376,25 +1376,25 @@ export class History extends React.Component{
                 <div ref='header' className={classes.header}>
                     <div className={classes.row}>
                         <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
-                            <Typography  align="left" variant="display1" className={classes.bold}>
+                            <Typography  align="left" variant="h4" className={classes.bold}>
                                     Wallet
                             </Typography>
                         </div>
                         <span className={classes.delimeter}></span>
                         <div className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                     Amount, {Api.getCoinName()}
                             </Typography>
                         </div>
                         <span className={classes.delimeter}></span>
                         <div style={{width: '250px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                     Date
                             </Typography>
                         </div>
                         <span className={classes.delimeter}></span>
                         <div style={{width: '150px'}} className={classes.col}>
-                            <Typography variant="display1" className={classes.bold}>
+                            <Typography variant="h4" className={classes.bold}>
                                     Explorer
                             </Typography>
                         </div>
@@ -1408,26 +1408,26 @@ export class History extends React.Component{
 
                                     <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
                                         <Tooltip  title={history.wallet} placement="top">
-                                            <Typography className={classes.short} variant="body1" gutterBottom>
+                                            <Typography className={classes.short} variant="body2" gutterBottom>
                                                     {history.wallet}
                                             </Typography>
                                         </Tooltip>
                                     </div>
 
                                     <div className={classes.col}>
-                                        <Typography variant="body1" gutterBottom>
+                                        <Typography variant="body2" gutterBottom>
                                                 {roundeWithDec(history.amount)}
                                         </Typography>
                                     </div>
 
                                     <div style={{width: '250px'}} className={classes.col}>
-                                        <Typography variant="body1" gutterBottom>
+                                        <Typography variant="body2" gutterBottom>
                                                 {(new Date(history.date)).getDate()} {getMonthName((new Date(history.date)).getMonth())}, {(new Date(history.date)).getFullYear()}, {(new Date(history.date)).getHours()}: {(new Date(history.date)).getMinutes()}
                                         </Typography>
                                     </div>
 
                                     <div style={{width: '150px'}} className={classes.col}>
-                                        <Typography variant="body1" gutterBottom>
+                                        <Typography variant="body2" gutterBottom>
                                             { history.responce && <a href={`https://explorer.impleum.com/tx/${history.responce.transactionId}`}
                                                 target="_blank" className={classes.explorer}><Icon>link</Icon>
                                             </a>}

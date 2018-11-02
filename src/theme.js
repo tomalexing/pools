@@ -34,9 +34,11 @@ export default {
         },
         white: {
             color: "rgba(255, 255, 255, 1)"
-        }
+        },
+        divider: "#000",
     },
     typography: {
+        useNextVariants: true,
         button: {
             fontSize: "0.875rem",
             textTransform: "none",
@@ -46,7 +48,7 @@ export default {
             color: "white",
             fontFamily: '"Montserrat" ,"Open Sans", "Helvetica", "Arial", "sans-serif"'
         },
-        title: { // h2
+        h5: { // h2
             fontSize: '1rem',
             fontFamily: '"Montserrat", "Open Sans", "Helvetica", "Arial", sans-serif',
             color: '#474e65'
@@ -56,38 +58,38 @@ export default {
             color: '#474e65',
             fontSize: '1.125rem',
         },
-        subheading: { // h3
+        subtitle1: { // h3
             color: '#797E8F',
             fontSize: '1rem',
             fontFamily: '"Montserrat", "Open Sans", "Helvetica", "Arial", sans-serif',
             color: '#474e65',
             fontWeight: 600
         },
-        body1: {
+        body2: {
             fontSize: '1rem',
             fontWeight: 400,
             color: '#474e65',
             fontFamily: '"Open Sans", "Helvetica", "Arial", sans-serif',
         },
-        display1: {
+        h4: {
             color: '#ffffff',
             fontFamily: '"Montserrat", "Open Sans", "Helvetica", "Arial", sans-serif',
             fontSize: '1rem',
             fontWeight: 400,
         },
-        display2: {
+        h3: {
             color: '#506980',
             fontFamily: '"Montserrat", "Open Sans", "Helvetica", "Arial", sans-serif',
             fontSize: 88,
             fontWeight: 200,
         },
-        display3: {
+        h2: {
             fontSize: '3rem',
             fontWeight: 400,
             color: '#fff',
             fontFamily: '"Open Sans", "Helvetica", "Arial", sans-serif',
         },
-        display4: {
+        h1: {
             fontSize: '1rem',
             fontWeight: 400,
             color: '#fff',
