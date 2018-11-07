@@ -6,7 +6,6 @@ import cn from 'classnames';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
@@ -14,7 +13,10 @@ import Paper from '@material-ui/core/Paper';
 import TableHead from '@material-ui/core/TableHead';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import EnhancedTableHead from './Table.header';
+import TableCell from '@material-ui/core/TableCell';
+import EnhancedTableCell from './Table.cell';
 import EnhancedTablePagination from './Table.pagination';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 function desc(a, b, orderBy) {
@@ -56,9 +58,24 @@ const EnhancedTableStyles = theme => ({
         whiteSpace: 'nowrap'
     },
 
+    center:{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        top:  '50%',
+        left: '50%',
+        transform: 'translateX(-50%)'
+    },
+
+    borderNone: {
+        border: 'none'
+    }
+
 })
 
 @withStyles(EnhancedTableStyles, { withTheme: true })
+@observer
 export default class EnhancedTable extends React.Component {
 
     state = {
@@ -138,9 +155,35 @@ export default class EnhancedTable extends React.Component {
         const {order, orderBy, selected, rowsPerPage, page } = this.state;
 
         const {data, classes} = this.props;
+        let {loaded} = this.props;
 
+        if(typeof this.props.loaded == 'undefined'){
+            loaded = true;
+        }
+        
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
+        if(!loaded)
+            return (
+                <Table className={classes.tableBackground}>
+
+                    <EnhancedTableHead
+                        numSelected={selected.length}
+                        order={order}
+                        orderBy={orderBy}
+                        onSelectAllClick={this.handleSelectAllClick}
+                        onRequestSort={this.handleRequestSort}
+                        rowCount={data.length}
+                        rows={this.props.rowsHeader}
+                    />
+                    <TableBody className={classes.tableBackground}>
+                        <TableRow style={{ height: 200 }}>
+                            <EnhancedTableCell className={cn(classes.borderNone)}> <div className={classes.center} > <CircularProgress color="secondary" /></div> </EnhancedTableCell>
+                        </TableRow>
+                    </TableBody>
+
+                </Table>
+                );
 
         return(
             <Table className={classes.tableBackground}>
@@ -152,15 +195,14 @@ export default class EnhancedTable extends React.Component {
                     onSelectAllClick={this.handleSelectAllClick}
                     onRequestSort={this.handleRequestSort}
                     rowCount={data.length}
-                    columns={this.props.headerColumns}
+                    rows={this.props.rowsHeader}
                 />
 
                 <TableBody className={classes.tableBackground}>
-
                 {stableSort(data, getSorting(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(this.props.innerTable)}
-                {emptyRows > 0 && (
+                { emptyRows > 0 && (
                     <TableRow style={{ height: 48 * emptyRows }}>
-                        <TableCell colSpan={6} />
+                        <EnhancedTableCell colSpan={12} />
                     </TableRow>
                 )}
                 </TableBody>

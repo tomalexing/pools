@@ -85,17 +85,19 @@ const styles = theme => ({
     },
     paper: {
         position: 'absolute',
-        maxWidth: theme.spacing.unit * 50,
-        width: '85%',
+        maxWidth: 'calc(100% - 20px)',
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[4],
-        padding: theme.spacing.unit * 2,
+        padding: theme.spacing.unit * 4,
         outline: 'none',
         borderRadius: 5,
         overflow: 'hidden',
+        maxHeight: '80%',
+        display: 'flex',
+        flexDirection: 'column',
         '& #share-modal-title': {
-            margin: `${-1 * theme.spacing.unit * 2}px ${-1 * theme.spacing.unit * 2}px 0 ${-1 * theme.spacing.unit * 2}px`,
-            padding: `${theme.spacing.unit * 1}px ${theme.spacing.unit * 2}px`,
+            margin: `${-1 * theme.spacing.unit * 4}px ${-1 * theme.spacing.unit * 4}px 0 ${-1 * theme.spacing.unit * 4}px`,
+            padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 4}px`,
             backgroundColor: theme.palette.secondary.main 
         },
         '& #share-modal-description': {
@@ -219,13 +221,14 @@ class Share extends React.Component {
                 }
 
                 <Modal
+                    id="modal"
                     aria-labelledby="share-modal-title"
                     aria-describedby="share-modal-description"
                     open={open}
                     onClose={this.handleClose}
                     >
                     <div style={this.getModalStyle()} className={classes.paper}>
-                    <Typography variant="display1" id="share-modal-title">
+                    <Typography variant="h4" id="share-modal-title">
                         Share
                     </Typography>
                     <div className={classes.socialNetworksModal}  id="share-modal-description">
@@ -352,7 +355,10 @@ class Share extends React.Component {
                                 </EmailShareButton>
                             </div> */}
                     </div>
-                    <Button size="small" variant="raised" color="secondary" className={classes.modalBtn} onClick={this.handleClose}>Close</Button>
+                    <div style={{height: '12px'}} />
+                    <div className={classes.footer}>
+                        <Button size="small" variant="contained" color="secondary" className={classes.modalBtn} onClick={this.handleClose}>Close</Button>
+                    </div>
                     </div>
                 </Modal>
              </div>

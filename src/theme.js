@@ -35,7 +35,7 @@ export default {
         white: {
             color: "rgba(255, 255, 255, 1)"
         },
-        divider: "#000",
+        divider: "#474E65",
     },
     typography: {
         useNextVariants: true,
@@ -48,17 +48,17 @@ export default {
             color: "white",
             fontFamily: '"Montserrat" ,"Open Sans", "Helvetica", "Arial", "sans-serif"'
         },
-        h5: { // h2
+        h5: { 
             fontSize: '1rem',
             fontFamily: '"Montserrat", "Open Sans", "Helvetica", "Arial", sans-serif',
             color: '#474e65'
         },
-        headline: { // h1
+        headline: { 
             fontFamily: '"Open Sans", "Helvetica", "Arial", sans-serif',
             color: '#474e65',
             fontSize: '1.125rem',
         },
-        subtitle1: { // h3
+        subtitle1: { 
             color: '#797E8F',
             fontSize: '1rem',
             fontFamily: '"Montserrat", "Open Sans", "Helvetica", "Arial", sans-serif',

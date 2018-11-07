@@ -48,15 +48,9 @@ import IMP from './../assets/IMP.svg';
 
 import info from './../assets/info.svg';
 
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableFooter from '@material-ui/core/TableFooter';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import TableHead from '@material-ui/core/TableHead';
 import EnhancedTable from './../components/Table/TableWrapper';
+import EnhancedTableCell from './../components/Table/Table.cell';
 
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
@@ -80,7 +74,9 @@ const stylesAnalytics = theme => ({
 
     cardWrapper:{
         display: 'flex',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        alignItems: 'flex-start',
+        width: '100%'
     },
 
     card:{
@@ -90,7 +86,7 @@ const stylesAnalytics = theme => ({
         marginBottom: 40,
         marginRight: 40,
         borderRadius: '8px',
-        overflow: 'hidden',
+        overflow: 'auto',
         maxWidth: '100%',
         width: 'auto',
         boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
@@ -119,158 +115,6 @@ const stylesAnalytics = theme => ({
     delimeter:{},
     impNum:{},
 
-    cardBodyResult: {
-        padding: '12px 0px',
-        backgroundColor: '#474E65',
-        overflow: 'hidden'
-    },
-
-    row: {
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        padding: '0 30px',
-        width: '100%'
-    },
-
-    col: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: 200,
-        height: 33,
-        flexShrink: 0,
-    },
-
-    btnResult: {
-        marginTop: 30,
-        borderRadius: 74
-    },
-
-    title: {
-        padding: '0 30px',
-    },
-
-    column:{
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-
-    headerResult: {
-        paddingBottom: '1rem'
-    },
-
-    noWrap:{
-        whiteSpace: 'nowrap',
-        textAlign: 'center'
-    },
-
-    center:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    analitics:{
-        display: 'flex',
-        flexDirection: 'column',
-    },
-
-    walletSetWrapper:{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: '100%',
-        overflow: 'hidden',
-        width: 480,
-        marginBottom: 7,
-        marginTop: 29
-    },
-
-    walletSet:{
-        width: 'calc(100% - 65px)',
-        display: 'inline-block',
-    },
-    
-    divider: {
-        margin: '7px 30px',
-        backgroundColor: "#bbc2d8"
-    },
-
-    headerField:{
-        margin: '20px 0 12px',
-        fontSize: 16,
-    },
-
-    bold:{
-        fontWeight: 600,
-        textAlign: 'center'
-    },
-
-    formInput:{
-        width: '90%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
-    submitBtn:{
-        float: 'right',
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    editBtn:{
-        float: 'right',
-        borderRadius: 74,
-    },
-
-    editBtnTypo:{
-        fontSize: 14,
-        fontWeight: 700
-    },
-
-    short:{
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
-        display: 'inline-block',
-        width: '100%'
-    },
-
-    firstCol:{
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        transition: 'color .5s',
-        '&:hover': {
-            color: '#FC3868',
-            cursor: 'pointer',
-        }
-    },
-    
-    delBtn:{
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    explorer: {
-        verticalAlign: 'middle',
-        lineHeight: '100%',
-        fontSize: 30,
-        color: 'white'
-    },
 
     addIMP:{
         height: '100px',
@@ -329,12 +173,38 @@ const stylesAnalytics = theme => ({
         }
     },
 
+    formInput:{
+        width: 'calc(100% - 66px)',
+        '&:after, &:hover:before': {
+            borderBottomColor: '#FC3868 !important'
+        },
+    },
+
+    formField:{
+        display: 'block',
+        width: 480,
+        '&:after': {
+            borderBottomColor: '#FC3868',
+        },
+        '@media (max-width: 600px)':{
+            width: 300,
+        }
+    },
+
+    submitBtn:{
+        float: 'right',
+        marginTop: 20,
+        marginBottom: 5,
+        borderRadius: 74,
+    },
+
     addIMPTitle: {
         textAlign: 'center'
     },
 
     link:{
-        color: 'white'
+        color: 'white',
+        textDecoration: 'none',
     },
 
     busi:{
@@ -372,6 +242,26 @@ const stylesAnalytics = theme => ({
     menuBtnIcon:{
         color: 'white'
     },
+
+    noWrap: {
+        display: 'flex',
+        alignItems: 'center',
+        whiteSpace: 'nowrap'
+    },
+
+    cell: {
+        padding: '0 10px',
+        textAlign: 'center'
+    },
+
+    borderOff: {
+        border: 'none'
+    },
+
+    center: {
+        textAlign: 'center',
+    }
+
 })
 
 const themeAnalytics = createMuiTheme( Object.assign(themeObject, {
@@ -403,6 +293,7 @@ export class Analytics extends React.Component{
     }
 
     @observable analitics = {};
+    @observable analiticsLoaded = false;
     @observable balanceIncome = 0;
     @observable processingIframe = {};
     @observable anchorEl = {};
@@ -422,8 +313,9 @@ export class Analytics extends React.Component{
             let idToken = await user.getIdToken();
 
             let fetchBody = {token: idToken};
-            let {list:analitics, d} = await Api.ourApi('getAnalytics', fetchBody);
 
+            let {list:analitics, d} = await Api.ourApi('getAnalytics', fetchBody);
+            this.analiticsLoaded = true;
             console.log(analitics, d)
 
             that.balanceIncome = await Api.ourApi('getallbalance', fetchBody);
@@ -476,6 +368,7 @@ export class Analytics extends React.Component{
         return available;
     }
 
+    @action.bound
     makeVisibleInOnlyIframe = (path, id, idx = 0) => async ({target}) => {
         if(this.processingIframe[idx]) return
         
@@ -483,8 +376,10 @@ export class Analytics extends React.Component{
         await Api.setValueInCatalog('onlyIframe', target.checked, path, id);
         await this.getAnalytics();
         this.processingIframe[idx] = false;
+
     }
 
+    @action.bound
     makeOnOff = (path, id, idx = 0) => async ({target}) => {
         if(this.processingIframe[idx]) return
 
@@ -492,6 +387,7 @@ export class Analytics extends React.Component{
         await Api.setValueInCatalog('blockedByUser', !target.checked, path, id);
         await this.getAnalytics();
         this.processingIframe[idx] = false;
+
     }
 
     getBalanceInfo(){
@@ -500,52 +396,46 @@ export class Analytics extends React.Component{
 
         return (
                 <div className={classes.card}>
-                    <div ref='header' className={classes.header}>
-                        <div className={classes.row} style={{padding: '0 10px'}}>
-                            <div style={{ width: '100px'}} className={classes.col}>
-                                <Typography  align="left" variant="h4" className={classes.bold}>
-                                    Available
-                                </Typography>
-                            </div>
-                            <span className={classes.delimeter}></span>
-                            <div style={{ alignItems: 'center', width: '100px'}} className={classes.col}>
-                                <Typography variant="h4" className={classes.bold}>
-                                    Blocked
-                                </Typography>
-                            </div>
-                            <span className={classes.delimeter}></span>
-                            <div style={{ width: '100px'}} className={classes.col}>
-                                <Typography variant="h4" className={classes.bold}>
-                                    Balance
-                                </Typography>
-                            </div>
-                        </div>
-                    </div>
-                    <div className={classes.cardBodyResult}>
-                        <div className={classes.analitics}>
-                            <div className={classes.row} style={{padding: '0 10px'}}>
 
-                                <div style={{ width: '100px'}} className={classes.col}>
-                                    <Typography variant="h1" >
-                                        {roundeWithDec(this.available)} {Api.getCoinName()}      
-                                    </Typography>
-                                </div>
-
-                                <div style={{width: '100px'}} className={classes.col}>
-                                    <Typography variant="h1" >
-                                        {roundeWithDec(this.blocked)} {Api.getCoinName()}      
-                                    </Typography>
-                                </div>
-
-                                <div style={{ width: '100px'}} className={classes.col}>
-                                    <Typography variant="h1" >
-                                        {roundeWithDec(this.balance)} {Api.getCoinName()}      
-                                    </Typography>
-                                </div>
-                            </div>    
-                        </div>
-                    </div>
-                 </div>
+                    <EnhancedTable
+                        rowsPerPage = {1}
+                        notShowPagination = {true}
+                        data = {
+                            [{
+                                'r0' : roundeWithDec(this.available),
+                                'r1' : roundeWithDec(this.blocked),
+                                'r2' : roundeWithDec(this.balance)
+                            }]
+                        }
+                        rowsHeader = {[[
+                            { id: 'r0', center: true, notAbleSort: true, padding: 'dense', label: 'Available' },
+                            { id: 'r1', center: true, notAbleSort: true, padding: 'dense', label: 'Blocked' },
+                            { id: 'r2', center: true, notAbleSort: true, padding: 'dense', label: 'Balance' },
+                        ]]}
+                        innerTable = {(row, idx) => {   
+                            return(
+                                <TableRow key={idx}>
+                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} component="th" scope="row" >
+                                        <Typography  variant="h1">
+                                            {row.r0}
+                                        </Typography>
+                                    </EnhancedTableCell>   
+                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} > 
+                                        <Typography variant="h1" >
+                                            {row.r1}
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} > 
+                                        <Typography variant="h1" >
+                                            {row.r2}
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                </TableRow>
+                            )
+                        }}
+                    />
+                  
+                </div>
         )
     }
 
@@ -562,8 +452,8 @@ export class Analytics extends React.Component{
 
     @action.bound
     copyEmbedCode = (code) => _ => {
-        
         copy(this.textareaRef);
+
     }
 
     render(){
@@ -587,7 +477,7 @@ export class Analytics extends React.Component{
 
         <MuiThemeProvider theme={themeAnalytics}>
             <div className={classes.cardWrapper} >
-            <div className={cn(classes.row, classes.nopadding)}>
+            <div className={cn(classes.cardWrapper, classes.nopadding)}>
                 { this.getBalanceInfo() }
 
                 <div className={classes.addIMP}>
@@ -596,201 +486,188 @@ export class Analytics extends React.Component{
                         Add {Api.getCoinName()}
                     </Typography>
                 </div>
+
             </div>
             <div className={classes.card}>
-                <div ref='header' className={classes.header}>
-                    <div className={classes.row}>
-                        <div style={{ alignItems: 'flex-start', width: '180px'}} className={classes.col}>
-                            <Typography  align="left" variant="h4" className={classes.bold}>
-                                Title
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                On/Off
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '80px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                Embed only
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '120px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                Reward / Share Reward
-                            </Typography>
-                        </div>
 
-                        <span className={classes.delimeter}></span>
-
-                        <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                Responses / Shares
-                            </Typography>
-                        </div>
-
-                        <span className={classes.delimeter}></span>
-
-                        <div style={{width: '150px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                Payouts / Shares
-                            </Typography>
-                        </div> 
-                        
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                Blocked
-                            </Typography>
-                        </div>
-
-                        <span className={classes.delimeter}></span>
-
-                        <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                Spent
-                            </Typography>
-                        </div>
-
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                More
-                            </Typography>
-                        </div>
-                    </div>
-                </div>
-                <div className={classes.cardBodyResult}>
-                    <div className={classes.analitics}>
-                            { Object.entries(this.analitics).sort(([_, {title:title1}], [__, {title:title2}]) => {return title1.toUpperCase() >= title2.toUpperCase(); }).map(([path, {overall, payoutsIMP, responses, title, reward, sharedReward, sharedCount, sharedPaidCount, blockedIMP , entry_path, entry_id, onlyIframe, blockedEntity, blockedByUser}], idx, analitics) => {
-                                return [<div key={`history-${idx}`} className={classes.row}>
-
-                                    <div style={{ alignItems: 'flex-start', width: '180px'}} className={classes.col}>
-                                        <Typography className={cn({[classes.short]:true, [classes.firstCol]: true})} variant="h1" >
-                                            <Link to={entry_path.replace('v1','')} className={classes.link} style={{textDecoration: 'none'}}>
-                                                <span style={{ paddingRight: '10px'}}> {title} </span>
-                                            </Link>
-                                            <Icon className={classes.link}>link</Icon>
-                                            {this.processingIframe[idx] && <div className={classes.busi}> <CircularProgress size={15} color="secondary" /></div>}
-                                        </Typography>
-                                    </div>
-
-                                    <div style={{width: '100px'}} className={classes.col}>
+                <EnhancedTable
+                    orderBy = {'last'}
+                    loaded= {this.analiticsLoaded}
+                    data = {Object.entries(this.analitics).map(([path, {overall, payoutsIMP, responses, title, reward, sharedReward, sharedCount, sharedPaidCount, blockedIMP , entry_path, entry_id, onlyIframe, blockedEntity, blockedByUser}], idx, analitics) => {
+                        return {
+                            'title': title,
+                            'entry_path': entry_path,
+                            'entry_id': entry_id,
+                            'enable': (blockedEntity ? false : !blockedByUser ),
+                            'onlyIframe': onlyIframe,
+                            'blockedEntity': blockedEntity,
+                            'reward': roundeWithDec(reward),
+                            'sharedReward': roundeWithDec(sharedReward),        
+                            'responses': responses,    
+                            'sharedCount': sharedCount,
+                            'payoutsIMP': roundeWithDec(payoutsIMP),
+                            'sharesSpend': roundeWithDec(sharedReward * sharedPaidCount),
+                            'blockedIMP': roundeWithDec(blockedIMP),
+                            'spent': roundeWithDec(payoutsIMP + sharedReward * sharedPaidCount + blockedIMP),
+                            'more': ''
+                        }
+                    })}
+                    rowsHeader = {[[
+                        { id: 'a', notAbleSort: true, padding: 'checkbox', label: '', colSpan: 1},
+                        { id: 'aa', notAbleSort: true, center: true, padding: 'checkbox', label: 'Controls', colSpan: 2},
+                        { id: 'b', notAbleSort: true, center: true, padding: 'checkbox', label: 'Reward, ' + Api.getCoinName(), colSpan: 2 },
+                        { id: 'c', notAbleSort: true, center: true, padding: 'checkbox', label: 'Number Of', colSpan: 2},
+                        { id: 'd', notAbleSort: true, center: true, padding: 'checkbox', label: 'Spent For, ' + Api.getCoinName(), colSpan: 3 },
+                        { id: 'f', notAbleSort: true, center: true, padding: 'checkbox', label: 'Σ, ' + Api.getCoinName(), colSpan: 1 },
+                        { id: 'g', notAbleSort: true, center: true, padding: 'checkbox', label: '', colSpan: 1},
+                    ],[
+                        { id: 'title', numeric: false, padding: 'checkbox', label: 'Title' },
+                        { id: 'enable', notAbleSort: true, center: true, padding: 'checkbox', label: 'On/Off' },
+                        { id: 'iframe', notAbleSort: true, center: true, padding: 'checkbox', label: 'Embed only' },
+                        { id: 'reward', center: true, padding: 'checkbox', label: 'Entity' },
+                        { id: 'sharedReward', center: true, padding: 'checkbox', label: 'Sharing' },
+                        { id: 'responses', center: true, padding: 'checkbox', label: 'Responses' },
+                        { id: 'sharedCount', center: true, padding: 'checkbox', label: 'Shares' },
+                        { id: 'payoutsIMP', center: true, padding: 'checkbox', label: 'Answers' },
+                        { id: 'sharesSpend',center: true,  padding: 'checkbox', label: ' Sharing' },
+                        { id: 'blockedIMP', center: true, padding: 'checkbox', label: 'Blocked ' },
+                        { id: 'spent', center: true, padding: 'checkbox', label: 'Spent'},
+                        { id: 'more', center: true, notAbleSort: true, padding: 'checkbox', label: 'More' },
+                    ]]}
+                    innerTable = {(row, idx) => {
+                        return(
+                            <TableRow key={idx}>
+                                <EnhancedTableCell className={classes.cell} component="th" scope="row">
+                                    <Typography className={classes.noWrap} variant="h1" >
+                                        <Link to={row.entry_path.replace('v1','')} className={classes.link} >
+                                            <span style={{ paddingRight: '10px'}}> {row.title} </span>
+                                        </Link>
+                                        <Icon className={classes.link}>link</Icon>
+                                        {that.processingIframe[idx] && <div className={classes.busi}> <CircularProgress size={15} color="secondary" /></div>}
+                                    </Typography>
+                                </EnhancedTableCell>   
+                                <EnhancedTableCell className={classes.cell} >
+                                    <Typography className={classes.noWrap} variant="h1">
                                         <Switch
-                                            checked={ (blockedEntity ? false : !blockedByUser ) }
-                                            onChange={this.makeOnOff(entry_path, entry_id, idx)}
-                                            disabled={blockedEntity}
+                                            checked={row.enable}
+                                            onChange={that.makeOnOff(row.entry_path, row.entry_id, idx)}
+                                            disabled={row.blockedEntity}
                                         />
-                                    </div>
-                                    <div style={{width: '80px'}} className={classes.col}>
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell className={classes.cell}>
+                                    <Typography className={classes.noWrap} variant="h1">
                                         <Switch
-                                            checked={onlyIframe}
-                                            onChange={this.makeVisibleInOnlyIframe(entry_path, entry_id, idx)}
+                                            checked={row.onlyIframe}
+                                            onChange={that.makeVisibleInOnlyIframe(row.entry_path, row.entry_id, idx)}
                                         />
-                                    </div>
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell className={classes.cell}> 
+                                    <Typography variant="h1" >
+                                        {row.reward}                                     
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell className={classes.cell}> 
+                                    <Typography variant="h1" >
+                                        {row.sharedReward}                                     
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell className={classes.cell}> 
+                                    <Typography variant="h1" >
+                                        {row.responses}                             
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell className={classes.cell}> 
+                                    <Typography variant="h1" >
+                                        {row.sharedCount}                                    
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell className={classes.cell}> 
+                                    <Typography variant="h1" >
+                                        {row.payoutsIMP}                                     
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell className={classes.cell}> 
+                                    <Typography variant="h1" >
+                                        {row.sharesSpend}                                     
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell className={classes.cell}> 
+                                    <Typography variant="h1" >
+                                        {row.blockedIMP}                                     
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell className={classes.cell}> 
+                                    <Typography variant="h1" >
+                                        {row.spent}                                     
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell className={classes.cell}> 
+                                    <IconButton
+                                        aria-label="More"
+                                        aria-haspopup="true"
+                                        aria-owns={that.anchorEl[idx] ? `menu#${idx}` : null}
+                                        className={classes.menuBtn}
+                                        onClick={that.handleMenuClick(idx)}>
+                                        <Icon className={classes.menuBtnIcon}>more_horiz</Icon>
+                                    </IconButton>
+                                    <Menu
+                                        id={`menu#${idx}`}
+                                        anchorEl={that.anchorEl[idx]}
+                                        open={Boolean(that.anchorEl[idx])}
+                                        onClose={that.handleMenuClose(idx)}
+                                        placement="bottom"
+                                        classes={{paper: classes.dropdown}}
+                                        PaperProps={{
+                                            style: {width: 200},
+                                        }}
+                                    >
 
-                                    <div style={{width: '120px'}} className={classes.col}>
-                                        <Typography variant="h1" >
-                                            {roundeWithDec(reward)} / {roundeWithDec(sharedReward)} {Api.getCoinName()}                                        
-                                        </Typography>
-                                    </div>
+                                        <SModal width="auto" 
+                                            title={<div dangerouslySetInnerHTML={{__html:'Embed code'}} />} 
+                                            body={
+                                                <div className={classes.textAreaWrappper}>
+                                                    <Textarea ref={that.textareaRef} value={`${window.location.protocol}//${window.location.host}/embed${row.entry_path.replace('/v1','')}`} />
+                                                    <IconButton className={classes.copyEmbedCode} style={{height: 36, width: 36}} size='small' onClick={this.copyEmbedCode(`${window.location.protocol}//${window.location.host}/embed${row.entry_path.replace('/v1','')}`)}>
+                                                        <Icon>file_copy</Icon>
+                                                    </IconButton>
+                                                </div>
+                                                } 
+                                            open={that.modalEmbedOpened[idx] || false} 
+                                            close={that.closeEmbedModal(idx)} 
+                                            full={false} zoom={false} 
+                                            
+                                        />  
 
-                                    <div style={{width: '100px'}} className={classes.col}>
-                                        <Typography variant="h1" >
-                                            {responses} / {sharedCount}
-                                        </Typography>
-                                    </div>
+                                        <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={that.openEmbedModal(idx)}>
+                                            <Typography variant="subtitle1" >
+                                                Embed code
+                                            </Typography>
+                                        </MenuItem>
 
-                                    <div style={{width: '150px'}} className={classes.col}>
-                                        <Typography variant="h1" >
-                                            {roundeWithDec(payoutsIMP)} / {roundeWithDec(sharedReward * sharedPaidCount)} {Api.getCoinName()}        
-                                        </Typography>
-                                    </div>
-
-                                    <div style={{width: '100px'}} className={classes.col}>
-                                        <Typography variant="h1" >
-                                            {roundeWithDec(blockedIMP)} {Api.getCoinName()}    
-                                        </Typography>
-                                    </div>
-
-                                    <div style={{width: '100px'}} className={classes.col}>
-                                        <Typography variant="h1" >
-                                            {roundeWithDec(payoutsIMP + sharedReward * sharedPaidCount + blockedIMP)} {Api.getCoinName()}         
-                                        </Typography>
-                                    </div> 
-
-                                    <div style={{width: '100px'}} className={classes.col}>
-                                       <IconButton
-                                            aria-label="More"
-                                            aria-haspopup="true"
-                                            aria-owns={that.anchorEl[idx] ? `menu#${idx}` : null}
-                                            className={classes.menuBtn}
-                                            onClick={that.handleMenuClick(idx)}>
-                                            <Icon className={classes.menuBtnIcon}>more_horiz</Icon>
-                                        </IconButton>
-                                        <Menu
-                                            id={`menu#${idx}`}
-                                            anchorEl={that.anchorEl[idx]}
-                                            open={Boolean(that.anchorEl[idx])}
-                                            onClose={that.handleMenuClose(idx)}
-                                            placement="bottom"
-                                            classes={{paper: classes.dropdown}}
-                                            PaperProps={{
-                                                style: {width: 200},
-                                            }}
-                                        >
-
-                                            <SModal width="100%" 
-                                                title={<div dangerouslySetInnerHTML={{__html:'Embed code'}} />} 
-                                                body={
-                                                    <div className={classes.textAreaWrappper}>
-                                                        <Textarea ref={that.textareaRef} value={`${window.location.protocol}//${window.location.host}/embed${entry_path.replace('/v1','')}`} />
-                                                        <IconButton className={classes.copyEmbedCode} style={{height: 36, width: 36}} size='small' onClick={this.copyEmbedCode(`${window.location.protocol}//${window.location.host}/embed${entry_path.replace('/v1','')}`)}>
-                                                            <Icon>file_copy</Icon>
-                                                        </IconButton>
-                                                    </div>
-                                                    } 
-                                                open={that.modalEmbedOpened[idx] || false} 
-                                                close={that.closeEmbedModal(idx)} 
-                                                full={false} zoom={false} 
-                                            />  
-
-                                            <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={that.openEmbedModal(idx)}>
+                                        <NavLink tabIndex='1' to={`/dashboard/analytics${row.entry_path.replace('v1','')}`} className={classes.menuLink}>
+                                            <MenuItem selected={false} className={classes.menuItem}>
                                                 <Typography variant="subtitle1" >
-                                                    Embed code
+                                                    Analytics
                                                 </Typography>
                                             </MenuItem>
+                                        </NavLink>
 
-                                            <NavLink tabIndex='1' to={`/dashboard/analytics${entry_path.replace('v1','')}`} className={classes.menuLink}>
-                                                <MenuItem selected={false} className={classes.menuItem}>
-                                                    <Typography variant="subtitle1" >
-                                                        Analytics
-                                                    </Typography>
-                                                </MenuItem>
-                                            </NavLink>
-
-                                            <Share link={`${window.location.protocol}//${window.location.host}${entry_path.replace('/v1','')}`} >
-                                                <MenuItem selected={false} className={classes.menuMobileItemSpacings} >
-                                                    <Typography variant="subtitle1" >
-                                                        Share
-                                                    </Typography>
-                                                </MenuItem>  
-                                             </Share>
-                                        </Menu>
-                                    </div>
-                                   
-                                </div>,
-                                analitics.length - 1 !=  idx ? <Divider key={`historydiv-${idx}`} className={classes.divider} /> : <div key={`historydiv-${idx}`}/> ]
-                                })
-                            }
-
-                            { Object.entries(this.analitics).length == 0 && <div className={classes.center}> <CircularProgress color="secondary" /></div>}
-                    </div>
-
-                </div>
+                                        <Share link={`${window.location.protocol}//${window.location.host}${row.entry_path.replace('/v1','')}`} >
+                                            <MenuItem selected={false} className={classes.menuMobileItemSpacings} >
+                                                <Typography variant="subtitle1" >
+                                                    Share
+                                                </Typography>
+                                            </MenuItem>  
+                                        </Share>
+                                    </Menu>
+                                </EnhancedTableCell>
+                            </TableRow>
+                        )
+                    }}
+                />
+                
             </div>
         </div> </MuiThemeProvider>)
     }
@@ -803,7 +680,8 @@ const stylesRequests = theme => ({
 
     cardWrapper:{
         display: 'flex',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        alignItems: 'flex-start'
     },
 
     card:{
@@ -952,13 +830,11 @@ export class Requests extends React.Component{
     @action.bound
     closeQuestionModal = id => () => {
         this.questionModal[id] = false;
-        this.forceUpdate();
     };
 
     @action.bound
     showQuestionModal = id => () => {
         this.questionModal[id] = true;
-        this.forceUpdate();
     };
 
     render(){
@@ -987,41 +863,40 @@ export class Requests extends React.Component{
                                     'last': formatedTime(Object.keys(row[0].data.body).sort((d1, d2)=>{
                                                 return new Date(d2) - new Date(d1)
                                             })[0]),
-                                    'number': Object.values(row[0].data.body).length        
-                    
+                                    'number': Object.values(row[0].data.body).length
                                 }
                             })}
-                            headerColumns = {[
-                                { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-                                { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
-                                { id: 'last', numeric: true, disablePadding: false, label: 'Last' },
-                                { id: 'number', center: true, notAbleSort: true, disablePadding: false, label: '#' },
-                            ]}
+                            rowsHeader = {[[
+                                { id: 'email', numeric: false, label: 'Email' },
+                                { id: 'name', numeric: false, label: 'Name' },
+                                { id: 'last', numeric: true, label: 'Last' },
+                                { id: 'number', center: true, notAbleSort: true, label: '#' },
+                            ]]}
                             innerTable = {(row) => {
                                 return(
                                     <TableRow key={row.email}>
-                                        <TableCell component="th" scope="row">
+                                        <EnhancedTableCell component="th" scope="row">
                                             <Typography  variant="h1">
                                                 {row.email}
                                             </Typography>
-                                        </TableCell>   
-                                        <TableCell>
+                                        </EnhancedTableCell>   
+                                        <EnhancedTableCell>
                                             <Typography className={classes.noWrap} variant="h1">
                                                 {row.name}
                                             </Typography>
-                                        </TableCell>
-                                        <TableCell numeric>
+                                        </EnhancedTableCell>
+                                        <EnhancedTableCell numeric>
                                             <Typography className={classes.noWrap} variant="h1">
                                                 {row.last}
                                             </Typography>
-                                        </TableCell>
-                                        <TableCell numeric > 
-                                            <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="raised" onClick={that.showContact(row.email)}>
+                                        </EnhancedTableCell>
+                                        <EnhancedTableCell numeric > 
+                                            <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="contained" onClick={that.showContact(row.email)}>
                                                 <Typography style={{color: '#FC3868'}} variant="button"  >
                                                     {row.number}
                                                 </Typography>
                                             </Button>
-                                        </TableCell>
+                                        </EnhancedTableCell>
                                     </TableRow>
                                 )
                             }}
@@ -1040,33 +915,33 @@ export class Requests extends React.Component{
                                     'full': question,
                                 }
                             })}
-                            headerColumns = {[
-                                { id: 'date', numeric: false, disablePadding: false, label: 'Date' },
-                                { id: 'preview', numeric: false, disablePadding: false, label: 'Preview Msg' },
-                                { id: 'full', numeric: false, disablePadding: false, label: 'Full' },
+                            rowsHeader = {[[
+                                { id: 'date', numeric: false, label: 'Date' },
+                                { id: 'preview', numeric: false, label: 'Preview Msg' },
+                                { id: 'full', numeric: false, label: 'Full' },
            
-                            ]}
+                            ]]}
                             innerTable = {(row, idx) => {
                                 return(
                                     <TableRow key={idx}>
-                                        <TableCell component="th" scope="row" >
+                                        <EnhancedTableCell component="th" scope="row" >
                                             <Typography className={classes.noWrap} variant="h1">
                                                 {formatedTime(row.date)}
                                             </Typography>
-                                        </TableCell>                          
-                                        <TableCell >
+                                        </EnhancedTableCell>                          
+                                        <EnhancedTableCell >
                                             <Typography className={classes.noWrap} variant="h1">
                                                 { row.preview }...
                                             </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="raised" onClick={that.showQuestionModal(idx)}>
+                                        </EnhancedTableCell>
+                                        <EnhancedTableCell>
+                                            <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="contained" onClick={that.showQuestionModal(idx)}>
                                                 <Icon>fullscreen</Icon>
                                             </Button>
                                             <SModal title="Question" body={
                                                 <Typography ariant="h1">{row.full}</Typography>
-                                            } open={that.questionModal[idx] || false} close={that.closeQuestionModal(idx)} />
-                                        </TableCell>
+                                            } open={that.questionModal[idx] || false} close={that.closeQuestionModal(idx)} width={'auto'}/>
+                                        </EnhancedTableCell>
                                     </TableRow>
                                 )
                             }}
@@ -1092,35 +967,35 @@ export class Requests extends React.Component{
                     
                                 }
                             })}
-                            headerColumns = {[
-                                { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-                                { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
-                                { id: 'last', numeric: true, disablePadding: false, label: 'Last' },
-                                { id: 'number', numeric: true, disablePadding: false, label: '#' },
-                            ]}
+                            rowsHeader = {[[
+                                { id: 'email', numeric: false, label: 'Email' },
+                                { id: 'name', numeric: false, label: 'Name' },
+                                { id: 'last', numeric: true, label: 'Last' },
+                                { id: 'number', numeric: true, label: '#' },
+                            ]]}
                             innerTable = {(row) => {
                                 return(
                                     <TableRow key={row.email}>
-                                        <TableCell component="th" scope="row">
+                                        <EnhancedTableCell component="th" scope="row">
                                             <Typography  variant="h1">
                                                 {row.email}
                                             </Typography>
-                                        </TableCell>   
-                                        <TableCell>
+                                        </EnhancedTableCell>   
+                                        <EnhancedTableCell>
                                             <Typography className={classes.noWrap} variant="h1">
                                                 {row.name}
                                             </Typography>
-                                        </TableCell>
-                                        <TableCell numeric>
+                                        </EnhancedTableCell>
+                                        <EnhancedTableCell numeric>
                                             <Typography className={classes.noWrap} variant="h1">
                                                 {row.last}
                                             </Typography>
-                                        </TableCell>
-                                        <TableCell numeric > 
+                                        </EnhancedTableCell>
+                                        <EnhancedTableCell numeric > 
                                             <Typography style={{color: '#FC3868'}} variant="button"  >
                                                 {row.number}
                                             </Typography>
-                                        </TableCell>
+                                        </EnhancedTableCell>
                                     </TableRow>
                                 )
                             }}
@@ -1140,23 +1015,23 @@ export class Requests extends React.Component{
                                     'date' : row[0].data.date && formatedTime(row[0].data.date)
                                 }
                             })}
-                            headerColumns = {[
-                                { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-                                { id: 'date', numeric: true, disablePadding: false, label: 'Date' },
-                            ]}
+                            rowsHeader = {[[
+                                { id: 'email', numeric: false, label: 'Email' },
+                                { id: 'date', numeric: true, label: 'Date' },
+                            ]]}
                             innerTable = {(row) => {
                                 return(
                                     <TableRow key={row.email}>
-                                        <TableCell component="th" scope="row">
+                                        <EnhancedTableCell component="th" scope="row">
                                             <Typography  variant="h1">
                                                 {row.email}
                                             </Typography>
-                                        </TableCell>   
-                                        <TableCell numeric > 
+                                        </EnhancedTableCell>   
+                                        <EnhancedTableCell numeric > 
                                             <Typography variant="h1" >
                                                 {row.date}
                                             </Typography>
-                                        </TableCell>
+                                        </EnhancedTableCell>
                                     </TableRow>
                                 )
                             }}
@@ -1219,7 +1094,6 @@ const stylesAnalyticsClick = theme => ({
 
     center: {
         textAlign: 'center',
-        padding: '4px 24px 4px 24px'
     }
 
 })
@@ -1269,29 +1143,29 @@ export class AnalyticsClick extends React.Component{
                                 'r2' : this.referrals && this.referrals.appleStore || 0
                             }]
                         }
-                        headerColumns = {[
-                            { id: 'r0', center: true, notAbleSort: true, label: 'Catalog(site)' },
-                            { id: 'r1', center: true, notAbleSort: true, label: 'Results(site)' },
-                            { id: 'r2', center: true, notAbleSort: true, label: 'Results(app)' },
-                        ]}
+                        rowsHeader = {[[
+                            { id: 'r0', center: true, padding:'checkbox', notAbleSort: true, label: 'Catalog(site)' },
+                            { id: 'r1', center: true, padding:'checkbox', notAbleSort: true, label: 'Results(site)' },
+                            { id: 'r2', center: true, padding:'checkbox', notAbleSort: true, label: 'Results(app)' },
+                        ]]}
                         innerTable = {(row, idx) => {   
                             return(
                                 <TableRow key={idx}>
-                                    <TableCell className={cn(classes.borderOff, classes.center)} component="th" scope="row" >
+                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} component="th" scope="row" >
                                         <Typography  variant="h1">
                                             {row.r0}
                                         </Typography>
-                                    </TableCell>   
-                                    <TableCell className={cn(classes.borderOff, classes.center)} > 
+                                    </EnhancedTableCell>   
+                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} > 
                                         <Typography variant="h1" >
                                             {row.r1}
                                         </Typography>
-                                    </TableCell>
-                                    <TableCell className={cn(classes.borderOff, classes.center)} > 
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} > 
                                         <Typography variant="h1" >
                                             {row.r2}
                                         </Typography>
-                                    </TableCell>
+                                    </EnhancedTableCell>
                                 </TableRow>
                             )
                         }}

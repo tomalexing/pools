@@ -13,7 +13,7 @@ function getModalStyle(props) {
   const top = 50;
   const left = 50;
 
-  const width = props.width ? width : '270px';
+  const width = props.width ? props.width : '270px';
 
   return {
     top: `${top}%`,
@@ -26,13 +26,16 @@ function getModalStyle(props) {
 const styles = theme => ({
     paper: {
         position: 'absolute',
-        maxWidth: '100%',
+        maxWidth: 'calc(100% - 20px)',
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[4],
         padding: theme.spacing.unit * 4,
         outline: 'none',
         borderRadius: 5,
         overflow: 'hidden',
+        maxHeight: '80%',
+        display: 'flex',
+        flexDirection: 'column',
         '& #simple-modal-title': {
             margin: `${-1 * theme.spacing.unit * 4}px ${-1 * theme.spacing.unit * 4}px 0 ${-1 * theme.spacing.unit * 4}px`,
             padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 4}px`,
@@ -47,6 +50,7 @@ const styles = theme => ({
             width: '100%',
             height: '100%',
             overflow: 'auto',
+            maxWidth: '100%',
             '@media (max-width: 600px)': {
                 overflow: 'hidden'
             }
@@ -88,6 +92,18 @@ const styles = theme => ({
     },
     paddingBottom4: {
         paddingBottom: theme.spacing.unit * 4
+    },
+
+    scroll:{
+        overflow: 'auto',
+        margin: '0 -32px',
+        padding: '0 32px',
+        height: 'calc(100% - 44px)',
+        whiteSpace: 'pre-wrap'
+    },
+
+    footer:{
+        
     }
 });
 
@@ -257,8 +273,9 @@ class SimpleModal extends React.Component {
     const { open } = this.state;
 
     return (
-      <div>
+      <div >
         <Modal
+          id="modal"
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={open}
@@ -273,18 +290,20 @@ class SimpleModal extends React.Component {
                     {this.props.body}
                     </PinchView></div>
                     : 
-                    <div>
+                    <div className={classes.scroll}>
                         {this.props.body}
                     </div>
                 :
-                <div>
+                <div className={classes.scroll}>
                     <Typography variant="subtitle1" id="simple-modal-description">
                         {this.props.body}
                     </Typography>
                 </div>
             }
             <div style={{height: '12px'}} />
-            <Button size={this.props.full?'large':'small'} variant="raised" color="secondary" classes={{label: classes.label}} className={classes.closeModal} onClick={this.closeModal}>Close</Button>
+            <div className={classes.footer}>
+                <Button size={this.props.full?'large':'small'} variant="contained" color="secondary" classes={{label: classes.label}} className={classes.closeModal} onClick={this.closeModal}>Close</Button>
+            </div>
           </div>
         </Modal>
       </div>

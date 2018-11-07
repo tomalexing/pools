@@ -9,7 +9,7 @@ import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 
-import { listener, getMonthName, roundeWithDec, loadScript, copy } from './../utils';
+import { listener, getMonthName, roundeWithDec, loadScript, copy, formatedTime } from './../utils';
 
 import {Route, Redirect, Link, withRouter} from 'react-router-dom';
 import {NavLink} from './../components/NavLink';
@@ -43,12 +43,10 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import themeObject from './../theme.js';
 
-import BTC from './../assets/BTC.svg';
-import IMP from './../assets/IMP.svg';
-
-import info from './../assets/info.svg';
-
-import Explore  from './Explore.js';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import EnhancedTable from './../components/Table/TableWrapper';
+import EnhancedTableCell from './../components/Table/Table.cell';
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
   (!redirect
@@ -477,7 +475,7 @@ export class Profile extends React.Component{
                         </div>  
                     </div>
                     <div className={classes.row} >
-                        <Button variant="raised" color="secondary" className={classes.submitBtn} href={'/dashboard/profile'}>
+                        <Button variant="contained" color="secondary" className={classes.submitBtn} href={'/dashboard/profile'}>
                             <Typography variant="button" >Add {Api.getCoinName()} </Typography>
                         </Button>
                     </div>  
@@ -555,7 +553,7 @@ export class Profile extends React.Component{
                             
                             <Textarea ref={this.walletRef} value={this.wallet} />
 
-                            <Button variant="raised" color="secondary" className={classes.submitBtn} onClick={this.copy}>
+                            <Button variant="contained" color="secondary" className={classes.submitBtn} onClick={this.copy}>
                                 <Typography variant="button" >Copy</Typography>
                             </Button>
                         </div>
@@ -573,7 +571,9 @@ const stylesDashboard = theme => ({
 
     cardWrapper:{
         display: 'flex',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        alignItems: 'flex-start',
+        width: '100%'
     },
 
     card:{
@@ -583,7 +583,7 @@ const stylesDashboard = theme => ({
         marginBottom: 40,
         marginRight: 40,
         borderRadius: '8px',
-        overflow: 'hidden',
+        overflow: 'auto',
         maxWidth: '100%',
         width: 'auto',
         boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
@@ -612,158 +612,6 @@ const stylesDashboard = theme => ({
     delimeter:{},
     impNum:{},
 
-    cardBodyResult: {
-        padding: '12px 0px',
-        backgroundColor: '#474E65',
-        overflow: 'hidden'
-    },
-
-    row: {
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        padding: '0 30px',
-        width: '100%'
-    },
-
-    col: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: 200,
-        height: 33,
-        flexShrink: 0,
-    },
-
-    btnResult: {
-        marginTop: 30,
-        borderRadius: 74
-    },
-
-    title: {
-        padding: '0 30px',
-    },
-
-    column:{
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-
-    headerResult: {
-        paddingBottom: '1rem'
-    },
-
-    noWrap:{
-        whiteSpace: 'nowrap',
-        textAlign: 'center'
-    },
-
-    center:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    analitics:{
-        display: 'flex',
-        flexDirection: 'column',
-    },
-
-    walletSetWrapper:{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: '100%',
-        overflow: 'hidden',
-        width: 480,
-        marginBottom: 7,
-        marginTop: 29
-    },
-
-    walletSet:{
-        width: 'calc(100% - 65px)',
-        display: 'inline-block',
-    },
-    
-    divider: {
-        margin: '7px 30px',
-        backgroundColor: "#bbc2d8"
-    },
-
-    headerField:{
-        margin: '20px 0 12px',
-        fontSize: 16,
-    },
-
-    bold:{
-        fontWeight: 600,
-        textAlign: 'center'
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
-    submitBtn:{
-        float: 'right',
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    editBtn:{
-        float: 'right',
-        borderRadius: 74,
-    },
-
-    editBtnTypo:{
-        fontSize: 14,
-        fontWeight: 700
-    },
-
-    short:{
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
-        display: 'inline-block',
-        width: '100%'
-    },
-
-    firstCol:{
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        transition: 'color .5s',
-        '&:hover': {
-            color: '#FC3868',
-            cursor: 'pointer',
-        }
-    },
-    
-    delBtn:{
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    explorer: {
-        verticalAlign: 'middle',
-        lineHeight: '100%',
-        fontSize: 30,
-        color: 'white'
-    },
 
     addIMP:{
         height: '100px',
@@ -822,33 +670,9 @@ const stylesDashboard = theme => ({
         }
     },
 
-    addIMPTitle: {
-        textAlign: 'center'
-    },
-
-
-    link:{
-        color: 'white'
-    },
-
-    busi:{
-        display: 'inline-block',
-        paddingLeft: '20px'
-    },
-    
-    dropdown:{
-//        marginTop: '40px !important',
-        width: '200px',
-        borderRadius: '8px'
-    },
-
-    textarea:{
-        width: '100%',
-        height: '112px'
-    },
 
     formInput:{
-        width: '100%',
+        width: 'calc(100% - 66px)',
         '&:after, &:hover:before': {
             borderBottomColor: '#FC3868 !important'
         },
@@ -857,12 +681,35 @@ const stylesDashboard = theme => ({
     formField:{
         display: 'block',
         width: 480,
-        maxWidth: '88%',
         '&:after': {
             borderBottomColor: '#FC3868',
         },
+        '@media (max-width: 600px)':{
+            width: 300,
+        }
     },
 
+    submitBtn:{
+        float: 'right',
+        marginTop: 20,
+        marginBottom: 5,
+        borderRadius: 74,
+    },
+
+    addIMPTitle: {
+        textAlign: 'center'
+    },
+
+    link:{
+        color: 'white',
+        textDecoration: 'none',
+    },
+
+    busi:{
+        display: 'inline-block',
+        paddingLeft: '20px'
+    },
+    
     nopadding: {
         padding: 0
     },
@@ -893,6 +740,25 @@ const stylesDashboard = theme => ({
     menuBtnIcon:{
         color: 'white'
     },
+
+    noWrap: {
+        display: 'flex',
+        alignItems: 'center',
+        whiteSpace: 'nowrap'
+    },
+
+    cell: {
+        padding: '0 10px',
+        textAlign: 'center'
+    },
+
+    borderOff: {
+        border: 'none'
+    },
+
+    center: {
+        textAlign: 'center',
+    }
 })
 
 const themeAnalytics = createMuiTheme( Object.assign(themeObject, {
@@ -924,6 +790,7 @@ export class Dashboard extends React.Component{
     }
 
     @observable analitics = {};
+    @observable analiticsLoaded = false;
     @observable balanceIncome = 0;
     @observable processingIframe = {};
     @observable anchorEl = {};
@@ -944,6 +811,7 @@ export class Dashboard extends React.Component{
 
             let fetchBody = {token: idToken, uid: Auth.uid};
             let {list:analitics, d} = await Api.ourApi('getAnalytic', fetchBody);
+            this.analiticsLoaded = true;
 
             //console.log(analitics, d)
 
@@ -1021,51 +889,43 @@ export class Dashboard extends React.Component{
 
         return (
                 <div className={classes.card}>
-                    <div ref='header' className={classes.header}>
-                        <div className={classes.row} style={{padding: '0 10px'}}>
-                            <div style={{ width: '100px'}} className={classes.col}>
-                                <Typography  align="left" variant="h4" className={classes.bold}>
-                                    Available
-                                </Typography>
-                            </div>
-                            <span className={classes.delimeter}></span>
-                            <div style={{ alignItems: 'center', width: '100px'}} className={classes.col}>
-                                <Typography variant="h4" className={classes.bold}>
-                                    Blocked
-                                </Typography>
-                            </div>
-                            <span className={classes.delimeter}></span>
-                            <div style={{ width: '100px'}} className={classes.col}>
-                                <Typography variant="h4" className={classes.bold}>
-                                    Balance
-                                </Typography>
-                            </div>
-                        </div>
-                    </div>
-                    <div className={classes.cardBodyResult}>
-                        <div className={classes.analitics}>
-                            <div className={classes.row} style={{padding: '0 10px'}}>
-
-                                <div style={{ width: '100px'}} className={classes.col}>
-                                    <Typography variant="h1" >
-                                        {roundeWithDec(this.available)} {Api.getCoinName()}      
-                                    </Typography>
-                                </div>
-
-                                <div style={{width: '100px'}} className={classes.col}>
-                                    <Typography variant="h1" >
-                                        {roundeWithDec(this.blocked)} {Api.getCoinName()}      
-                                    </Typography>
-                                </div>
-
-                                <div style={{ width: '100px'}} className={classes.col}>
-                                    <Typography variant="h1" >
-                                        {roundeWithDec(this.balance)} {Api.getCoinName()}      
-                                    </Typography>
-                                </div>
-                            </div>    
-                        </div>
-                    </div>
+                    <EnhancedTable
+                        rowsPerPage = {1}
+                        notShowPagination = {true}
+                        data = {
+                            [{
+                                'r0' : roundeWithDec(this.available),
+                                'r1' : roundeWithDec(this.blocked),
+                                'r2' : roundeWithDec(this.balance)
+                            }]
+                        }
+                        rowsHeader = {[[
+                            { id: 'r0', center: true, notAbleSort: true, padding: 'dense', label: 'Available' },
+                            { id: 'r1', center: true, notAbleSort: true, padding: 'dense', label: 'Blocked' },
+                            { id: 'r2', center: true, notAbleSort: true, padding: 'dense', label: 'Balance' },
+                        ]]}
+                        innerTable = {(row, idx) => {   
+                            return(
+                                <TableRow key={idx}>
+                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} component="th" scope="row" >
+                                        <Typography  variant="h1">
+                                            {row.r0}
+                                        </Typography>
+                                    </EnhancedTableCell>   
+                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} > 
+                                        <Typography variant="h1" >
+                                            {row.r1}
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} > 
+                                        <Typography variant="h1" >
+                                            {row.r2}
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                </TableRow>
+                            )
+                        }}
+                    />
                  </div>
         )
     }
@@ -1108,143 +968,133 @@ export class Dashboard extends React.Component{
 
         <MuiThemeProvider theme={themeAnalytics}>
             <div className={classes.cardWrapper} >
-            <div className={cn(classes.row, classes.nopadding)}>
-                { this.getBalanceInfo() }
+                <div className={cn(classes.cardWrapper, classes.nopadding)}>
+                    { this.getBalanceInfo() }
 
-                <div className={classes.addIMP}>
-                    <Link className={classes.addIMPLink} to='/dashboard/profile'></Link>
-                    <Typography  variant="body2" className={classes.addIMPTitle}>
-                        Add {Api.getCoinName()}
-                    </Typography>
-                </div>
-            </div>
-            <div className={classes.card}>
-                <div ref='header' className={classes.header}>
-                    <div className={classes.row}>
-                        <div style={{ alignItems: 'flex-start', width: '180px'}} className={classes.col}>
-                            <Typography  align="left" variant="h4" className={classes.bold}>
-                                Title
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                On/Off
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '80px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                Embed only
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '120px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                Reward / Share Reward
-                            </Typography>
-                        </div>
-
-                        <span className={classes.delimeter}></span>
-
-                        <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                Responses / Shares
-                            </Typography>
-                        </div>
-
-                        <span className={classes.delimeter}></span>
-
-                        <div style={{width: '150px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                Payouts / Shares
-                            </Typography>
-                        </div> 
-                        
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                Blocked
-                            </Typography>
-                        </div>
-
-                        <span className={classes.delimeter}></span>
-
-                        <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                Spent
-                            </Typography>
-                        </div>
-
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '100px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                More
-                            </Typography>
-                        </div>
+                    <div className={classes.addIMP}>
+                        <Link className={classes.addIMPLink} to='/contact'></Link>
+                        <Typography  variant="body2" className={classes.addIMPTitle}>
+                            Add {Api.getCoinName()}
+                        </Typography>
                     </div>
-                </div>
-                <div className={classes.cardBodyResult}>
-                    <div className={classes.analitics}>
-                            { Object.entries(this.analitics).sort(([_, {title:title1}], [__, {title:title2}]) => {return title1.toUpperCase() >= title2.toUpperCase(); }).map(([path, {overall, payoutsIMP, responses, title, reward, sharedReward, sharedCount, sharedPaidCount, blockedIMP , entry_path, entry_id, onlyIframe, blockedEntity, blockedByUser}], idx, analitics) => {
-                                return [<div key={`history-${idx}`} className={classes.row}>
 
-                                    <div style={{ alignItems: 'flex-start', width: '180px'}} className={classes.col}>
-                                        <Typography className={cn({[classes.short]:true, [classes.firstCol]: true})} variant="h1" >
-                                            <Link to={entry_path.replace('v1','')} className={classes.link} style={{textDecoration: 'none'}}>
-                                                <span style={{ paddingRight: '10px'}}> {title} </span>
+                </div>
+                <div className={classes.card}>
+                    <EnhancedTable
+                        orderBy = {'last'}
+                        loaded= {this.analiticsLoaded}
+                        data = {Object.entries(this.analitics).map(([path, {overall, payoutsIMP, responses, title, reward, sharedReward, sharedCount, sharedPaidCount, blockedIMP , entry_path, entry_id, onlyIframe, blockedEntity, blockedByUser}], idx, analitics) => {
+                            return {
+                                'title': title,
+                                'entry_path': entry_path,
+                                'entry_id': entry_id,
+                                'enable': (blockedEntity ? false : !blockedByUser ),
+                                'onlyIframe': onlyIframe,
+                                'blockedEntity': blockedEntity,
+                                'reward': roundeWithDec(reward),
+                                'sharedReward': roundeWithDec(sharedReward),        
+                                'responses': responses,    
+                                'sharedCount': sharedCount,
+                                'payoutsIMP': roundeWithDec(payoutsIMP),
+                                'sharesSpend': roundeWithDec(sharedReward * sharedPaidCount),
+                                'blockedIMP': roundeWithDec(blockedIMP),
+                                'spent': roundeWithDec(payoutsIMP + sharedReward * sharedPaidCount + blockedIMP),
+                                'more': ''
+                            }
+                        })}
+                        rowsHeader = {[[
+                            { id: 'a', notAbleSort: true, padding: 'checkbox', label: '', colSpan: 1},
+                            { id: 'aa', notAbleSort: true, center: true, padding: 'checkbox', label: 'Controls', colSpan: 2},
+                            { id: 'b', notAbleSort: true, center: true, padding: 'checkbox', label: 'Reward, ' + Api.getCoinName(), colSpan: 2 },
+                            { id: 'c', notAbleSort: true, center: true, padding: 'checkbox', label: 'Number Of', colSpan: 2},
+                            { id: 'd', notAbleSort: true, center: true, padding: 'checkbox', label: 'Spent For, ' + Api.getCoinName(), colSpan: 3 },
+                            { id: 'f', notAbleSort: true, center: true, padding: 'checkbox', label: 'Σ, ' + Api.getCoinName(), colSpan: 1 },
+                            { id: 'g', notAbleSort: true, center: true, padding: 'checkbox', label: '', colSpan: 1},
+                        ],[
+                            { id: 'title', numeric: false, padding: 'checkbox', label: 'Title' },
+                            { id: 'enable', notAbleSort: true, center: true, padding: 'checkbox', label: 'On/Off' },
+                            { id: 'iframe', notAbleSort: true, center: true, padding: 'checkbox', label: 'Embed only' },
+                            { id: 'reward', center: true, padding: 'checkbox', label: 'Entity' },
+                            { id: 'sharedReward', center: true, padding: 'checkbox', label: 'Sharing' },
+                            { id: 'responses', center: true, padding: 'checkbox', label: 'Responses' },
+                            { id: 'sharedCount', center: true, padding: 'checkbox', label: 'Shares' },
+                            { id: 'payoutsIMP', center: true, padding: 'checkbox', label: 'Answers' },
+                            { id: 'sharesSpend',center: true,  padding: 'checkbox', label: ' Sharing' },
+                            { id: 'blockedIMP', center: true, padding: 'checkbox', label: 'Blocked ' },
+                            { id: 'spent', center: true, padding: 'checkbox', label: 'Spent'},
+                            { id: 'more', center: true, notAbleSort: true, padding: 'checkbox', label: 'More' },
+                        ]]}
+                        innerTable = {(row, idx) => {
+                            return(
+                                <TableRow key={idx}>
+                                    <EnhancedTableCell className={classes.cell} component="th" scope="row">
+                                        <Typography className={classes.noWrap} variant="h1" >
+                                            <Link to={row.entry_path.replace('v1','')} className={classes.link} >
+                                                <span style={{ paddingRight: '10px'}}> {row.title} </span>
                                             </Link>
                                             <Icon className={classes.link}>link</Icon>
-                                            {this.processingIframe[idx] && <div className={classes.busi}> <CircularProgress size={15} color="secondary" /></div>}
+                                            {that.processingIframe[idx] && <div className={classes.busi}> <CircularProgress size={15} color="secondary" /></div>}
                                         </Typography>
-                                    </div>
-
-                                    <div style={{width: '100px'}} className={classes.col}>
-                                        <Switch
-                                            checked={ (blockedEntity ? false : !blockedByUser ) }
-                                            onChange={this.makeOnOff(entry_path, entry_id, idx)}
-                                            disabled={blockedEntity}
-                                        />
-                                    </div>
-                                    <div style={{width: '80px'}} className={classes.col}>
-                                        <Switch
-                                            checked={onlyIframe}
-                                            onChange={this.makeVisibleInOnlyIframe(entry_path, entry_id, idx)}
-                                        />
-                                    </div>
-
-                                    <div style={{width: '120px'}} className={classes.col}>
+                                    </EnhancedTableCell>   
+                                    <EnhancedTableCell className={classes.cell} >
+                                        <Typography className={classes.noWrap} variant="h1">
+                                            <Switch
+                                                checked={row.enable}
+                                                onChange={that.makeOnOff(row.entry_path, row.entry_id, idx)}
+                                                disabled={row.blockedEntity}
+                                            />
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={classes.cell}>
+                                        <Typography className={classes.noWrap} variant="h1">
+                                            <Switch
+                                                checked={row.onlyIframe}
+                                                onChange={that.makeVisibleInOnlyIframe(row.entry_path, row.entry_id, idx)}
+                                            />
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={classes.cell}> 
                                         <Typography variant="h1" >
-                                            {roundeWithDec(reward)} / {roundeWithDec(sharedReward)} {Api.getCoinName()}                                        
+                                            {row.reward}                                     
                                         </Typography>
-                                    </div>
-
-                                    <div style={{width: '100px'}} className={classes.col}>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={classes.cell}> 
                                         <Typography variant="h1" >
-                                            {responses} / {sharedCount}
+                                            {row.sharedReward}                                     
                                         </Typography>
-                                    </div>
-
-                                    <div style={{width: '150px'}} className={classes.col}>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={classes.cell}> 
                                         <Typography variant="h1" >
-                                            {roundeWithDec(payoutsIMP)} / {roundeWithDec(sharedReward * sharedPaidCount)} {Api.getCoinName()}        
+                                            {row.responses}                             
                                         </Typography>
-                                    </div>
-
-                                    <div style={{width: '100px'}} className={classes.col}>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={classes.cell}> 
                                         <Typography variant="h1" >
-                                            {roundeWithDec(blockedIMP)} {Api.getCoinName()}    
+                                            {row.sharedCount}                                    
                                         </Typography>
-                                    </div>
-
-                                    <div style={{width: '100px'}} className={classes.col}>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={classes.cell}> 
                                         <Typography variant="h1" >
-                                            {roundeWithDec(payoutsIMP + sharedReward * sharedPaidCount + blockedIMP)} {Api.getCoinName()}         
+                                            {row.payoutsIMP}                                     
                                         </Typography>
-                                    </div> 
-
-                                    <div style={{width: '100px'}} className={classes.col}>
-                                       <IconButton
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={classes.cell}> 
+                                        <Typography variant="h1" >
+                                            {row.sharesSpend}                                     
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={classes.cell}> 
+                                        <Typography variant="h1" >
+                                            {row.blockedIMP}                                     
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={classes.cell}> 
+                                        <Typography variant="h1" >
+                                            {row.spent}                                     
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={classes.cell}> 
+                                        <IconButton
                                             aria-label="More"
                                             aria-haspopup="true"
                                             aria-owns={that.anchorEl[idx] ? `menu#${idx}` : null}
@@ -1261,15 +1111,15 @@ export class Dashboard extends React.Component{
                                             classes={{paper: classes.dropdown}}
                                             PaperProps={{
                                                 style: {width: 200},
-                                            }}
+                                            }}v
                                         >
 
-                                            <SModal width="100%" 
+                                            <SModal
                                                 title={<div dangerouslySetInnerHTML={{__html:'Embed code'}} />} 
                                                 body={
                                                     <div className={classes.textAreaWrappper}>
-                                                        <Textarea ref={that.textareaRef} value={`${window.location.protocol}//${window.location.host}/embed${entry_path.replace('/v1','')}`} />
-                                                        <IconButton className={classes.copyEmbedCode} style={{height: 36, width: 36}} size='small' onClick={this.copyEmbedCode(`${window.location.protocol}//${window.location.host}/embed${entry_path.replace('/v1','')}`)}>
+                                                        <Textarea ref={that.textareaRef} value={`${window.location.protocol}//${window.location.host}/embed${row.entry_path.replace('/v1','')}`} />
+                                                        <IconButton className={classes.copyEmbedCode} style={{height: 36, width: 36}} size='small' onClick={this.copyEmbedCode(`${window.location.protocol}//${window.location.host}/embed${row.entry_path.replace('/v1','')}`)}>
                                                             <Icon>file_copy</Icon>
                                                         </IconButton>
                                                     </div>
@@ -1277,15 +1127,16 @@ export class Dashboard extends React.Component{
                                                 open={that.modalEmbedOpened[idx] || false} 
                                                 close={that.closeEmbedModal(idx)} 
                                                 full={false} zoom={false} 
+                                                width="auto" 
                                             />  
 
-                                            <MenuItem selected={false} className={classes.menuItem} onClick={that.openEmbedModal(idx)}>
+                                            <MenuItem selected={false} className={classes.menuMobileItemSpacings} onClick={that.openEmbedModal(idx)}>
                                                 <Typography variant="subtitle1" >
                                                     Embed code
                                                 </Typography>
                                             </MenuItem>
 
-                                            <NavLink tabIndex='1' to={`/dashboard/analytics${entry_path.replace('v1','')}`} className={classes.menuLink}>
+                                            <NavLink tabIndex='1' to={`/dashboard/analytics${row.entry_path.replace('v1','')}`} className={classes.menuLink}>
                                                 <MenuItem selected={false} className={classes.menuItem}>
                                                     <Typography variant="subtitle1" >
                                                         Analytics
@@ -1293,27 +1144,22 @@ export class Dashboard extends React.Component{
                                                 </MenuItem>
                                             </NavLink>
 
-                                            <Share link={`${window.location.protocol}//${window.location.host}${entry_path.replace('/v1','')}`} >
-                                                <MenuItem selected={false} className={classes.menuItem} >
+                                            <Share link={`${window.location.protocol}//${window.location.host}${row.entry_path.replace('/v1','')}`} >
+                                                <MenuItem selected={false} className={classes.menuMobileItemSpacings} >
                                                     <Typography variant="subtitle1" >
                                                         Share
                                                     </Typography>
                                                 </MenuItem>  
-                                             </Share>
+                                            </Share>
                                         </Menu>
-                                    </div>
-                                   
-                                </div>,
-                                analitics.length - 1 !=  idx ? <Divider key={`historydiv-${idx}`} className={classes.divider} /> : <div key={`historydiv-${idx}`}/> ]
-                                })
-                            }
-
-                            { Object.entries(this.analitics).length == 0 && <div className={classes.center}> <CircularProgress color="secondary" /></div>}
-                    </div>
-
+                                    </EnhancedTableCell>
+                                </TableRow>
+                            )
+                        }}
+                    />
                 </div>
-            </div>
-        </div> </MuiThemeProvider>)
+            </div> 
+        </MuiThemeProvider>)
     }
 }
 
@@ -1324,7 +1170,8 @@ const stylesHistory = theme => ({
 
     cardWrapper:{
         display: 'flex',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        maxWidth: '100%'
     },
 
     container:{
@@ -1340,179 +1187,10 @@ const stylesHistory = theme => ({
         marginBottom: 40,
         marginRight: 40,
         borderRadius: '8px',
-        overflow: 'hidden',
+        overflow: 'auto',
         maxWidth: '100%',
         width: 'auto',
         boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
-    },
-
-    header:{
-        color: 'white',
-        background: '#FC3868',
-        fontWeight: 100,
-        display: 'flex',
-        height: 40,
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        overflow: 'hidden',
-        '& $delimeter': {
-            background: 'rgba(0, 0, 0, 0.1)',
-            height: '100px',
-            width: 1,
-            margin: '-50px 0'
-        },
-        '& $impNum':{
-            padding: '0 10px'
-        }
-    },
-    
-    delimeter:{},
-    impNum:{},
-
-    cardBodyResult: {
-        padding: '12px 0px',
-        backgroundColor: '#474E65',
-        overflow: 'hidden'
-    },
-
-    row: {
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        padding: '0 30px',
-        width: '100%'
-    },
-
-    col: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: 200,
-        height: 33,
-        flexShrink: 0,
-    },
-
-    btnResult: {
-        marginTop: 30,
-        borderRadius: 74
-    },
-
-    title: {
-        padding: '0 30px',
-    },
-
-    column:{
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-
-    headerResult: {
-        paddingBottom: '1rem'
-    },
-
-    noWrap:{
-        whiteSpace: 'nowrap',
-        textAlign: 'center'
-    },
-
-    center:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    analitics:{
-        display: 'flex',
-        flexDirection: 'column',
-    },
-
-    walletSetWrapper:{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: '100%',
-        overflow: 'hidden',
-        width: 480,
-        marginBottom: 7,
-        marginTop: 29
-    },
-
-    walletSet:{
-        width: 'calc(100% - 65px)',
-        display: 'inline-block',
-    },
-    
-    divider: {
-        margin: '7px 30px',
-        backgroundColor: "#bbc2d8"
-    },
-
-    headerField:{
-        margin: '20px 0 12px',
-        fontSize: 16,
-    },
-
-    bold:{
-        fontWeight: 600,
-        textAlign: 'center'
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
-    submitBtn:{
-        float: 'right',
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    editBtn:{
-        float: 'right',
-        borderRadius: 74,
-    },
-
-    editBtnTypo:{
-        fontSize: 14,
-        fontWeight: 700
-    },
-
-    short:{
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
-        display: 'inline-block',
-        width: '100%'
-    },
-
-    firstCol:{
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        transition: 'color .5s',
-        '&:hover': {
-            color: '#FC3868',
-            cursor: 'pointer',
-        }
-    },
-    
-    delBtn:{
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
     },
 
     explorer: {
@@ -1520,121 +1198,6 @@ const stylesHistory = theme => ({
         lineHeight: '100%',
         fontSize: 30,
         color: 'white'
-    },
-
-    addIMP:{
-        height: '100px',
-        width: '100px',
-        zIndex: '100',
-        position: 'relative',
-        marginBottom: 40,
-        marginRight: 40,
-        marginLeft: 5,
-        borderRadius: '8px',
-        overflow: 'hidden', 
-        backgroundColor: '#b1b4bd',
-        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
-        '@media (max-width: 600px)':{
-            marginRight: 0
-        }
-    },
-
-    addIMPLink:{
-        display: 'block',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        backgroundColor: '#d8d9dd',
-        height: '56px',
-        width: '56px',
-        margin: '14px auto 4px',
-        position: 'relative',
-        transition: 'boxShadow .5s',
-        '&:hover': {
-            boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.1)',
-        },
-        '&:before': {
-            content: '\'\'',
-            position: 'absolute',
-            left: '8px',
-            top: '50%',
-            width: '40px',
-            height: '5px',
-            borderRadius: '14px',
-            overflow: 'hidden',
-            backgroundColor: '#506880',   
-            transform: 'translateY(-50%)' 
-        },
-
-        '&:after':{
-            content: '\'\'',
-            position: 'absolute',
-            left: '50%',
-            top: '8px',
-            height: '40px',
-            width: '5px',
-            borderRadius: '14px',
-            overflow: 'hidden',
-            backgroundColor: '#506880',   
-            transform: 'translateX(-50%)' 
-        }
-    },
-
-    addIMPTitle: {
-        textAlign: 'center'
-    },
-
-    menuBtn:{
-        color: 'white',
-    },
-
-    link:{
-        color: 'white'
-    },
-
-    busi:{
-        display: 'inline-block',
-        paddingLeft: '20px'
-    },
-    
-    dropdown:{
-//        marginTop: '40px !important',
-        width: '200px',
-        borderRadius: '8px'
-    },
-
-    textarea:{
-        width: '100%',
-        height: '112px'
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        maxWidth: '88%',
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
-    nopadding: {
-        padding: 0
-    },
-
-    textAreaWrappper: {
-        position: 'relative'
-    },
-
-    copyEmbedCode:{
-        position: 'absolute',
-        top: 0,
-        right: 0
     },
 
     unconfirmed:{
@@ -1670,6 +1233,11 @@ const stylesHistory = theme => ({
         marginBottom: '30px'
     },
 
+    cell: {
+        padding: '0 10px',
+        textAlign: 'center'
+    },
+
 })
 
 // History
@@ -1683,9 +1251,10 @@ export class History extends React.Component{
     }
 
     @observable histories = [];
+    @observable historyLoaded = false;
     @observable count = 0;
 
-    @action.bound
+    @action
     getHistory = async _ => {
         let body = {
             uid: Auth.uid
@@ -1701,9 +1270,12 @@ export class History extends React.Component{
         if(getblockcount.status){
             this.count = getblockcount.count;
         }
+
+        this.historyLoaded = true;
     }
 
     render(){
+        let that = this;
         let {classes} = this.props;
 
         return( 
@@ -1713,101 +1285,76 @@ export class History extends React.Component{
 
             <div className={classes.cardWrapper} >
                 <div className={classes.card}>
-                    <div ref='header' className={classes.header}>
-                        <div className={classes.row}>
-                            <div style={{width: '100px'}} className={classes.col}>
-                                <Typography  variant="h4" className={classes.bold}>
-                                    Block
-                                </Typography>
-                            </div>
-                            <span className={classes.delimeter}></span>
-                            <div className={classes.col}>
-                                <Typography variant="h4" className={classes.bold}>
-                                    Amount, {Api.getCoinName()}
-                                </Typography>
-                            </div>
-                            <span className={classes.delimeter}></span>
-                            <div  className={classes.col}>
-                                <Typography variant="h4" className={classes.bold}>
-                                    Date
-                                </Typography>
-                            </div>
-                            <span className={classes.delimeter}></span>
-                            <div style={{width: '155px'}} className={classes.col}>
-                                <Typography variant="h4" className={classes.bold}>
-                                    Status
-                                </Typography>
-                            </div>
-            
-                            <span className={classes.delimeter}></span>
-                            <div style={{width: '150px'}} className={classes.col}>
-                                <Typography variant="h4" className={classes.bold}>
-                                    Explorer
-                                </Typography>
-                            </div>
-                        </div>
-                    </div>
-                    <div className={classes.cardBodyResult}>
-                        <div className={classes.history}>
-                            
-                                {this.histories.map((history, idx, histories) => {
-                                    if(history.category != 'receive'){
-                                        return <div key={`history-${idx}`} />
-                                    }
-                                    let stamptime = new Date(history.timereceived * 1000);
-                                    return [<div key={`history-${idx}`} className={classes.row}>
-                                        
-                                        <div style={{width: '100px'}} className={classes.col}>
+                    <EnhancedTable
+                        rowsPerPage = {5}
+                        loaded= {this.historyLoaded}
+                        data = { this.histories.filter(history => {
+                                    return history.category == 'receive'
+                                    
+                                }).map(history => {
+                                    
+                                let stamptime = new Date(history.timereceived * 1000);
+                               
+                                return {
+                                    'block' : that.count - history.confirmations,
+                                    'amount' : roundeWithDec(history.amount),
+                                    'date' : formatedTime(stamptime),
+                                    'confirmations' : history.confirmations,
+                                    'explorer' : history.txid
+                                }
+                            })
+                        }
+                        rowsHeader = {[[
+                            { id: 'block', numeric: false, center: true, padding: 'dense', label: 'Block' },
+                            { id: 'amount', numeric: true, center: true, padding: 'dense', label: 'Amount, ' + Api.getCoinName()},
+                            { id: 'date', numeric: true, center: true, padding: 'dense',  label: 'Date' },
+                            { id: 'confirmations', numeric: false, center: true, padding: 'dense',  label: 'Status' },
+                            { id: 'explorer', numeric: false, center: true, padding: 'dense',  label: 'Explorer' },
+                        ]]}
+                        innerTable = {(row, idx) => {   
+                            return(
+                                <TableRow key={idx}>
+                                    <EnhancedTableCell className={classes.cell}  component="th" scope="row" >
+                                        <Typography  variant="h1">
+                                            {row.block}
+                                        </Typography>
+                                    </EnhancedTableCell>   
+                                    <EnhancedTableCell className={classes.cell} > 
+                                        <Typography  variant="h1" >
+                                            {row.amount}
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={classes.cell}  > 
+                                        <Typography  variant="h1" >
+                                            {row.date}
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={classes.cell} > 
+                                        <div className={cn(classes.status)}>
+                                            <div className={cn(classes.label, {
+                                            [classes.received]: row.confirmations >= 10,
+                                            [classes.unconfirmed]: row.confirmations <= 1,
+                                            [classes.processing]: row.confirmations > 1 && row.confirmations < 10
+                                            })}></div>
                                             <Typography variant="h1">
-                                                {this.count - history.confirmations}
-                                            </Typography>
-                                        </div>  
-
-                                        <div className={classes.col}>
-                                            <Typography variant="h1">
-                                                {roundeWithDec(history.amount)}
-                                            </Typography>
-                                        </div>
-
-                                        <div className={classes.col}>
-                                            <Typography variant="h1">
-                                                {stamptime.getFullYear()}-{stamptime.getMonth().length > 1 ? `${stamptime.getMonth()}` : `0${stamptime.getMonth()}`}-{stamptime.getDate()} {stamptime.getHours().toString().length > 1 ? `${stamptime.getHours()}` : `0${stamptime.getHours()}`} : {stamptime.getMinutes().toString().length > 1 ? `${stamptime.getMinutes()}` : `0${stamptime.getMinutes()}`}
+                                                {row.confirmations >= 10 && 'received' }
+                                                {row.confirmations <= 1  && 'unconfirmed' }
+                                                {row.confirmations > 1 && row.confirmations < 10 && 'processing' } 
                                             </Typography>
                                         </div>
-
-                                        <div style={{width: '155px'}} className={cn(classes.col)} >
-
-                                            <div className={cn(classes.status)}>
-
-                                                <div className={cn(classes.label, {
-                                                    [classes.received]: history.confirmations >= 10,
-                                                    [classes.unconfirmed]: history.confirmations <= 1,
-                                                    [classes.processing]: history.confirmations > 1 && history.confirmations < 10
-                                                    })}></div>
-                                                    <Typography variant="h1">
-                                                        {history.confirmations >= 10 && 'received' }
-                                                        {history.confirmations <= 1  && 'unconfirmed' }
-                                                        {history.confirmations > 1 && history.confirmations < 10 && 'processing' } 
-                                                    </Typography>
-
-                                            </div>
-
-                                        </div>
-
-                                        <div style={{width: '150px'}} className={classes.col}>
-                                            <Typography variant="h1" >
-                                                { history.txid && <a href={`https://explorer.impleum.com/tx/${history.txid}`}
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={classes.cell} > 
+                                        <Typography  variant="h1" >
+                                            { row.explorer && <a href={`https://explorer.impleum.com/tx/${row.explorer}`}
                                                     target="_blank" className={classes.explorer}><Icon>link</Icon>
-                                                </a>}
-                                            </Typography>
-                                        </div>
-                                    </div>,
-                                    histories.length - 1 !=  idx ? <Divider key={`historydiv-${idx}`} className={classes.divider} /> : <div key={`historydiv-${idx}`}/> ]
-                                    }
-                                )}
-                        </div>
+                                             </a>}
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                </TableRow>
+                            )
+                        }}
+                    />
 
-                    </div>
                 </div>
             </div>
         </div>)
@@ -1834,321 +1381,13 @@ const stylesAnalytics = theme => ({
         marginBottom: 40,
         marginRight: 40,
         borderRadius: '8px',
-        overflow: 'hidden',
+        overflow: 'auto',
         maxWidth: '100%',
         width: 'auto',
         boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
     },
 
-    header:{
-        color: 'white',
-        background: '#FC3868',
-        fontWeight: 100,
-        display: 'flex',
-        height: 40,
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        overflow: 'hidden',
-        '& $delimeter': {
-            background: 'rgba(0, 0, 0, 0.1)',
-            height: '100px',
-            width: 1,
-            margin: '-50px 0'
-        },
-        '& $impNum':{
-            padding: '0 10px'
-        }
-    },
-    
-    delimeter:{},
-    impNum:{},
-
-    cardBodyResult: {
-        padding: '12px 0px',
-        backgroundColor: '#474E65',
-        overflow: 'hidden'
-    },
-
-    row: {
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        padding: '0 30px',
-        width: '100%'
-    },
-
-    col: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: 200,
-        height: 33,
-        flexShrink: 0,
-    },
-
-    btnResult: {
-        marginTop: 30,
-        borderRadius: 74
-    },
-
-    title: {
-        padding: '0 30px',
-    },
-
-    column:{
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-
-    headerResult: {
-        paddingBottom: '1rem'
-    },
-
-    noWrap:{
-        whiteSpace: 'nowrap',
-        textAlign: 'center'
-    },
-
-    center:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    analitics:{
-        display: 'flex',
-        flexDirection: 'column',
-    },
-
-    walletSetWrapper:{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: '100%',
-        overflow: 'hidden',
-        width: 480,
-        marginBottom: 7,
-        marginTop: 29
-    },
-
-    walletSet:{
-        width: 'calc(100% - 65px)',
-        display: 'inline-block',
-    },
-    
-    divider: {
-        margin: '7px 30px',
-        backgroundColor: "#bbc2d8"
-    },
-
-    headerField:{
-        margin: '20px 0 12px',
-        fontSize: 16,
-    },
-
-    bold:{
-        fontWeight: 600,
-        textAlign: 'center'
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
-    submitBtn:{
-        float: 'right',
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    editBtn:{
-        float: 'right',
-        borderRadius: 74,
-    },
-
-    editBtnTypo:{
-        fontSize: 14,
-        fontWeight: 700
-    },
-
-    short:{
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
-        display: 'inline-block',
-        width: '100%'
-    },
-
-    firstCol:{
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        transition: 'color .5s',
-        '&:hover': {
-            color: '#FC3868',
-            cursor: 'pointer',
-        }
-    },
-    
-    delBtn:{
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    explorer: {
-        verticalAlign: 'middle',
-        lineHeight: '100%',
-        fontSize: 30,
-        color: 'white'
-    },
-
-    addIMP:{
-        height: '100px',
-        width: '100px',
-        zIndex: '100',
-        position: 'relative',
-        marginBottom: 40,
-        marginRight: 40,
-        marginLeft: 5,
-        borderRadius: '8px',
-        overflow: 'hidden', 
-        backgroundColor: '#b1b4bd',
-        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
-        '@media (max-width: 600px)':{
-            marginRight: 0
-        }
-    },
-
-    addIMPLink:{
-        display: 'block',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        backgroundColor: '#d8d9dd',
-        height: '56px',
-        width: '56px',
-        margin: '14px auto 4px',
-        position: 'relative',
-        transition: 'boxShadow .5s',
-        '&:hover': {
-            boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.1)',
-        },
-        '&:before': {
-            content: '\'\'',
-            position: 'absolute',
-            left: '8px',
-            top: '50%',
-            width: '40px',
-            height: '5px',
-            borderRadius: '14px',
-            overflow: 'hidden',
-            backgroundColor: '#506880',   
-            transform: 'translateY(-50%)' 
-        },
-
-        '&:after':{
-            content: '\'\'',
-            position: 'absolute',
-            left: '50%',
-            top: '8px',
-            height: '40px',
-            width: '5px',
-            borderRadius: '14px',
-            overflow: 'hidden',
-            backgroundColor: '#506880',   
-            transform: 'translateX(-50%)' 
-        }
-    },
-
-    addIMPTitle: {
-        textAlign: 'center'
-    },
-
-    menuBtn:{
-        color: 'white',
-    },
-
-    link:{
-        color: 'white'
-    },
-
-    busi:{
-        display: 'inline-block',
-        paddingLeft: '20px'
-    },
-    
-    dropdown:{
-//        marginTop: '40px !important',
-        width: '200px',
-        borderRadius: '8px'
-    },
-
-    textarea:{
-        width: '100%',
-        height: '112px'
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        maxWidth: '88%',
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
-    nopadding: {
-        padding: 0
-    },
-
-    textAreaWrappper: {
-        position: 'relative'
-    },
-
-    copyEmbedCode:{
-        position: 'absolute',
-        top: 0,
-        right: 0
-    },
-
-    unconfirmed:{
-        background: '#FC3868'
-    },
-
-    received:{
-        background: '#34E8C0'
-    },
-
-    processing:{
-        background: '#329CF4'
-    },
-
-    status:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-
+ 
     label:{
         padding: '3px 5px',
         borderRadius: '6px',
@@ -2163,6 +1402,14 @@ const stylesAnalytics = theme => ({
         letterSpacing: 1,
         marginBottom: '30px'
     },
+
+    borderOff: {
+        border: 'none'
+    },
+
+    center: {
+        textAlign: 'center',
+    }
 
 })
 
@@ -2201,55 +1448,43 @@ export class Analytics extends React.Component{
 
             <div className={classes.cardWrapper} >
                 <div className={classes.card}>
-                    <div ref='header' className={classes.header}>
-                        <div className={classes.row}>
-                            <div className={classes.col}>
-                                <Typography  variant="h4" className={classes.bold}>
-                                    Catalog(site)
-                                </Typography>
-                            </div>
-
-                            <span className={classes.delimeter}></span>
-
-                            <div className={classes.col}>
-                                <Typography variant="h4" className={classes.bold}>
-                                    Results(site)
-                                </Typography>
-                            </div>
-
-                            <span className={classes.delimeter}></span>
-                            
-                            <div className={classes.col}>
-                                <Typography variant="h4" className={classes.bold}>
-                                    Results(app)
-                                </Typography>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div className={classes.cardBodyResult}>
-                        <div className={classes.history}>
-                            <div className={classes.row}>
-                                <div className={classes.col}>
-                                    <Typography variant="h1">
-                                        {this.referrals && this.referrals.catalog || 0}
-                                    </Typography>
-                                </div> 
-
-                                <div className={classes.col}>
-                                    <Typography variant="h1">
-                                        {this.referrals && this.referrals.congratulations || 0}
-                                    </Typography>
-                                </div>  
-
-                                <div className={classes.col}>
-                                    <Typography variant="h1">
-                                        {this.referrals && this.referrals.appleStore || 0}
-                                    </Typography>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <EnhancedTable
+                        rowsPerPage = {1}
+                        notShowPagination = {true}
+                        data = {
+                            [{
+                                'r0' : this.referrals && this.referrals.catalog || 0,
+                                'r1' : this.referrals && this.referrals.congratulations || 0,
+                                'r2' : this.referrals && this.referrals.appleStore || 0
+                            }]
+                        }
+                        rowsHeader = {[[
+                            { id: 'r0', center: true, padding:'checkbox', notAbleSort: true, label: 'Catalog(site)' },
+                            { id: 'r1', center: true, padding:'checkbox', notAbleSort: true, label: 'Results(site)' },
+                            { id: 'r2', center: true, padding:'checkbox', notAbleSort: true, label: 'Results(app)' },
+                        ]]}
+                        innerTable = {(row, idx) => {   
+                            return(
+                                <TableRow key={idx}>
+                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} component="th" scope="row" >
+                                        <Typography  variant="h1">
+                                            {row.r0}
+                                        </Typography>
+                                    </EnhancedTableCell>   
+                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} > 
+                                        <Typography variant="h1" >
+                                            {row.r1}
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} > 
+                                        <Typography variant="h1" >
+                                            {row.r2}
+                                        </Typography>
+                                    </EnhancedTableCell>
+                                </TableRow>
+                            )
+                        }}
+                    />
                 </div>
             </div>
         </div>)

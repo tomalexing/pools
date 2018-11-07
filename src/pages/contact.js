@@ -284,7 +284,7 @@ class Contact extends React.Component{
                             required
                             multiline
                             type="text"
-                            rowsMax="4"
+                            rowsMax="20"
                             value={this.question}
                             className={classes.formField}
                             onChange={this.setQuestion}

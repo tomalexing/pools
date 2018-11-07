@@ -32,6 +32,14 @@ a, body, div, h1, h2, h3, label, li, p, span, ul, img {
     user-select: none;
 }
 
+.admin-area a, .admin-area div, .admin-area h1, .admin-area h2, .admin-area h3, .admin-area label, .admin-area li, .admin-area p, .admin-area span, .admin-area ul, .admin-area img {
+  user-select: text;
+}
+
+#modal a, #modal div, #modal h1, #modal h2, #modal h3, #modal label, #modal li, #modal p, #modal span, #modal ul, #modal img {
+  user-select: text;
+}
+
 a{
   -webkit-tap-highlight-color: none;
 }

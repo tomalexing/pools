@@ -331,7 +331,7 @@ class Dashboard extends React.Component {
                 </Drawer>
             </aside>
             
-            <div className={classes.mainArea}>
+            <div id="AdminArea" className={cn(classes.mainArea, 'admin-area')}>
                 <PrivateRoute role={['user']} exact path="/dashboard" component={User.Common} /> 
                 <PrivateRoute role={['user']} exact path="/dashboard/profile" component={User.Profile} /> 
                 <PrivateRoute role={['user']} exact path="/dashboard/history" component={User.History} />

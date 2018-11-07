@@ -24,13 +24,22 @@ const EnhancedTableHeadStyles = theme => ({
     },
 
     center: {
-      textAlign: 'center',
-      padding: '4px 24px 4px 24px'
+      textAlign: 'center', 
     },
 
     dilimiter: {
       '&:not(:last-child)': {
         borderRight: '1px solid rgba(0, 0, 0, 0.1)'
+      },
+      position: 'relative',
+      '&:after':{
+        content: '\"\"',
+        position: 'absolute',
+        bottom: '0',
+        left: '0',
+        right: '0',
+        height: '1px',
+        backgroundColor: 'rgba(0, 0, 0, 0.1)'
       }
     }
 
@@ -48,43 +57,45 @@ export default class EnhancedTableHead extends React.Component {
 
       return (
         <TableHead classes={{ root: classes.root }} >
-          <TableRow classes={{ root: classes.height }}>
-            {this.props.columns.map(row => {
-              return (
-                <TableCell
-                  key={row.id}
-                  numeric={row.numeric}
-                  padding={row.disablePadding ? 'none' : 'default'}
-                  sortDirection={orderBy === row.id ? order : false}
-                  className={cn(classes.dilimiter, classes.borderOff, {[classes.center]: row.center})}
-                > 
+          {this.props.rows.map((columns, idx) => (
+            <TableRow key={idx} classes={{ root: classes.height }}>
+              {columns.map(row => {
+                return (
+                  <TableCell
+                    key={row.id}
+                    numeric={row.numeric}
+                    padding={row.padding || 'default'}
+                    sortDirection={orderBy === row.id ? order : false}
+                    className={cn(classes.dilimiter, classes.borderOff, {[classes.center]: row.center})}
+                    colSpan={row.colSpan || 1}
+                  > 
 
-                  {!row.notAbleSort ? 
-                  (<Tooltip
-                    title="Sort"
-                    placement={row.numeric ? 'bottom-end' : 'bottom-start'}
-                    enterDelay={300}
-                  >
-                    <TableSortLabel
-                      active={orderBy === row.id}
-                      direction={order}
-                      onClick={this.createSortHandler(row.id)}
-                      style={{color: 'white'}}
+                    {!row.notAbleSort ? 
+                    (<Tooltip
+                      title="Sort"
+                      placement={row.numeric ? 'bottom-end' : 'bottom-start'}
+                      enterDelay={300}
                     >
+                      <TableSortLabel
+                        active={orderBy === row.id}
+                        direction={order}
+                        onClick={this.createSortHandler(row.id)}
+                        style={{color: 'white'}}
+                      >
+                        <Typography  variant="h4" style={{weight: 'bold'}}> 
+                              {row.label}
+                        </Typography>
+                      </TableSortLabel>
+                    </Tooltip>)
+                    :(
                       <Typography  variant="h4" style={{weight: 'bold'}}> 
-                            {row.label}
+                        {row.label}
                       </Typography>
-                    </TableSortLabel>
-                  </Tooltip>)
-                  :(
-                    <Typography  variant="h4" style={{weight: 'bold'}}> 
-                      {row.label}
-                    </Typography>
-                  )}
-                </TableCell>
-              );
-            }, this)}
-          </TableRow>
+                    )}
+                  </TableCell>
+                );
+              }, this)}
+            </TableRow>))}
         </TableHead>
       );
     }
