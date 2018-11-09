@@ -10,7 +10,7 @@ import {LightenDarkenColor} from './../../utils';
 
 const EnhancedTableCellStyles = theme => ({
     border:{
-        borderColor: LightenDarkenColor("#474E65", 20),
+        borderColor: LightenDarkenColor("#bbc2d8", -80),
     }
 });
 
@@ -34,7 +34,6 @@ export default class EnhancedTableCell extends React.Component {
 
     render() {
       const { classes, children, className, theme, ...other } = this.props;
-
         if (this.state.hasError) {
             return <p>.</p>;
         }

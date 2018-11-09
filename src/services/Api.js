@@ -607,16 +607,6 @@ function getCoinName(){
     return "IMPL"
 }
 
-function checkCaptcha(resp) {
-    return fetch(`https://quizi.io/api/checkCaptcha`,{
-        method: 'post',
-        headers: {
-            'content-type': 'application/x-www-form-urlencoded; charset=utf-8',
-            'Accept': 'application/json'},
-        mode: 'cors',
-        body: 'resp=' + resp
-    })
-}
 
 async function ourApi(path, fetchBody) {
 
@@ -687,6 +677,44 @@ async function loadCBTicker(ticker){
     }).then(r => r.json()).catch( _ => {})
 }
 
+
+async function getPayoutsRequests(){
+
+    return new Promise(async resolve => {
+        let payoutsRequestsRef = await db.collection('payoutsRequests');
+        let payoutsRequests = await payoutsRequestsRef.get();
+        payoutsRequests = payoutsRequests.docs.map(payoutsRequest => {
+            return [{id: payoutsRequest.id, data: payoutsRequest.data()}];
+        });
+        return resolve(payoutsRequests);
+    })
+}
+
+
+function setPayoutsRequests(fields){
+    if(!fields.id || !fields.wallet) return Promise.resolve(false);
+    return new Promise(async resolve => {
+        let userRef = db.collection('payoutsRequests').doc(fields.id);
+        var setWithMerge = await userRef.set({
+            body: {[(new Date).toISOString()]: fields}
+        }, { merge: true } );
+        return resolve(true)
+    })
+}
+
+
+function checkPayoutsRequests(id){
+    if(!id) return Promise.resolve(false);
+    return new Promise(async resolve => {
+        let payoutsRequestsRef = await db.collection('payoutsRequests');
+        let payoutsRequests = await payoutsRequestsRef.get();
+        payoutsRequests = payoutsRequests.docs.some(payoutsRequest => {
+            return payoutsRequest.id == id;
+        });
+        return resolve(payoutsRequests);
+    })
+}
+
 const Api = {
     getCard,
    // getQuizzesIds,
@@ -712,7 +740,6 @@ const Api = {
     getCoinName,
     deleteUserData,
     create,
-    checkCaptcha,
     getRole,
     saveReferral,
     loadReferral,
@@ -722,6 +749,9 @@ const Api = {
     getRequestsContact,
     getRequestsCreateNew,
     getRequestsSubscriptions,
-    loadCBTicker
+    loadCBTicker,
+    getPayoutsRequests,
+    setPayoutsRequests,
+    checkPayoutsRequests
 }
 export default Api;

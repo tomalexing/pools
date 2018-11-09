@@ -307,7 +307,7 @@ class Contact extends React.Component{
                             </Typography>
 
                         </div>
-                        <Button type="submit" variant="raised" color="secondary" className={classes.submitBtn} onClick={this.send} disabled={!this.confirmEmail}>
+                        <Button type="submit" variant="contained" color="secondary" className={classes.submitBtn} onClick={this.send} disabled={!this.confirmEmail}>
                             <Typography variant="button">Send</Typography>
                         </Button>
                     </form>

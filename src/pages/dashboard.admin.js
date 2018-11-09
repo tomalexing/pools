@@ -25,7 +25,6 @@ import Divider from '@material-ui/core/Divider';
 
 import classNames from 'classnames';
 
-import Switch from '@material-ui/core/Switch';
 import IconButton from '@material-ui/core/IconButton';
 import {loadFromStore , saveToStore, clearAll} from "./../services/localDb";
 
@@ -40,9 +39,6 @@ import SModal from './../components/Modal';
 
 import Checkbox from '@material-ui/core/Checkbox';
 
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import themeObject from './../theme.js';
-
 import BTC from './../assets/BTC.svg';
 import IMP from './../assets/IMP.svg';
 
@@ -51,7 +47,10 @@ import info from './../assets/info.svg';
 import TableRow from '@material-ui/core/TableRow';
 import EnhancedTable from './../components/Table/TableWrapper';
 import EnhancedTableCell from './../components/Table/Table.cell';
+import EnhancedTableToolbar from './../components/Table/Table.toolbar';
+import EnhancedSwitch from './../components/Switch';
 
+  
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
   (!redirect
@@ -235,8 +234,8 @@ const stylesAnalytics = theme => ({
     },
 
     menuBtn:{
-        width: 48,
-        height: 48
+        width: 36,
+        height: 36
     },
 
     menuBtnIcon:{
@@ -249,10 +248,6 @@ const stylesAnalytics = theme => ({
         whiteSpace: 'nowrap'
     },
 
-    cell: {
-        padding: '0 10px',
-        textAlign: 'center'
-    },
 
     borderOff: {
         border: 'none'
@@ -264,23 +259,6 @@ const stylesAnalytics = theme => ({
 
 })
 
-const themeAnalytics = createMuiTheme( Object.assign(themeObject, {
-    typography: {
-        ...themeObject.typography,
-        h1: {
-             ...themeObject.typography.h1,
-            fontSize: '14px',
-        },
-        body2: {
-             ...themeObject.typography.body2,
-            fontSize: '14px',
-        },
-        h4:{
-             ...themeObject.typography.h4,
-            fontSize: '14px',
-        }
-    }
-}));
 
 // Analytics
 @withStyles(stylesAnalytics)
@@ -475,7 +453,6 @@ export class Analytics extends React.Component{
 
         return(
 
-        <MuiThemeProvider theme={themeAnalytics}>
             <div className={classes.cardWrapper} >
             <div className={cn(classes.cardWrapper, classes.nopadding)}>
                 { this.getBalanceInfo() }
@@ -491,8 +468,9 @@ export class Analytics extends React.Component{
             <div className={classes.card}>
 
                 <EnhancedTable
-                    orderBy = {'last'}
+                    orderBy = {'title'}
                     loaded= {this.analiticsLoaded}
+                    rowsPerPage = {10}
                     data = {Object.entries(this.analitics).map(([path, {overall, payoutsIMP, responses, title, reward, sharedReward, sharedCount, sharedPaidCount, blockedIMP , entry_path, entry_id, onlyIframe, blockedEntity, blockedByUser}], idx, analitics) => {
                         return {
                             'title': title,
@@ -521,7 +499,7 @@ export class Analytics extends React.Component{
                         { id: 'f', notAbleSort: true, center: true, padding: 'checkbox', label: 'Σ, ' + Api.getCoinName(), colSpan: 1 },
                         { id: 'g', notAbleSort: true, center: true, padding: 'checkbox', label: '', colSpan: 1},
                     ],[
-                        { id: 'title', numeric: false, padding: 'checkbox', label: 'Title' },
+                        { id: 'title', numeric: false, padding: 'dense', label: 'Title' },
                         { id: 'enable', notAbleSort: true, center: true, padding: 'checkbox', label: 'On/Off' },
                         { id: 'iframe', notAbleSort: true, center: true, padding: 'checkbox', label: 'Embed only' },
                         { id: 'reward', center: true, padding: 'checkbox', label: 'Entity' },
@@ -536,7 +514,7 @@ export class Analytics extends React.Component{
                     ]]}
                     innerTable = {(row, idx) => {
                         return(
-                            <TableRow key={idx}>
+                            <TableRow hover key={idx}>
                                 <EnhancedTableCell className={classes.cell} component="th" scope="row">
                                     <Typography className={classes.noWrap} variant="h1" >
                                         <Link to={row.entry_path.replace('v1','')} className={classes.link} >
@@ -546,64 +524,64 @@ export class Analytics extends React.Component{
                                         {that.processingIframe[idx] && <div className={classes.busi}> <CircularProgress size={15} color="secondary" /></div>}
                                     </Typography>
                                 </EnhancedTableCell>   
-                                <EnhancedTableCell className={classes.cell} >
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)} >
                                     <Typography className={classes.noWrap} variant="h1">
-                                        <Switch
+                                        <EnhancedSwitch
                                             checked={row.enable}
                                             onChange={that.makeOnOff(row.entry_path, row.entry_id, idx)}
                                             disabled={row.blockedEntity}
                                         />
                                     </Typography>
                                 </EnhancedTableCell>
-                                <EnhancedTableCell className={classes.cell}>
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
                                     <Typography className={classes.noWrap} variant="h1">
-                                        <Switch
+                                        <EnhancedSwitch
                                             checked={row.onlyIframe}
                                             onChange={that.makeVisibleInOnlyIframe(row.entry_path, row.entry_id, idx)}
                                         />
                                     </Typography>
                                 </EnhancedTableCell>
-                                <EnhancedTableCell className={classes.cell}> 
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
                                     <Typography variant="h1" >
                                         {row.reward}                                     
                                     </Typography>
                                 </EnhancedTableCell>
-                                <EnhancedTableCell className={classes.cell}> 
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
                                     <Typography variant="h1" >
                                         {row.sharedReward}                                     
                                     </Typography>
                                 </EnhancedTableCell>
-                                <EnhancedTableCell className={classes.cell}> 
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
                                     <Typography variant="h1" >
                                         {row.responses}                             
                                     </Typography>
                                 </EnhancedTableCell>
-                                <EnhancedTableCell className={classes.cell}> 
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
                                     <Typography variant="h1" >
                                         {row.sharedCount}                                    
                                     </Typography>
                                 </EnhancedTableCell>
-                                <EnhancedTableCell className={classes.cell}> 
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
                                     <Typography variant="h1" >
                                         {row.payoutsIMP}                                     
                                     </Typography>
                                 </EnhancedTableCell>
-                                <EnhancedTableCell className={classes.cell}> 
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
                                     <Typography variant="h1" >
                                         {row.sharesSpend}                                     
                                     </Typography>
                                 </EnhancedTableCell>
-                                <EnhancedTableCell className={classes.cell}> 
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
                                     <Typography variant="h1" >
                                         {row.blockedIMP}                                     
                                     </Typography>
                                 </EnhancedTableCell>
-                                <EnhancedTableCell className={classes.cell}> 
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
                                     <Typography variant="h1" >
                                         {row.spent}                                     
                                     </Typography>
                                 </EnhancedTableCell>
-                                <EnhancedTableCell className={classes.cell}> 
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
                                     <IconButton
                                         aria-label="More"
                                         aria-haspopup="true"
@@ -669,7 +647,7 @@ export class Analytics extends React.Component{
                 />
                 
             </div>
-        </div> </MuiThemeProvider>)
+        </div>)
     }
 }
 
@@ -729,16 +707,16 @@ const stylesRequests = theme => ({
         alignSelf: 'flex-start'
     },
 
-    pagination: {
-        color: 'white'
-    },
-
     tableBackground: {
         backgroundColor: theme.background.default
     },
 
     noWrap: {
         whiteSpace: 'nowrap'
+    },
+
+    center: {
+        textAlign: 'center',
     }
 
 })
@@ -874,7 +852,7 @@ export class Requests extends React.Component{
                             ]]}
                             innerTable = {(row) => {
                                 return(
-                                    <TableRow key={row.email}>
+                                    <TableRow hover key={row.email}>
                                         <EnhancedTableCell component="th" scope="row">
                                             <Typography  variant="h1">
                                                 {row.email}
@@ -958,7 +936,7 @@ export class Requests extends React.Component{
                                 return {
                                     'email': row[0].id,
                                     'name': Object.entries(row[0].data.body).sort(([d1, _], [d2, __])=>{
-                                                return d1 < d2
+                                                return new Date(d2) - new Date(d1)
                                             })[0][1].name,
                                     'last': formatedTime(Object.keys(row[0].data.body).sort((d1, d2)=>{
                                                 return new Date(d2) - new Date(d1)
@@ -975,7 +953,7 @@ export class Requests extends React.Component{
                             ]]}
                             innerTable = {(row) => {
                                 return(
-                                    <TableRow key={row.email}>
+                                    <TableRow hover key={row.email}>
                                         <EnhancedTableCell component="th" scope="row">
                                             <Typography  variant="h1">
                                                 {row.email}
@@ -1021,7 +999,7 @@ export class Requests extends React.Component{
                             ]]}
                             innerTable = {(row) => {
                                 return(
-                                    <TableRow key={row.email}>
+                                    <TableRow hover key={row.email}>
                                         <EnhancedTableCell component="th" scope="row">
                                             <Typography  variant="h1">
                                                 {row.email}
@@ -1150,7 +1128,7 @@ export class AnalyticsClick extends React.Component{
                         ]]}
                         innerTable = {(row, idx) => {   
                             return(
-                                <TableRow key={idx}>
+                                <TableRow hover key={idx}>
                                     <EnhancedTableCell className={cn(classes.borderOff, classes.center)} component="th" scope="row" >
                                         <Typography  variant="h1">
                                             {row.r0}
@@ -1172,6 +1150,414 @@ export class AnalyticsClick extends React.Component{
                     />
                 </div>
             </div>
+        </div>)
+    }
+}
+
+
+const stylesPayouts = theme => ({
+
+    cardWrapper:{
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'flex-start'
+    },
+
+    card:{
+        maxHeight: '100%',
+        zIndex: '100',
+        position: 'relative',
+        marginBottom: 40,
+        marginRight: 40,
+        borderRadius: '8px',
+        overflow: 'auto',
+        maxWidth: '100%',
+        width: 'auto',
+        boxShadow:  '0px 2px 20px 0px rgba(0, 0, 0, 0.5)',
+    },
+
+    nopadding: {
+        padding: 0
+    },
+
+    titleTopBtn: {
+        marginBottom: '30px',  
+    },
+
+    titleTop: {
+        fontWeight: 700,
+        letterSpacing: 1,
+        opacity: .6,
+        transition: 'opacity .5s',      
+        '&.activeTab':{
+            opacity: 1,
+        },
+        '&:hover':{
+            opacity: .9
+        }
+    },
+
+    container:{
+        display: 'flex',
+        alignItems: 'stretch',
+        flexDirection: 'column'
+    },
+
+    additionalTable: {
+        marginRight: 0,
+        alignSelf: 'flex-start'
+    },
+
+    pagination: {
+        color: 'white'
+    },
+
+    tableBackground: {
+        backgroundColor: theme.background.default
+    },
+
+    noWrap: {
+        whiteSpace: 'nowrap'
+    },
+
+    center: {
+        textAlign: 'center',
+    }
+
+
+})
+
+
+// Payouts
+@withStyles(stylesPayouts, { withTheme: true })
+@observer
+export class Payouts extends React.Component{
+
+    constructor(props){
+        super(props);
+        this.getData();
+    }
+
+    @observable data = [];
+    @observable details = null;
+
+    @action.bound
+    showDetails = id => e => {
+        e && e.preventDefault();
+        if(this.data.filter(d => d[0].id == id)[0][0]){
+            this.details = {
+                id: this.data.filter(d => d[0].id == id)[0][0]['id'],
+                body: this.data.filter(d => d[0].id == id)[0][0]['data']['body']
+            };
+        }
+    }
+
+    @action.bound
+    showAllRequests = id => e => {
+        e && e.preventDefault();
+
+    }
+
+    @action.bound
+    payout = id => e => {
+        e && e.preventDefault();
+
+       
+    }
+
+    @action.bound
+    delete = id => e => {
+        e && e.preventDefault();
+
+       
+    }
+
+
+    @action.bound
+    handleClick = (event, id) => {
+        const { selected } = this.state;
+        const selectedIndex = selected.indexOf(id);
+        let newSelected = [];
+    
+        if (selectedIndex === -1) {
+          newSelected = newSelected.concat(selected, id);
+        } else if (selectedIndex === 0) {
+          newSelected = newSelected.concat(selected.slice(1));
+        } else if (selectedIndex === selected.length - 1) {
+          newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+          newSelected = newSelected.concat(
+            selected.slice(0, selectedIndex),
+            selected.slice(selectedIndex + 1),
+          );
+        }
+    
+        this.setState({ selected: newSelected });
+    };
+
+    @action.bound
+    isSelected = id => {
+
+        return false
+    }
+
+    @action
+    getData = async _ => {
+  
+            // let resp = await Api.ourApi(`transaction`, fetchBody);
+            // Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken, resp, that.withdrawDetail ).then( amount => {
+            //     that.getProgress();
+            //     that.paying = false;
+            // })           
+        
+        this.data = await Api.getPayoutsRequests();
+        
+    }
+
+    render(){
+        let that = this;
+        let {classes} = this.props;
+
+        return( 
+            <div className={classes.container}>
+
+                <div className={classes.cardWrapper} >
+                    <div className={classes.card}>
+
+                        <EnhancedTable
+                            orderBy = {'last'}
+                            data = {that.data.map(row =>  {
+                                let body = Object.entries(row[0].data.body).sort(([d1, _], [d2, __]) => {
+                                    return d1 - d2
+                                })[0][1];
+
+                                return {
+                                    'uid': row[0].id,
+                                    'coins': roundeWithDec( body['totalIMP'] ),
+                                    'wallet': body['wallet'],
+                                    'ip': body['ip'],
+                                    'last': formatedTime(Object.keys(row[0].data.body).sort((d1, d2) => {
+                                                return new Date(d2) - new Date(d1)
+                                            })[0]),
+                                    'number': Object.values(row[0].data.body).length
+                                }
+                            })}
+
+                            rowsHeader = {[[
+                                { id: 'checkbox', type: "checkbox", padding: 'checkbox' },
+                                { id: 'uid', numeric: false, padding: 'dense', label: 'Id' },
+                                { id: 'coins', center: true, padding: 'dense',label: 'Coins to payout, ' + Api.getCoinName() },
+                                { id: 'wallet', center: true, padding: 'dense',label: 'Wallet' },
+                                { id: 'ip', center: true, padding: 'dense',label: 'Ip' },
+                                { id: 'last', numeric: true, padding: 'dense', label: 'Date' },
+                                { id: 'number', center: true, notAbleSort: true, label: '#' },
+                            ]]}
+
+                            footerData = {[{
+                                'uid': '',
+                                'coins': '',
+                                'wallet': '',
+                                'ip': '',
+                                'last': '',
+                                'number': ''
+                            }]}
+
+                            innerTable = {(row) => {
+                                let isSelected = this.isSelected(row.uid);
+                             
+                                return(
+                                    <TableRow 
+                                        hover 
+                                        key={row.uid}
+                                        onClick={event => this.handleClick(event, row.uid)}
+                                        role="checkbox"
+                                        aria-checked={isSelected}
+                                        tabIndex={-1}
+                                        selected={isSelected}>
+                                       <EnhancedTableCell padding={'checkbox'} component="th" scope="row">
+                                            <Checkbox
+                                                style={{color: 'white'}}
+                                                checked={isSelected}
+                                            />
+                                        </EnhancedTableCell>  
+                                        <EnhancedTableCell component="th" scope="row">
+                                            <Typography variant="h1">
+                                                {row.uid}
+                                            </Typography>
+                                        </EnhancedTableCell>   
+                                        <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
+                                            <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="contained" onClick={that.showDetails(row.uid)}>
+                                                <Typography className={classes.noWrap} variant="h1">
+                                                    {row.coins}
+                                                </Typography>
+                                            </Button>
+                                        </EnhancedTableCell>
+                                        <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
+                                            <Typography className={classes.noWrap} variant="h1">
+                                                {row.wallet}
+                                            </Typography>
+                                        </EnhancedTableCell>
+                                        <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
+                                            <Typography className={classes.noWrap} variant="h1">
+                                                {row.ip}
+                                            </Typography>
+                                        </EnhancedTableCell>
+                                        <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
+                                            <Typography className={classes.noWrap} variant="h1">
+                                                {row.last}
+                                            </Typography>
+                                        </EnhancedTableCell>
+                                        <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
+                                            <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="contained" onClick={that.showAllRequests(row.uid)}>
+                                                <Typography style={{color: '#FC3868'}} variant="button"  >
+                                                    {row.number}
+                                                </Typography>
+                                            </Button>
+                                        </EnhancedTableCell>
+                                    </TableRow>
+                                )
+                            }}
+                        />
+                    </div>
+
+                    {this.details && <div>
+                        <div className={cn(classes.card, classes.additionalTable)}>
+
+                        <EnhancedTable
+                            orderBy = {'date'}
+                            rowsPerPage = {5}
+                            data = {Object.entries(this.details.body)
+                                .sort(([d1, _], [d2, __]) => {
+                                    return new Date(d2) - new Date(d1)
+                                })
+                                .map(([date, {diffWithdrawDetail}]) =>  {
+                                return Object.entries(diffWithdrawDetail).map(([entityId, {addr, amount, isLiked, reward, sharedReward}]) => {
+                                    return {
+                                        'entityId': entityId,
+                                        'amount': roundeWithDec( amount ),
+                                        'isLiked': isLiked ? 'TRUE' : 'FALSE',
+                                        'reward': roundeWithDec( reward ),
+                                        'sharedReward': roundeWithDec( sharedReward ),
+                                    }
+                                });
+                            })[0]}
+
+                            rowsHeader = {[[
+                                { id: 'a', notAbleSort: true, padding: 'checkbox', center: true, label: this.details.id, colSpan: 6},  
+                                ]
+                                ,[
+                                { id: 'entityId', numeric: false, label: 'Entity Id'},
+                                { id: 'amount', center: true, padding: 'dense', center: true, label: 'Amount For Answers, ' + Api.getCoinName() },
+                                { id: 'reward', center: true, padding: 'dense', label: 'Reward, ' + Api.getCoinName() },
+                                { id: 'sharedReward', center: true, padding: 'dense', label: 'SharedReward, ' + Api.getCoinName() },
+                                { id: 'isLiked', numeric: false, padding: 'dense', center: true, label: 'Is Liked?' },
+
+                            ]]}
+
+                            footerData = {
+                                
+                                (function(){
+                                    let calc = Object.entries(this.details.body)
+                                                .sort(([d1, _], [d2, __]) => {
+                                                    return new Date(d2) - new Date(d1)
+                                                }).slice(0, 1)
+                                                .map(([date, {diffWithdrawDetail}]) =>  {
+                         
+                                                    return Object.values(diffWithdrawDetail).reduce((acc, next) => {
+                                                        console.log(acc)
+                                                        return {
+                                                            'amount':  acc.amount + next.amount ,
+                                                            'sharedReward': +acc.sharedReward + (next.isLiked ? next.sharedReward : 0)
+                                                        }
+                                                    },{amount: 0, sharedReward: 0});
+                                                });
+                                    return [{
+                                        'entityId': '',
+                                        'amount': '',
+                                        'isLiked': '',
+                                        'reward': '',
+                                        'sharedReward': '',
+                                    },{
+                                        'entityId': 'Σ',
+                                        'amount': roundeWithDec( calc[0].amount ),
+                                        'isLiked': roundeWithDec( calc[0].amount + calc[0].sharedReward ),
+                                        'reward': '',
+                                        'sharedReward': roundeWithDec( calc[0].sharedReward ),
+                                    },{
+                                        'entityId': '',
+                                        'amount': '',
+                                        'isLiked': 'payout',
+                                        'reward': '',
+                                        'sharedReward': 'delete', // crunch
+                                    }]
+                                }).call(this)
+                            
+                            }
+
+                            innerTable = {(row, idx) => {
+                               
+                                return(
+                                    <TableRow hover key={idx}>
+                                        <EnhancedTableCell component="th" scope="row" >
+                                            <Typography className={classes.noWrap} variant="h1">
+                                                {row.entityId}
+                                            </Typography>
+                                        </EnhancedTableCell>    
+
+                                        <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
+                                            <Typography className={classes.noWrap} variant="h1">
+                                                { row.amount }
+                                            </Typography>
+                                        </EnhancedTableCell>
+             
+                                        <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
+                                            <Typography className={classes.noWrap} variant="h1">
+                                                { row.reward }
+                                            </Typography>
+                                        </EnhancedTableCell>
+
+                                        <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
+                                            {row.sharedReward === 'delete' && <div> 
+                                            
+                                                <Button color="secondary" variant="outlined" size="small"  onClick={that.delete(row.uid)}>
+                                                    <Typography variant="button"  >
+                                                        delete
+                                                    </Typography>
+                                                </Button>
+                                        
+                                            </div>}
+
+                                            {row.sharedReward != 'delete' && <Typography className={classes.noWrap} variant="h1">
+                                                { row.sharedReward }
+                                            </Typography>}
+                                        </EnhancedTableCell>
+
+                                        <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
+                                            {row.isLiked === 'payout' && <div> 
+                                              
+                                                <Button color="secondary" variant="contained" size="small" onClick={that.payout(row.uid)}>
+                                                    <Typography variant="button"  >
+                                                        {row.isLiked}
+                                                    </Typography>
+                                                </Button>
+
+                                            </div>}
+
+                                            {row.isLiked != 'payout' && <Typography className={classes.noWrap} variant="h1">
+                                                { row.isLiked }
+                                            </Typography> }
+                                        </EnhancedTableCell>
+                                      
+                                    </TableRow>
+                                )
+                            }}
+                        />
+                        </div>
+                    </div>}
+
+                </div>
+            
+
         </div>)
     }
 }

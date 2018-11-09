@@ -8,6 +8,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import TableHead from '@material-ui/core/TableHead';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import * as cn from 'classnames';
 
 const EnhancedTableHeadStyles = theme => ({
@@ -70,28 +71,40 @@ export default class EnhancedTableHead extends React.Component {
                     colSpan={row.colSpan || 1}
                   > 
 
-                    {!row.notAbleSort ? 
-                    (<Tooltip
-                      title="Sort"
-                      placement={row.numeric ? 'bottom-end' : 'bottom-start'}
-                      enterDelay={300}
-                    >
-                      <TableSortLabel
-                        active={orderBy === row.id}
-                        direction={order}
-                        onClick={this.createSortHandler(row.id)}
-                        style={{color: 'white'}}
+                  {row.type != "checkbox" ? 
+
+                    !row.notAbleSort ? 
+                      (<Tooltip
+                        title="Sort"
+                        placement={row.numeric ? 'bottom-end' : 'bottom-start'}
+                        enterDelay={300}
                       >
+                        <TableSortLabel
+                          active={orderBy === row.id}
+                          direction={order}
+                          onClick={this.createSortHandler(row.id)}
+                          style={{color: 'white'}}
+                        >
+                          <Typography  variant="h4" style={{weight: 'bold'}}> 
+                                {row.label}
+                          </Typography>
+                        </TableSortLabel>
+                      </Tooltip>)
+                      :(
                         <Typography  variant="h4" style={{weight: 'bold'}}> 
-                              {row.label}
+                          {row.label}
                         </Typography>
-                      </TableSortLabel>
-                    </Tooltip>)
-                    :(
-                      <Typography  variant="h4" style={{weight: 'bold'}}> 
-                        {row.label}
-                      </Typography>
-                    )}
+                      )
+                    :
+
+                    <Checkbox
+                      style={{color: 'white'}}
+                      indeterminate={numSelected > 0 && numSelected < rowCount}
+                      checked={numSelected === rowCount}
+                      onChange={onSelectAllClick}
+                    />
+                  }
+
                   </TableCell>
                 );
               }, this)}

@@ -911,7 +911,7 @@ class Landing extends React.Component {
                         <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                             <h1 className={classes.topheader}>Quizi.io</h1>
                             <p className={classes.topdescription}>Quizi is a powerful marketing tool. It is a service of convenient and informative quizzes and polls.</p>
-                            <Button variant="raised" className={classes.exploreTopBtn} href={'/categories'}>Explore</Button> 
+                            <Button variant="contained" className={classes.exploreTopBtn} href={'/categories'}>Explore</Button> 
                         </Grid>
                 
                     </Grid>
@@ -976,7 +976,7 @@ class Landing extends React.Component {
                         <Grid item xs={12} sm={4} className={classes.center}>
                             <h2 className={classes.header}>Quizzes or Polls</h2>
                             <p className={cx(classes.description, classes.textCenter)}>Different online tests for you to try or discover answers to the most provocative questions.</p>
-                            <Button variant="raised" color="secondary"  className={classes.btn} href={'/categories'}>Explore</Button> 
+                            <Button variant="contained" color="secondary"  className={classes.btn} href={'/categories'}>Explore</Button> 
                         </Grid>
                         <Grid item xs={12} sm={4} className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
                             <Link style={{textDecoration: 'none'}} to={'/categories/polls'}> 
@@ -1052,7 +1052,7 @@ class Landing extends React.Component {
                         <Grid item xs={12} sm={3}  className={cx(classes.center, classes.toLeft, classes.zIndex10)}>
                             <h2 className={classes.header}>More than…</h2>
                             <p className={classes.description}>Solving tests and answering questionnaires and getting cryptocurrency rewards</p>
-                            <Button variant="raised" color="secondary"  className={classes.btn}  href={'/categories'}>Explore</Button> 
+                            <Button variant="contained" color="secondary"  className={classes.btn}  href={'/categories'}>Explore</Button> 
                         </Grid>
                 
                     </Grid>
@@ -1069,7 +1069,7 @@ class Landing extends React.Component {
                             <div className={cx(classes.centerOnMobile)} >
                                 <h2 className={classes.header}>Easy control</h2>
                                 <p className={classes.description}>Useful dashboard allows you to control rewards and make fast withdrawals</p>
-                                <Button variant="raised" color="secondary"  className={classes.btn}  href={'/categories'}>Explore</Button> 
+                                <Button variant="contained" color="secondary"  className={classes.btn}  href={'/categories'}>Explore</Button> 
                             </div>
                         </Grid>
                         
@@ -1242,7 +1242,7 @@ class Landing extends React.Component {
                                         </Typography>
 
                                 </div>
-                                <Button type="submit"  color="secondary" variant="raised" disabled={!this.confirmEmail} className={classes.submitBtn}>
+                                <Button type="submit"  color="secondary" variant="contained" disabled={!this.confirmEmail} className={classes.submitBtn}>
                                     Subscribe
                                 </Button>
                             </form>
@@ -1277,28 +1277,28 @@ class Landing extends React.Component {
                             <div className={cx(classes.footerMenu)}>
                                 <NavLink tabIndex='1' to={'/term-of-use'} className={classes.footerMenuLink} >
                                     <MenuItem selected={false} className={classes.footerMenuItem}>
-                                        <Typography variant="display1" >
+                                        <Typography variant="h1" >
                                             Terms of Use
                                         </Typography>
                                     </MenuItem>
                                 </NavLink>
                                 <NavLink tabIndex='1' to={'/privacy-policy'} className={classes.footerMenuLink} >
                                     <MenuItem selected={false} className={classes.footerMenuItem}>
-                                        <Typography variant="display1" >
+                                        <Typography variant="h1" >
                                             Privacy policy  
                                         </Typography>
                                         </MenuItem>
                                 </NavLink> 
                                 <NavLink tabIndex='1' to={'/create'} className={classes.footerMenuLink} >
                                     <MenuItem selected={false} className={classes.footerMenuItem}>
-                                        <Typography variant="display1" >
+                                        <Typography variant="h1" >
                                             Create  
                                         </Typography>
                                         </MenuItem>
                                 </NavLink> 
                                 <NavLink tabIndex='1' to={'/contact'} className={classes.footerMenuLink} >
                                     <MenuItem selected={false} className={classes.footerMenuItem}>
-                                        <Typography variant="display1" >
+                                        <Typography variant="h1" >
                                             Contact us  
                                         </Typography>
                                         </MenuItem>
@@ -1333,13 +1333,13 @@ class Landing extends React.Component {
             onClose={this.handleClose}
             >
             <div style={this.getModalStyle()} className={classes.paper}>
-            <Typography variant="display1" id="Subscribe-modal-title">
+            <Typography variant="h1" id="Subscribe-modal-title">
                 {this.title}
             </Typography>
             <Typography variant="body1" id="Subscribe-modal-description">
                 {this.description}
             </Typography>
-            <Button size="small" variant="raised" color="secondary" onClick={this.handleClose} className={classes.closeModal}>close</Button>
+            <Button size="small" variant="contained" color="secondary" onClick={this.handleClose} className={classes.closeModal}>close</Button>
             </div>
         </Modal>
     </div>

@@ -36,7 +36,8 @@ import CardsModel from './../models/Cards'
 import Share from './../components/Share';
 import SModal from './../components/Modal';
 
-
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import themeObject from './../theme.js';
 
 import BTC from './../assets/BTC.svg';
 import IMP from './../assets/IMP.png';
@@ -182,6 +183,24 @@ const styles = theme => ({
 
 })
 
+const themeDashboard = createMuiTheme( Object.assign(themeObject, {
+    typography: {
+        ...themeObject.typography,
+        h1: {
+             ...themeObject.typography.h1,
+            fontSize: '14px',
+        },
+        body2: {
+             ...themeObject.typography.body2,
+            fontSize: '14px',
+        },
+        h4:{
+             ...themeObject.typography.h4,
+            fontSize: '14px',
+        }
+    }
+}));
+
 @withStyles(styles)
 @withRouter
 @observer
@@ -305,6 +324,18 @@ class Dashboard extends React.Component {
                                 
                             </MenuItem>
                         </NavLink>}
+                    { admin &&
+                        <NavLink tabIndex='1' to={'/dashboard/payouts'} className={classes.link} >
+                            <MenuItem selected={/dashboard\/payouts/.test(this.props.location.pathname)} onClick={this.handleClose}>
+                                <ListItemIcon className={classes.icon}>
+                                    <Icon className={classes.mainMenuIcon} >import_export</Icon>
+                                </ListItemIcon>
+                                <Typography variant="h4" >
+                                    Payouts
+                                </Typography>
+                                
+                            </MenuItem>
+                        </NavLink>}
                 </MenuList>
                 <div className={classes.footer}>
 
@@ -330,25 +361,28 @@ class Dashboard extends React.Component {
 
                 </Drawer>
             </aside>
-            
-            <div id="AdminArea" className={cn(classes.mainArea, 'admin-area')}>
-                <PrivateRoute role={['user']} exact path="/dashboard" component={User.Common} /> 
-                <PrivateRoute role={['user']} exact path="/dashboard/profile" component={User.Profile} /> 
-                <PrivateRoute role={['user']} exact path="/dashboard/history" component={User.History} />
+           
+                <div id="AdminArea" className={cn(classes.mainArea, 'admin-area')}>
+                    <PrivateRoute role={['user']} exact path="/dashboard" component={User.Common} /> 
+                    <PrivateRoute role={['user']} exact path="/dashboard/profile" component={User.Profile} /> 
+                    <PrivateRoute role={['user']} exact path="/dashboard/history" component={User.History} />
+
+                    <MuiThemeProvider theme={themeDashboard}>
+
+                        <PrivateRoute role={['business']} exact path="/dashboard" component={Business.Dashboard} /> 
+                        <PrivateRoute role={['business']} exact path="/dashboard/profile" component={Business.Profile} /> 
+                        <PrivateRoute role={['business']} exact path="/dashboard/history" component={Business.History} />
+                        <PrivateRoute role={['business']} exact path="/dashboard/analytics/:slug/:id" component={Business.Analytics} />
 
 
-                <PrivateRoute role={['business']} exact path="/dashboard" component={Business.Dashboard} /> 
-                <PrivateRoute role={['business']} exact path="/dashboard/profile" component={Business.Profile} /> 
-                <PrivateRoute role={['business']} exact path="/dashboard/history" component={Business.History} />
-                <PrivateRoute role={['business']} exact path="/dashboard/analytics/:slug/:id" component={Business.Analytics} />
+                        <PrivateRoute role={['admin']} exact path="/dashboard" component={Admin.Analytics} /> 
+                        <PrivateRoute role={['admin']} exact path="/dashboard/requests" component={Admin.Requests} /> 
+                        <PrivateRoute role={['admin']} exact path="/dashboard/payouts" component={Admin.Payouts} /> 
+                        <PrivateRoute role={['admin']} exact path="/dashboard/analytics/:slug/:id" component={Admin.AnalyticsClick} />
 
+                    </MuiThemeProvider>
 
-                <PrivateRoute role={['admin']} exact path="/dashboard" component={Admin.Analytics} /> 
-                <PrivateRoute role={['admin']} exact path="/dashboard/requests" component={Admin.Requests} /> 
-                <PrivateRoute role={['admin']} exact path="/dashboard/analytics/:slug/:id" component={Admin.AnalyticsClick} />
-
-            </div>
-
+                </div>
             </div>
         )
     }

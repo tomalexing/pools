@@ -159,7 +159,7 @@ class Explore extends React.Component {
                                 <Typography variant="h6" className={classes.title}>{card.title}</Typography>
                             </Link>
                             <Typography variant="body2" className={classes.description}>{card.description}</Typography>
-                            <Link style={{textDecoration: 'none'}} to={card.to}><Button className={classes.btn} variant="raised" color="secondary"  side="small" >{card.btn}</Button></Link>
+                            <Link style={{textDecoration: 'none'}} to={card.to}><Button className={classes.btn} variant="contained" color="secondary"  side="small" >{card.btn}</Button></Link>
                         </article>
                         </div>))}
                 </div>

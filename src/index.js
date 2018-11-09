@@ -234,7 +234,7 @@ render(<Router >
 
 
 function NotFound() {
-    return <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}><Typography variant="display2" color="secondary">404</Typography> <Typography component="p" variant="display1" >Page Not Found</Typography></div>
+    return <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}><Typography variant="display2" color="secondary">404</Typography> <Typography component="p" variant="h1" >Page Not Found</Typography></div>
 }
 
 //registerServiceWorker();

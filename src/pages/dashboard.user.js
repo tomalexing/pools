@@ -7,7 +7,7 @@ import cx from 'classnames';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
-import { listener, getMonthName, roundeWithDec, loadScript, sleep } from './../utils';
+import { listener, getMonthName, roundeWithDec, loadScript, sleep, formatedTime} from './../utils';
 
 import {Switch, Route, Redirect, Link, withRouter} from 'react-router-dom';
 import {NavLink} from './../components/NavLink';
@@ -20,8 +20,7 @@ import { Hidden } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
-
-import classNames from 'classnames';
+import cn from 'classnames';
 
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
@@ -45,6 +44,10 @@ import IMP from './../assets/IMP.svg';
 import info from './../assets/info.svg';
 
 import Explore  from './Explore.js';
+
+import TableRow from '@material-ui/core/TableRow';
+import EnhancedTable from './../components/Table/TableWrapper';
+import EnhancedTableCell from './../components/Table/Table.cell';
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
   (!redirect
@@ -780,6 +783,11 @@ export class Profile extends React.Component{
             that.wallet = wallet;
         });
 
+        Api.checkPayoutsRequests(Auth.uid).then( res => {
+            that.alreadyPayoutsRequests = res;
+        })
+
+
         window.onloadCaptchaCallback = () => {
             this.grecaptcha = true;
         }
@@ -792,6 +800,7 @@ export class Profile extends React.Component{
     @observable enteder = false; 
     @observable wallet = '';
     @observable grecaptcha;
+    @observable alreadyPayoutsRequests = false;
     
     withdrawDetail = {};
     calculatingProgress = false
@@ -873,6 +882,7 @@ export class Profile extends React.Component{
     @observable paying = false;
     @observable captchaVerified = false;
     @observable openCaptcha = false;
+    @observable IP = '';
 
     @action.bound
     closeCaptchaModal = () => {
@@ -885,8 +895,9 @@ export class Profile extends React.Component{
     @action.bound
     verifyCallback = (resp) => {
         let that = this;
-        Api.checkCaptcha(resp).then(resp => resp.json()).then(ans => {
-            that.captchaVerified = ans.success;
+        Api.ourApi('checkCaptcha', {resp}).then(ans => {
+            that.captchaVerified = ans.result.success;
+            that.IP = ans.ip;
             that.openCaptcha = false;
             that.payoff();
         }, _ => {
@@ -961,28 +972,31 @@ export class Profile extends React.Component{
                 totalIMP: that.totalIMP,
                 wallet: that.wallet,
                 diffWithdrawDetail,
-                id: Auth.uid
+                id: Auth.uid,
+                ip: this.IP
             };
 
             that.paying = true;
 
-            // let resp = await Api.ourApi(`transaction`, fetchBody);
+            let resp = await Api.setPayoutsRequests(fetchBody);
 
-            //if(resp.status == false) {
-            if(true) {
-                that.paying = false;
-                //if(resp.message)
-                    that.errorMassage = 'There is a problem with withdrawals, our highly skilled monkeys are working on it. Sorry about that. Problem will be resolved as soon as possible. Really.';
+            that.paying = false;
+            if(resp) {
+                that.notifyMassage = 'Your request for payout is received. Our team reviews and approves it up to 24 hour.';
+                return that.isNotifyModalOpened = true;
+            }else{
+                that.errorMassage = 'There is a problem with withdrawals, our highly skilled monkeys are working on it. Sorry about that. Problem will be resolved as soon as possible. Really.';
                 return that.isErrorModalOpened = true;
             }
 
-            // Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken, resp, that.withdrawDetail ).then( amount => {
-            //     that.getProgress();
-            //     that.paying = false;
-            // })           
-        
         }
     }
+
+    @observable isNotifyModalOpened = false    
+    @action.bound
+    closeNotifyModal = () => {
+        this.isNotifyModalOpened = false;
+    };
 
     @observable isErrorModalOpened = false    
     @action.bound
@@ -997,6 +1011,7 @@ export class Profile extends React.Component{
     };
     
     @observable errorMassage = 'Maybe is being problems with connection. Try again later.';
+    @observable notifyMassage = '';
 
     render(){
         let {classes} = this.props;
@@ -1053,7 +1068,7 @@ export class Profile extends React.Component{
                         />
                     </form> }
                     { !this.enteder && 
-                        <Button variant="raised" color="secondary" className={classes.submitBtn} onClick={this.setEntered}>
+                        <Button variant="contained" color="secondary" className={classes.submitBtn} onClick={this.setEntered}>
                             <Typography variant="button">Enter</Typography>
                         </Button>}
 
@@ -1067,9 +1082,9 @@ export class Profile extends React.Component{
 
                     {this.paying && <CircularProgress size={30} color="secondary"/>}
 
-                    { false && this.enteder && <Button variant="raised" disabled={this.totalIMP <= 0} color="secondary" className={classes.submitBtn} onClick={this.payoff}>
-                        <Typography variant="button" >Payout</Typography>
-                    </Button>}
+                    { this.enteder && <Button variant="contained" disabled={this.totalIMP <= 0.0001 || this.alreadyPayoutsRequests} color="secondary" className={classes.submitBtn} onClick={this.payoff}>
+                        <Typography variant="button" >Request Payout</Typography>
+                    </Button> }
 
                     <a href="https://impleum.com/wallet/" target="_blank" className={classes.getIMP}>
                         <img className={classes.getIMPmark} src={info} />  
@@ -1079,7 +1094,7 @@ export class Profile extends React.Component{
                     </a>
 
                     <SModal title="Something went wrong" body={this.errorMassage} open={this.isErrorModalOpened} close={this.closeErrorModal}/>  
-                    
+                    <SModal title="Notification" body={this.notifyMassage} open={this.isNotifyModalOpened} close={this.closeNotifyModal}/>  
                     <SModal title="Verification" width="auto" body={<div className={classes.captcha} ref="captcha" id="captcha"></div>} open={this.openCaptcha} close={this.closeCaptchaModal}/> 
 
                 </div>
@@ -1123,7 +1138,7 @@ const stylesHistory = theme => ({
         marginBottom: 40,
         marginRight: 40,
         borderRadius: '8px',
-        overflow: 'hidden',
+        overflow: 'auto',
         maxWidth: '100%',
         width: 'auto',
         height: '100%',
@@ -1133,199 +1148,6 @@ const stylesHistory = theme => ({
             minWidth: 690
         }
     },
-    header:{
-        color: 'white',
-        background: '#FC3868',
-        fontWeight: 100,
-        display: 'flex',
-        height: 40,
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        '& $delimeter': {
-            background: 'rgba(0, 0, 0, 0.1)',
-            height: '100px',
-            width: 1,
-            margin: '-50px 0'
-        },
-        '& $impNum':{
-            padding: '0 10px'
-        }
-    },
-    delimeter:{},
-    impNum:{},
-
-    cardBodyResult: {
-        padding: '23px 0px',
-        backgroundColor: 'white',
-        overflow: 'hidden'
-    },
-
-    row: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        padding: '0 30px',
- 
-    },
-
-    responseRow:{
-        '@media (max-width: 600px)':{
-            flexDirection: 'column',
-            alignItems: 'center',
-            flex: '1 0 66%'
-        }
-    },
-
-    col:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: 200,
-        height: 33,
-    },
-
-    btnResult: {
-        marginTop: 30,
-        borderRadius: 74
-    },
-
-    title: {
-        padding: '0 30px',
-    },
-
-    column:{
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-
-    headerResult: {
-        paddingBottom: '1rem'
-    },
-
-    noWrap:{
-        whiteSpace: 'nowrap',
-        textAlign: 'center'
-    },
-
-    history:{
-        display: 'flex',
-        flexDirection: 'column',
-    },
-
-    historyPic:{
-        width: 80,
-        height: '100%',
-        objectFit: 'cover',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        '& img': {
-            width: '100%',
-            height: 'auto',
-        }
-    },
-
-    historyDetails:{
-        display: 'flex',
-        flexDirection: 'column',
-        marginLeft: 20, 
-    },
-
-    historyName:{
-        fontSize: 16,
-        fontWeight: 600
-    },
-
-    historyEmail:{
-        fontSize: 14,
-        fontWeight: 400
-    },
-
-    historyImp:{
-        marginLeft: 'auto',
-        flexWrap: 'nowrap',
-        display: 'flex',
-        alignItems: 'baseline'
-    },
-
-    historyImpVal:{
-        textTransform: 'uppercase',
-        fontSize: 60,
-        fontWeight: 200,
-        letterSpacing: -1,
-        color: '#506980'
-    },
-    
-    historyImpAddon:{
-        textTransform: 'uppercase',
-        fontweight: 400,
-        color: '#506980',
-        paddingLeft: 15
-    },
-
-    walletSetWrapper:{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: '100%',
-        overflow: 'hidden',
-        width: 480,
-        marginBottom: 7,
-        marginTop: 29
-    },
-
-    walletSet:{
-        width: 'calc(100% - 65px)',
-        display: 'inline-block',
-    },
-    
-    divider: {
-        margin: '7px 30px',
-        backgroundColor: "#bbc2d8"
-    },
-
-    headerField:{
-        margin: '20px 0 12px',
-        fontSize: 16,
-    },
-
-    bold:{
-        fontWeight: 600
-    },
-
-    formInput:{
-        width: '100%',
-        '&:after, &:hover:before': {
-            borderBottomColor: '#FC3868 !important'
-        },
-    },
-
-    formField:{
-        display: 'block',
-        width: 480,
-        '&:after': {
-            borderBottomColor: '#FC3868',
-        },
-    },
-
-    submitBtn:{
-        float: 'right',
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
-
-    editBtn:{
-        float: 'right',
-        borderRadius: 74,
-    },
-
-    editBtnTypo:{
-        fontSize: 14,
-        fontWeight: 700
-    },
 
     short:{
         textOverflow: 'ellipsis',
@@ -1333,18 +1155,17 @@ const stylesHistory = theme => ({
         display: 'inline-block',
         width: '100%'
     },
-    
-    delBtn:{
-        marginTop: 20,
-        marginBottom: 5,
-        borderRadius: 74,
-    },
 
     explorer: {
         verticalAlign: 'middle',
         lineHeight: '100%',
         fontSize: 30,
         color: '#4b5168'
+    },
+
+
+    center: {
+        textAlign: 'center',
     }
 
 })
@@ -1360,10 +1181,12 @@ export class History extends React.Component{
     }
 
     @observable histories = [];
+    @observable historyLoaded = false;
 
     @action.bound
-    getHistory = _ => {
-        Api.getHistory(Auth.uid, this.histories)
+    getHistory = async _ => {
+        await Api.getHistory(Auth.uid, this.histories);
+        this.historyLoaded = true;
     }
 
     render(){
@@ -1373,73 +1196,68 @@ export class History extends React.Component{
             <div className={classes.cardWrapper} >
 
             <div className={classes.card}>
-                <div ref='header' className={classes.header}>
-                    <div className={classes.row}>
-                        <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
-                            <Typography  align="left" variant="h4" className={classes.bold}>
-                                    Wallet
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                    Amount, {Api.getCoinName()}
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '250px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                    Date
-                            </Typography>
-                        </div>
-                        <span className={classes.delimeter}></span>
-                        <div style={{width: '150px'}} className={classes.col}>
-                            <Typography variant="h4" className={classes.bold}>
-                                    Explorer
-                            </Typography>
-                        </div>
-                    </div>
-                </div>
-                <div className={classes.cardBodyResult}>
-                    <div className={classes.history}>
-                        
-                            {this.histories.map((history, idx, histories) => {
-                                return [<div key={`history-${idx}`} className={classes.row}>
 
-                                    <div style={{ alignItems: 'flex-start', width: '300px'}} className={classes.col}>
-                                        <Tooltip  title={history.wallet} placement="top">
-                                            <Typography className={classes.short} variant="body2" gutterBottom>
-                                                    {history.wallet}
-                                            </Typography>
-                                        </Tooltip>
-                                    </div>
-
-                                    <div className={classes.col}>
-                                        <Typography variant="body2" gutterBottom>
-                                                {roundeWithDec(history.amount)}
+                 <EnhancedTable
+                    backgroundColor={'#fff'}
+                    rowsPerPage = {5}
+                    loaded= {this.historyLoaded}
+                    orderBy={'date'}
+                    data = { this.histories.map(history => {     
+                            return {
+                                'wallet' : history.wallet,
+                                'amount' : roundeWithDec(history.amount),
+                                'date' : formatedTime(history.date),
+                                'explorers' : history.responce.sent &&  Object.values(history.responce.sent).map(s => {
+                                    return {
+                                        tx: s.main,
+                                        value: s.d1 || s.d2 || s.d3 || s.d4        
+                                    }
+                                })
+                            }
+                        })
+                    }
+                    rowsHeader = {[[
+                        { id: 'wallet', numeric: false, center: true, padding: 'dense', label: 'Wallet' },
+                        { id: 'amount', numeric: true, center: true, padding: 'dense', label: 'Amount, ' + Api.getCoinName()},
+                        { id: 'date', numeric: true, center: true, padding: 'dense',  label: 'Date' },
+                        { id: 'explorers', numeric: false, notAbleSort: true, center: true, padding: 'dense', label: 'Explorer' },
+                    ]]}
+                    innerTable = {(row, idx) => {   
+                        return(
+                            <TableRow key={idx}>
+                                <EnhancedTableCell numeric padding="dense" className={cn(classes.center)}   component="th" scope="row" >
+                                    <Tooltip title={row.wallet} placement="top">
+                                        <Typography className={classes.short} variant="body2" gutterBottom>
+                                            {row.wallet}
                                         </Typography>
-                                    </div>
-
-                                    <div style={{width: '250px'}} className={classes.col}>
-                                        <Typography variant="body2" gutterBottom>
-                                                {(new Date(history.date)).getDate()} {getMonthName((new Date(history.date)).getMonth())}, {(new Date(history.date)).getFullYear()}, {(new Date(history.date)).getHours()}: {(new Date(history.date)).getMinutes()}
-                                        </Typography>
-                                    </div>
-
-                                    <div style={{width: '150px'}} className={classes.col}>
-                                        <Typography variant="body2" gutterBottom>
-                                            { history.responce && <a href={`https://explorer.impleum.com/tx/${history.responce.transactionId}`}
-                                                target="_blank" className={classes.explorer}><Icon>link</Icon>
-                                            </a>}
-                                        </Typography>
-                                    </div>
-                                </div>,
-                                histories.length - 1 !=  idx ? <Divider key={`historydiv-${idx}`} className={classes.divider} /> : <div key={`historydiv-${idx}`}/> ]
-                                }
-                            )}
-                    </div>
-
-                </div>
+                                    </Tooltip>
+                                </EnhancedTableCell>   
+                                <EnhancedTableCell padding="dense" className={cn(classes.center)}  > 
+                                    <Typography  variant="body2" >
+                                        {row.amount}
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell padding="dense" className={cn(classes.center)}   > 
+                                    <Typography  variant="body2" >
+                                        {row.date}
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell padding="dense" className={cn(classes.center)}  > 
+                                    { row.explorers && row.explorers.map( explorer => {
+                                        return (
+                                            <Typography variant="body2" key={explorer.tx}>
+                                                <a href={`https://explorer.impleum.com/tx/${explorer.tx}`}
+                                                    target="_blank" className={classes.explorer}><Icon>link</Icon>
+                                                </a>
+                                                <span>({explorer.value}  {Api.getCoinName()} )</span>
+                                                </Typography>
+                                        )
+                                    })}
+                                </EnhancedTableCell>
+                            </TableRow>
+                        )
+                    }}
+                />
             </div>
         </div>)
     }

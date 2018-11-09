@@ -342,7 +342,7 @@ class Header extends React.Component {
                     </NavLink>}
             </ul> 
 
-            { !Auth.isAuthenticated &&  <Button variant="raised" className={classes.loginBtn} onClick={this.openLoginModal}>
+            { !Auth.isAuthenticated &&  <Button variant="contained" className={classes.loginBtn} onClick={this.openLoginModal}>
                         Sign Up
                 </Button> }
 

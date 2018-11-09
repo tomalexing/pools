@@ -25,7 +25,6 @@ import Divider from '@material-ui/core/Divider';
 
 import classNames from 'classnames';
 
-import Switch from '@material-ui/core/Switch';
 import IconButton from '@material-ui/core/IconButton';
 import {loadFromStore , saveToStore, clearAll} from "./../services/localDb";
 
@@ -40,13 +39,10 @@ import SModal from './../components/Modal';
 
 import Checkbox from '@material-ui/core/Checkbox';
 
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import themeObject from './../theme.js';
-
-import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import EnhancedTable from './../components/Table/TableWrapper';
 import EnhancedTableCell from './../components/Table/Table.cell';
+import EnhancedSwitch from './../components/Switch';
 
 const RoutePassProps = ({ component: Component, redirect, ...rest }) =>
   (!redirect
@@ -277,30 +273,6 @@ const stylesProfile = theme => ({
 
 })
 
-const themeProfile = createMuiTheme( Object.assign(themeObject, {
-    typography: {
-        ...themeObject.typography,
-        h1: {
-             ...themeObject.typography.h1,
-            fontSize: '14px',
-        },
-        body2: {
-             ...themeObject.typography.body2,
-            fontSize: '14px',
-        },
-        h4:{
-             ...themeObject.typography.h4,
-            fontSize: '14px',
-        }
-    },
-    palette:{
-         ...themeObject.palette,
-        text: {
-            disabled: '#ECEDF3'    
-        }
-    }
-}));
-
 // Profile
 @withStyles(stylesProfile)
 @observer
@@ -520,7 +492,6 @@ export class Profile extends React.Component{
         ));
 
         return( 
-            <MuiThemeProvider theme={themeProfile}>
                 <div className={classes.cardWrapper} >
         
                     <div className={classes.card}>
@@ -562,7 +533,7 @@ export class Profile extends React.Component{
                     {this.getBalanceInfo()}
 
                 </div>
-            </MuiThemeProvider>)
+            )
     }
 }
 
@@ -705,9 +676,10 @@ const stylesDashboard = theme => ({
         textDecoration: 'none',
     },
 
-    busi:{
+    busy:{
         display: 'inline-block',
-        paddingLeft: '20px'
+        paddingLeft: '20px',
+        width: '20px'
     },
     
     nopadding: {
@@ -733,8 +705,8 @@ const stylesDashboard = theme => ({
     },
 
     menuBtn:{
-        width: 48,
-        height: 48
+        width: 36,
+        height: 36
     },
 
     menuBtnIcon:{
@@ -761,23 +733,6 @@ const stylesDashboard = theme => ({
     }
 })
 
-const themeAnalytics = createMuiTheme( Object.assign(themeObject, {
-    typography: {
-        ...themeObject.typography,
-        h1: {
-             ...themeObject.typography.h1,
-            fontSize: '14px',
-        },
-        body2: {
-             ...themeObject.typography.body2,
-            fontSize: '14px',
-        },
-        h4:{
-             ...themeObject.typography.h4,
-            fontSize: '14px',
-        }
-    }
-}));
 
 // Dashboard
 @withStyles(stylesDashboard)
@@ -907,17 +862,17 @@ export class Dashboard extends React.Component{
                         innerTable = {(row, idx) => {   
                             return(
                                 <TableRow key={idx}>
-                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} component="th" scope="row" >
+                                    <EnhancedTableCell padding="dense" className={cn(classes.borderOff, classes.center)}  component="th" scope="row" >
                                         <Typography  variant="h1">
                                             {row.r0}
                                         </Typography>
                                     </EnhancedTableCell>   
-                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} > 
-                                        <Typography variant="h1" >
+                                    <EnhancedTableCell padding="dense" className={cn(classes.borderOff, classes.center)} > 
+                                        <Typography variant="h1">
                                             {row.r1}
                                         </Typography>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} > 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.borderOff, classes.center)}> 
                                         <Typography variant="h1" >
                                             {row.r2}
                                         </Typography>
@@ -966,7 +921,6 @@ export class Dashboard extends React.Component{
 
         return(
 
-        <MuiThemeProvider theme={themeAnalytics}>
             <div className={classes.cardWrapper} >
                 <div className={cn(classes.cardWrapper, classes.nopadding)}>
                     { this.getBalanceInfo() }
@@ -981,7 +935,7 @@ export class Dashboard extends React.Component{
                 </div>
                 <div className={classes.card}>
                     <EnhancedTable
-                        orderBy = {'last'}
+                        orderBy = {'title'}
                         loaded= {this.analiticsLoaded}
                         data = {Object.entries(this.analitics).map(([path, {overall, payoutsIMP, responses, title, reward, sharedReward, sharedCount, sharedPaidCount, blockedIMP , entry_path, entry_id, onlyIframe, blockedEntity, blockedByUser}], idx, analitics) => {
                             return {
@@ -1011,7 +965,7 @@ export class Dashboard extends React.Component{
                             { id: 'f', notAbleSort: true, center: true, padding: 'checkbox', label: 'Σ, ' + Api.getCoinName(), colSpan: 1 },
                             { id: 'g', notAbleSort: true, center: true, padding: 'checkbox', label: '', colSpan: 1},
                         ],[
-                            { id: 'title', numeric: false, padding: 'checkbox', label: 'Title' },
+                            { id: 'title', numeric: false, padding: 'dense', label: 'Title' },
                             { id: 'enable', notAbleSort: true, center: true, padding: 'checkbox', label: 'On/Off' },
                             { id: 'iframe', notAbleSort: true, center: true, padding: 'checkbox', label: 'Embed only' },
                             { id: 'reward', center: true, padding: 'checkbox', label: 'Entity' },
@@ -1019,7 +973,7 @@ export class Dashboard extends React.Component{
                             { id: 'responses', center: true, padding: 'checkbox', label: 'Responses' },
                             { id: 'sharedCount', center: true, padding: 'checkbox', label: 'Shares' },
                             { id: 'payoutsIMP', center: true, padding: 'checkbox', label: 'Answers' },
-                            { id: 'sharesSpend',center: true,  padding: 'checkbox', label: ' Sharing' },
+                            { id: 'sharesSpend', center: true, padding: 'checkbox', label: ' Sharing' },
                             { id: 'blockedIMP', center: true, padding: 'checkbox', label: 'Blocked ' },
                             { id: 'spent', center: true, padding: 'checkbox', label: 'Spent'},
                             { id: 'more', center: true, notAbleSort: true, padding: 'checkbox', label: 'More' },
@@ -1027,73 +981,75 @@ export class Dashboard extends React.Component{
                         innerTable = {(row, idx) => {
                             return(
                                 <TableRow key={idx}>
-                                    <EnhancedTableCell className={classes.cell} component="th" scope="row">
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)} component="th" scope="row">
                                         <Typography className={classes.noWrap} variant="h1" >
                                             <Link to={row.entry_path.replace('v1','')} className={classes.link} >
                                                 <span style={{ paddingRight: '10px'}}> {row.title} </span>
                                             </Link>
                                             <Icon className={classes.link}>link</Icon>
-                                            {that.processingIframe[idx] && <div className={classes.busi}> <CircularProgress size={15} color="secondary" /></div>}
+                                            <div className={classes.busy}>
+                                                {that.processingIframe[idx] && <CircularProgress size={15} color="secondary" />}
+                                            </div>
                                         </Typography>
                                     </EnhancedTableCell>   
-                                    <EnhancedTableCell className={classes.cell} >
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)} >
                                         <Typography className={classes.noWrap} variant="h1">
-                                            <Switch
+                                            <EnhancedSwitch
                                                 checked={row.enable}
                                                 onChange={that.makeOnOff(row.entry_path, row.entry_id, idx)}
                                                 disabled={row.blockedEntity}
                                             />
                                         </Typography>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={classes.cell}>
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}>
                                         <Typography className={classes.noWrap} variant="h1">
-                                            <Switch
+                                            <EnhancedSwitch
                                                 checked={row.onlyIframe}
                                                 onChange={that.makeVisibleInOnlyIframe(row.entry_path, row.entry_id, idx)}
                                             />
                                         </Typography>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={classes.cell}> 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}> 
                                         <Typography variant="h1" >
                                             {row.reward}                                     
                                         </Typography>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={classes.cell}> 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}> 
                                         <Typography variant="h1" >
                                             {row.sharedReward}                                     
                                         </Typography>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={classes.cell}> 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}> 
                                         <Typography variant="h1" >
                                             {row.responses}                             
                                         </Typography>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={classes.cell}> 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}> 
                                         <Typography variant="h1" >
                                             {row.sharedCount}                                    
                                         </Typography>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={classes.cell}> 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}> 
                                         <Typography variant="h1" >
                                             {row.payoutsIMP}                                     
                                         </Typography>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={classes.cell}> 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}> 
                                         <Typography variant="h1" >
                                             {row.sharesSpend}                                     
                                         </Typography>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={classes.cell}> 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}> 
                                         <Typography variant="h1" >
                                             {row.blockedIMP}                                     
                                         </Typography>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={classes.cell}> 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}> 
                                         <Typography variant="h1" >
                                             {row.spent}                                     
                                         </Typography>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={classes.cell}> 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}> 
                                         <IconButton
                                             aria-label="More"
                                             aria-haspopup="true"
@@ -1159,7 +1115,7 @@ export class Dashboard extends React.Component{
                     />
                 </div>
             </div> 
-        </MuiThemeProvider>)
+        )
     }
 }
 
@@ -1238,6 +1194,10 @@ const stylesHistory = theme => ({
         textAlign: 'center'
     },
 
+    center: {
+        textAlign: 'center',
+    }
+
 })
 
 // History
@@ -1314,22 +1274,22 @@ export class History extends React.Component{
                         innerTable = {(row, idx) => {   
                             return(
                                 <TableRow key={idx}>
-                                    <EnhancedTableCell className={classes.cell}  component="th" scope="row" >
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}   component="th" scope="row" >
                                         <Typography  variant="h1">
                                             {row.block}
                                         </Typography>
                                     </EnhancedTableCell>   
-                                    <EnhancedTableCell className={classes.cell} > 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}  > 
                                         <Typography  variant="h1" >
                                             {row.amount}
                                         </Typography>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={classes.cell}  > 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}   > 
                                         <Typography  variant="h1" >
                                             {row.date}
                                         </Typography>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={classes.cell} > 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}  > 
                                         <div className={cn(classes.status)}>
                                             <div className={cn(classes.label, {
                                             [classes.received]: row.confirmations >= 10,
@@ -1343,7 +1303,7 @@ export class History extends React.Component{
                                             </Typography>
                                         </div>
                                     </EnhancedTableCell>
-                                    <EnhancedTableCell className={classes.cell} > 
+                                    <EnhancedTableCell padding="dense" className={cn(classes.center)}  > 
                                         <Typography  variant="h1" >
                                             { row.explorer && <a href={`https://explorer.impleum.com/tx/${row.explorer}`}
                                                     target="_blank" className={classes.explorer}><Icon>link</Icon>
@@ -1413,6 +1373,8 @@ const stylesAnalytics = theme => ({
 
 })
 
+
+
 // Analytics
 @withStyles(stylesAnalytics)
 @observer
@@ -1444,50 +1406,51 @@ export class Analytics extends React.Component{
         return( 
             <div className={classes.container} >
 
-            <Typography variant="h1" className={classes.titleTop}>Responses</Typography>
+                <Typography variant="h1" className={classes.titleTop}>Responses</Typography>
 
-            <div className={classes.cardWrapper} >
-                <div className={classes.card}>
-                    <EnhancedTable
-                        rowsPerPage = {1}
-                        notShowPagination = {true}
-                        data = {
-                            [{
-                                'r0' : this.referrals && this.referrals.catalog || 0,
-                                'r1' : this.referrals && this.referrals.congratulations || 0,
-                                'r2' : this.referrals && this.referrals.appleStore || 0
-                            }]
-                        }
-                        rowsHeader = {[[
-                            { id: 'r0', center: true, padding:'checkbox', notAbleSort: true, label: 'Catalog(site)' },
-                            { id: 'r1', center: true, padding:'checkbox', notAbleSort: true, label: 'Results(site)' },
-                            { id: 'r2', center: true, padding:'checkbox', notAbleSort: true, label: 'Results(app)' },
-                        ]]}
-                        innerTable = {(row, idx) => {   
-                            return(
-                                <TableRow key={idx}>
-                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} component="th" scope="row" >
-                                        <Typography  variant="h1">
-                                            {row.r0}
-                                        </Typography>
-                                    </EnhancedTableCell>   
-                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} > 
-                                        <Typography variant="h1" >
-                                            {row.r1}
-                                        </Typography>
-                                    </EnhancedTableCell>
-                                    <EnhancedTableCell className={cn(classes.borderOff, classes.center)} > 
-                                        <Typography variant="h1" >
-                                            {row.r2}
-                                        </Typography>
-                                    </EnhancedTableCell>
-                                </TableRow>
-                            )
-                        }}
-                    />
+                <div className={classes.cardWrapper} >
+                    <div className={classes.card}>
+                        <EnhancedTable
+                            rowsPerPage = {1}
+                            notShowPagination = {true}
+                            data = {
+                                [{
+                                    'r0' : this.referrals && this.referrals.catalog || 0,
+                                    'r1' : this.referrals && this.referrals.congratulations || 0,
+                                    'r2' : this.referrals && this.referrals.appleStore || 0
+                                }]
+                            }
+                            rowsHeader = {[[
+                                { id: 'r0', center: true, padding:'dense', notAbleSort: true, label: 'Catalog(site)' },
+                                { id: 'r1', center: true, padding:'dense', notAbleSort: true, label: 'Results(site)' },
+                                { id: 'r2', center: true, padding:'dense', notAbleSort: true, label: 'Results(app)' },
+                            ]]}
+                            innerTable = {(row, idx) => {   
+                                return(
+                                    <TableRow key={idx}>
+                                        <EnhancedTableCell padding="dense" className={cn(classes.borderOff, classes.center)} component="th" scope="row" >
+                                            <Typography  variant="h1">
+                                                {row.r0}
+                                            </Typography>
+                                        </EnhancedTableCell>   
+                                        <EnhancedTableCell padding="dense" className={cn(classes.borderOff, classes.center)} > 
+                                            <Typography variant="h1" >
+                                                {row.r1}
+                                            </Typography>
+                                        </EnhancedTableCell>
+                                        <EnhancedTableCell padding="dense" className={cn(classes.borderOff, classes.center)} > 
+                                            <Typography variant="h1" >
+                                                {row.r2}
+                                            </Typography>
+                                        </EnhancedTableCell>
+                                    </TableRow>
+                                )
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>)
+       )
     }
 }
 

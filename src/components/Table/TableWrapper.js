@@ -1,9 +1,10 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {observable, action, when, computed} from 'mobx';
 import { observer }  from 'mobx-react';
 import cn from 'classnames';
-
+import {IsBright} from './../../utils';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableFooter from '@material-ui/core/TableFooter';
@@ -46,8 +47,12 @@ function getSorting(order, orderBy) {
 
 const EnhancedTableStyles = theme => ({
 
-    pagination: {
+    paginationWhite: {
         color: 'white'
+    },
+
+    paginationBlack: {
+        color: theme.background.default
     },
 
     tableBackground: {
@@ -70,7 +75,8 @@ const EnhancedTableStyles = theme => ({
 
     borderNone: {
         border: 'none'
-    }
+    },
+
 
 })
 
@@ -148,9 +154,20 @@ export default class EnhancedTable extends React.Component {
         }
     
         this.setState({ selected: newSelected });
-      };
-    
+    };
 
+    getStyleBackground(props, defaultClassName){
+        if(props.backgroundColor){
+            return {'style': {'backgroundColor': props.backgroundColor}};
+        }else{
+            return {'className': defaultClassName};
+        }
+    }
+
+    classForPagination(props) {
+        return IsBright(props.backgroundColor) ? props.classes.paginationBlack : props.classes.paginationWhite
+    }
+    
     render() {
         const {order, orderBy, selected, rowsPerPage, page } = this.state;
 
@@ -163,9 +180,11 @@ export default class EnhancedTable extends React.Component {
         
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
+        let backgroundProps = this.getStyleBackground(this.props, classes.tableBackground);
+        
         if(!loaded)
             return (
-                <Table className={classes.tableBackground}>
+                <Table {...backgroundProps}>
 
                     <EnhancedTableHead
                         numSelected={selected.length}
@@ -176,7 +195,7 @@ export default class EnhancedTable extends React.Component {
                         rowCount={data.length}
                         rows={this.props.rowsHeader}
                     />
-                    <TableBody className={classes.tableBackground}>
+                    <TableBody {...backgroundProps}>
                         <TableRow style={{ height: 200 }}>
                             <EnhancedTableCell className={cn(classes.borderNone)}> <div className={classes.center} > <CircularProgress color="secondary" /></div> </EnhancedTableCell>
                         </TableRow>
@@ -186,7 +205,7 @@ export default class EnhancedTable extends React.Component {
                 );
 
         return(
-            <Table className={classes.tableBackground}>
+            <Table {...backgroundProps}>
 
                 <EnhancedTableHead
                     numSelected={selected.length}
@@ -198,22 +217,26 @@ export default class EnhancedTable extends React.Component {
                     rows={this.props.rowsHeader}
                 />
 
-                <TableBody className={classes.tableBackground}>
-                {stableSort(data, getSorting(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(this.props.innerTable)}
-                { emptyRows > 0 && (
-                    <TableRow style={{ height: 48 * emptyRows }}>
-                        <EnhancedTableCell colSpan={12} />
-                    </TableRow>
-                )}
+                <TableBody {...backgroundProps}>
+                    {stableSort(data, getSorting(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(this.props.innerTable)}
+                    
+                    { emptyRows > 0 && (
+                        <TableRow style={{ height: 48 * emptyRows }}>
+                            <EnhancedTableCell colSpan={12} />
+                        </TableRow>
+                    )}
+
+                    {this.props.footerData && this.props.footerData.map(this.props.innerTable)}
+
                 </TableBody>
                 {!this.props.notShowPagination && <TableFooter>
-                        <TableRow>
+                        <TableRow >
                             <TablePagination
                                 classes={{
-                                    input: classes.pagination,
-                                    select: classes.pagination,
-                                    selectIcon: classes.pagination,
-                                    caption: classes.pagination
+                                    input: this.classForPagination( this.props ),
+                                    select: this.classForPagination( this.props ),
+                                    selectIcon: this.classForPagination( this.props ),
+                                    caption: this.classForPagination( this.props )
                                 }}
                                 colSpan={3}
                                 count={data.length}
@@ -229,3 +252,17 @@ export default class EnhancedTable extends React.Component {
     }
 
 }
+
+EnhancedTable.propTypes = {
+    backgroundColor: PropTypes.string,
+    rowsPerPage: PropTypes.number,
+    loaded: PropTypes.bool,
+    orderBy: PropTypes.string,
+    data: PropTypes.array.isRequired,
+    rowsHeader: PropTypes.array.isRequired,
+    innerTable: PropTypes.func.isRequired
+};
+
+EnhancedTable.defaultProps = {
+    backgroundColor: '#474E65'
+};

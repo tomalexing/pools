@@ -335,8 +335,8 @@ class Login extends React.Component {
                     <Typography variant="body2" className={classes.font14 + ' ' + classes.paddingTop1 + ' ' +  classes.paddingBottom1 } >
                         You can login / register with Quizi via social networks
                     </Typography>
-                    <Button  variant="raised" color="secondary" className={classes.facebook } disabled={!(this.terms && this.email)} classes={{disabled:classes.disabled}} onClick={this.loginWithFb}>Facebook</Button>
-                    <Button  variant="raised" color="secondary"  className={classes.google} disabled={!(this.terms && this.email)} classes={{disabled:classes.disabled}} onClick={this.loginWithGoogle}>Google</Button>
+                    <Button  variant="contained" color="secondary" className={classes.facebook } disabled={!(this.terms && this.email)} classes={{disabled:classes.disabled}} onClick={this.loginWithFb}>Facebook</Button>
+                    <Button  variant="contained" color="secondary"  className={classes.google} disabled={!(this.terms && this.email)} classes={{disabled:classes.disabled}} onClick={this.loginWithGoogle}>Google</Button>
                     <div className={classes.agree}>
                     
                         <Checkbox

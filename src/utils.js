@@ -464,6 +464,8 @@ export const LightenDarkenColor = (col, amt) => {
   
     var usePound = false;
   
+    if( (/^.*rgb/g).test(col) ) return col;
+
     if (col[0] == "#") {
         col = col.slice(1);
         usePound = true;
@@ -488,6 +490,36 @@ export const LightenDarkenColor = (col, amt) => {
  
     return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
   
+}
+
+export const IsBright = (col) => {
+  
+  if( (/^.*rgb/g).test(col) ) return col;
+
+  if (col[0] == "#") {
+      col = col.slice(1);
+  }
+
+  var num = parseInt(col,16);
+
+  var r = (num >> 16);
+
+
+  if (r > 255 / 2) r = 1;
+  else  r = 0;
+
+  var b = ((num >> 8) & 0x00FF);
+
+  if (b > 255 / 2) b = 1;
+  else b = 0;
+
+  var g = (num & 0x0000FF);
+
+  if (g > 255 / 2) g = 1;
+  else  g = 0;
+
+  return r + b + g > 3 / 2
+
 }
 
 
@@ -802,10 +834,8 @@ export const copy = (function(window, document, navigator) {
 
 export const formatedTime = (date) => {
   let dateInstance = new Date(date); 
-  return `${dateInstance.getFullYear()} -
-          ${dateInstance.getMonth().length > 1 ? dateInstance.getMonth() : `0${dateInstance.getMonth()}`} -
-          ${dateInstance.getDate()}  
-          ${dateInstance.getHours().toString().length > 1 ? dateInstance.getHours() : `0${dateInstance.getHours()}`}:${dateInstance.getMinutes().toString().length > 1 ? dateInstance.getMinutes() : `0${dateInstance.getMinutes()}`}`;
+  return `${dateInstance.getHours().toString().length > 1 ? dateInstance.getHours() : `0${dateInstance.getHours()}`}:${dateInstance.getMinutes().toString().length > 1 ? dateInstance.getMinutes() : `0${dateInstance.getMinutes()}`}
+          ${dateInstance.getDate()}/${dateInstance.getMonth().toString().length > 1 ? dateInstance.getMonth() : `0${dateInstance.getMonth()}`}/${dateInstance.getFullYear()}`;
 }
 
 util.copy = copy
