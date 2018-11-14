@@ -49,6 +49,7 @@ import EnhancedTable from './../components/Table/TableWrapper';
 import EnhancedTableCell from './../components/Table/Table.cell';
 import EnhancedTableToolbar from './../components/Table/Table.toolbar';
 import EnhancedSwitch from './../components/Switch';
+import { async } from '@firebase/util';
 
   
 
@@ -1222,7 +1223,13 @@ const stylesPayouts = theme => ({
 
     center: {
         textAlign: 'center',
-    }
+    },
+
+    busy:{
+        display: 'inline-block',
+        paddingLeft: '20px',
+        width: '20px'
+    },
 
 
 })
@@ -1240,10 +1247,20 @@ export class Payouts extends React.Component{
 
     @observable data = [];
     @observable details = null;
+    @observable busy = null;
+
+
+    @observable selected = [];
 
     @action.bound
     showDetails = id => e => {
         e && e.preventDefault();
+
+        if(this.details && this.details.id == id){
+            this.details = null;
+            return;
+        }
+
         if(this.data.filter(d => d[0].id == id)[0][0]){
             this.details = {
                 id: this.data.filter(d => d[0].id == id)[0][0]['id'],
@@ -1259,60 +1276,234 @@ export class Payouts extends React.Component{
     }
 
     @action.bound
-    payout = id => e => {
-        e && e.preventDefault();
+    payout = async id => {
 
-       
-    }
+        let o = this.data.filter(row => {return row[0].id == id});
+        if(o){
+            let body = Object.entries(o[0][0]['data']['body']);
 
-    @action.bound
-    delete = id => e => {
-        e && e.preventDefault();
+            let user = await new Promise(r => Api.auth().onAuthStateChanged(r)).catch(function(error) {
+                console.trace(error.stack);
+                console.log('User token is outdated. Relogin is required.')
+            });
+            let idToken = await user.getIdToken();
 
-       
-    }
+            let {diffWithdrawDetail, token, totalIMP, wallet, ip} = body.sort(([d1, _], [d2, __]) => {
+                return new Date(d2) - new Date(d1)
+            })[0][1];
+
+            let that = this,
+                fetchBody = {
+                    token: idToken,
+                    totalIMP,   
+                    wallet,
+                    diffWithdrawDetail,
+                    id,
+                    ip
+                };
+            
+            console.log(fetchBody);
+            
+            let resp = await Api.ourApi(`transaction`, fetchBody);
+
+            console.log(resp);
 
 
-    @action.bound
-    handleClick = (event, id) => {
-        const { selected } = this.state;
-        const selectedIndex = selected.indexOf(id);
-        let newSelected = [];
-    
-        if (selectedIndex === -1) {
-          newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-          newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-          newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-          newSelected = newSelected.concat(
-            selected.slice(0, selectedIndex),
-            selected.slice(selectedIndex + 1),
-          );
+            if(resp.status){
+                return Api.withdraw(id, totalIMP, wallet, token, resp, diffWithdrawDetail);
+            }else{
+                return Promise.reject(resp)
+            }
+
         }
-    
-        this.setState({ selected: newSelected });
+
+       
+    }
+
+    @action.bound
+    payoutClick = id => async e => {
+        e && e.preventDefault();
+        if(this.busy){
+            return 
+        }
+        this.busy = id;
+        try {   
+            await this.payout(id).then(async _ => {
+
+                await this.delete(id);
+                await this.getData();
+                if(this.details && this.details.id === id){
+                    this.details = null;
+                }
+
+            }, async resp => {
+
+                this.notifyMassage = resp.message + ' \n Check console for errors (Inspect elements => Console).';
+                this.isNotifyModalOpened = true;
+                this.getData();
+
+            })
+
+        } finally {
+            this.busy = null;
+        }
+
+    }
+
+    @action.bound
+    delete = async id => {
+
+        await Api.delPayoutsRequests(id);
+        let index = this.selected.findIndex(sid => sid === id);
+
+        if( index !== -1){
+            this.selected.splice(index, 1)
+        }
+    }
+
+    @action.bound
+    deleteClick = id => async e => {
+        e && e.preventDefault();
+
+        if(this.busy){
+            return 
+        }
+        this.busy = id;
+
+        try {   
+
+            await this.delete(id);
+            await this.getData();
+            if(this.details && this.details.id === id){
+                this.details = null;
+            }
+        } finally {
+            this.busy = null;
+        }
+    }
+
+    @action.bound
+    payoutAll = async e => {
+        e && e.preventDefault();
+        if(this.busy){
+            return 
+        }
+        try {
+
+            await this.selected.reduce(async (p, id) => {
+                await p;
+                if(this.canceled) return Promise.resolve();
+                this.busy = id;
+                return await this.payout(id).then(async _ => {
+
+                    await this.delete(id);
+                    await this.getData();
+                    if(this.details && this.details.id === id){
+                        this.details = null;
+                    }
+        
+                }, async resp => {
+        
+                    this.notifyMassage = resp.message + ' \n Check console for errors (Inspect elements => Console).';
+                    this.isNotifyModalOpened = true;
+                    this.getData();
+        
+                });
+            }, Promise.resolve());
+
+        } finally {
+            this.busy = null;
+            this.canceled = false;
+        }
+    }
+
+    @action.bound
+    deleteAll = async e => {
+        e && e.preventDefault();
+        if(this.busy){
+            return 
+        }
+
+        try {
+            
+            this.selected.reduce(async (p, id) => {
+                await p;
+                this.busy = id;
+                if(this.details && this.details.id === id){
+                    this.details = null;
+                }
+                return await this.delete(id);
+            }, Promise.resolve())
+
+            await this.getData();
+            
+
+        } finally {
+            this.busy = null;
+        }
+
+    }
+
+    @observable canceled = false;
+    @action     
+    cancel = e => {
+        e && e.preventDefault();
+        this.canceled = !this.canceled;
     };
 
-    @action.bound
-    isSelected = id => {
+    @action
+    selectRow = id => _ => {
+        const selectedIndex = this.selected.indexOf(id);
+        let newSelected = [];
 
-        return false
+        if (selectedIndex === -1) {
+          newSelected = newSelected.concat(this.selected, id);
+        } else if (selectedIndex === 0) {
+          newSelected = newSelected.concat(this.selected.slice(1));
+        } else if (selectedIndex === this.selected.length - 1) {
+          newSelected = newSelected.concat(this.selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+          newSelected = newSelected.concat(
+            this.selected.slice(0, selectedIndex),
+            this.selected.slice(selectedIndex + 1),
+          );
+        }
+
+        this.selected = newSelected;
+    };
+
+    isSelected = id => {
+        return this.selected.indexOf(id) >= 0;
     }
+
+    isBusy = id => {
+        return this.busy === id;
+    }
+   
+    @action     
+    selectAll = event => {
+        if (event.target.checked) {
+          this.selected = this.data.map(n => n[0].id);
+          return;
+        }   
+        this.selected = [];
+    };
+
 
     @action
     getData = async _ => {
   
-            // let resp = await Api.ourApi(`transaction`, fetchBody);
-            // Api.withdraw(Auth.uid, that.totalIMP, that.wallet, idToken, resp, that.withdrawDetail ).then( amount => {
-            //     that.getProgress();
-            //     that.paying = false;
-            // })           
-        
         this.data = await Api.getPayoutsRequests();
         
     }
+
+    @observable notifyMassage = '';
+
+    @observable isNotifyModalOpened = false    
+    @action.bound
+    closeNotifyModal = () => {
+        this.isNotifyModalOpened = false;
+    };
 
     render(){
         let that = this;
@@ -1320,11 +1511,15 @@ export class Payouts extends React.Component{
 
         return( 
             <div className={classes.container}>
+                
+                <SModal title="Notification" body={this.notifyMassage} open={this.isNotifyModalOpened} close={this.closeNotifyModal}/>  
 
                 <div className={classes.cardWrapper} >
                     <div className={classes.card}>
 
                         <EnhancedTable
+                            selected={this.selected}
+                            selectAll={this.selectAll}
                             orderBy = {'last'}
                             data = {that.data.map(row =>  {
                                 let body = Object.entries(row[0].data.body).sort(([d1, _], [d2, __]) => {
@@ -1356,63 +1551,93 @@ export class Payouts extends React.Component{
                             footerData = {[{
                                 'uid': '',
                                 'coins': '',
-                                'wallet': '',
-                                'ip': '',
-                                'last': '',
+                                'wallet': 'cancel',
+                                'ip': 'delete',
+                                'last': 'payout',
                                 'number': ''
                             }]}
 
                             innerTable = {(row) => {
                                 let isSelected = this.isSelected(row.uid);
-                             
+                                let idBusy  = this.isBusy(row.uid);
                                 return(
                                     <TableRow 
-                                        hover 
+                                        hover
                                         key={row.uid}
-                                        onClick={event => this.handleClick(event, row.uid)}
-                                        role="checkbox"
-                                        aria-checked={isSelected}
                                         tabIndex={-1}
                                         selected={isSelected}>
                                        <EnhancedTableCell padding={'checkbox'} component="th" scope="row">
-                                            <Checkbox
+                                            {row.uid && <Checkbox
                                                 style={{color: 'white'}}
                                                 checked={isSelected}
-                                            />
+                                                onClick={this.selectRow(row.uid)}
+                                            />}
                                         </EnhancedTableCell>  
                                         <EnhancedTableCell component="th" scope="row">
-                                            <Typography variant="h1">
+                                            <Typography variant="h1" className={classes.noWrap}>
                                                 {row.uid}
+                                                <div className={classes.busy}>
+                                                    {idBusy && <CircularProgress size={15} color="secondary" />}
+                                                </div>
                                             </Typography>
                                         </EnhancedTableCell>   
                                         <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
-                                            <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="contained" onClick={that.showDetails(row.uid)}>
+                                            {row.uid && <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="contained" onClick={that.showDetails(row.uid)}>
                                                 <Typography className={classes.noWrap} variant="h1">
                                                     {row.coins}
                                                 </Typography>
-                                            </Button>
+                                            </Button>}
                                         </EnhancedTableCell>
                                         <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
-                                            <Typography className={classes.noWrap} variant="h1">
+                                            {row.wallet != 'cancel' && <Typography className={classes.noWrap} variant="h1">
                                                 {row.wallet}
-                                            </Typography>
+                                            </Typography>}
+                                            {row.wallet === 'cancel' && this.selected.length > 0 && this.data.length != 0 && <div> 
+                                            
+                                              <Button color="secondary" variant={`${this.canceled ? 'contained' : 'outlined'}`} size="small" onClick={that.cancel}>
+                                                    <Typography variant="button"  >
+                                                        {row.wallet}
+                                                    </Typography>
+                                                </Button>
+                                        
+                                            </div>}
                                         </EnhancedTableCell>
                                         <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
-                                            <Typography className={classes.noWrap} variant="h1">
+                                            {row.ip != 'delete' && <Typography className={classes.noWrap} variant="h1">
                                                 {row.ip}
-                                            </Typography>
+                                            </Typography>}
+
+                                            {row.ip === 'delete' && this.selected.length > 0 && this.data.length != 0 && <div> 
+                                            
+                                              <Button color="secondary" variant="outlined" size="small" onClick={that.deleteAll}>
+                                                    <Typography variant="button"  >
+                                                        {row.ip}
+                                                    </Typography>
+                                                </Button>
+                                        
+                                            </div>}
                                         </EnhancedTableCell>
                                         <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
-                                            <Typography className={classes.noWrap} variant="h1">
+                                            {row.last != 'payout' && <Typography className={classes.noWrap} variant="h1">
                                                 {row.last}
-                                            </Typography>
+                                            </Typography>}
+
+                                            {row.last === 'payout' &&  this.selected.length > 0 && this.data.length != 0 && <div> 
+                                              
+                                              <Button color="secondary" variant="contained" size="small" onClick={that.payoutAll}>
+                                                  <Typography variant="button"  >
+                                                      {row.last}
+                                                  </Typography>
+                                              </Button>
+
+                                            </div>}
                                         </EnhancedTableCell>
                                         <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
-                                            <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="contained" onClick={that.showAllRequests(row.uid)}>
+                                            {row.uid && <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="contained" onClick={that.showAllRequests(row.uid)}>
                                                 <Typography style={{color: '#FC3868'}} variant="button"  >
                                                     {row.number}
                                                 </Typography>
-                                            </Button>
+                                            </Button>}
                                         </EnhancedTableCell>
                                     </TableRow>
                                 )
@@ -1464,7 +1689,7 @@ export class Payouts extends React.Component{
                                                 .map(([date, {diffWithdrawDetail}]) =>  {
                          
                                                     return Object.values(diffWithdrawDetail).reduce((acc, next) => {
-                                                        console.log(acc)
+                                                  
                                                         return {
                                                             'amount':  acc.amount + next.amount ,
                                                             'sharedReward': +acc.sharedReward + (next.isLiked ? next.sharedReward : 0)
@@ -1519,9 +1744,9 @@ export class Payouts extends React.Component{
                                         <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
                                             {row.sharedReward === 'delete' && <div> 
                                             
-                                                <Button color="secondary" variant="outlined" size="small"  onClick={that.delete(row.uid)}>
+                                                <Button color="secondary" variant="outlined" size="small"  onClick={that.deleteClick(that.details.id)}>
                                                     <Typography variant="button"  >
-                                                        delete
+                                                        {row.sharedReward}
                                                     </Typography>
                                                 </Button>
                                         
@@ -1533,9 +1758,9 @@ export class Payouts extends React.Component{
                                         </EnhancedTableCell>
 
                                         <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
-                                            {row.isLiked === 'payout' && <div> 
+                                            {row.isLiked === 'payout'  && <div> 
                                               
-                                                <Button color="secondary" variant="contained" size="small" onClick={that.payout(row.uid)}>
+                                                <Button color="secondary" variant="contained" size="small" onClick={that.payoutClick(that.details.id)}>
                                                     <Typography variant="button"  >
                                                         {row.isLiked}
                                                     </Typography>

@@ -459,7 +459,7 @@ export class Common extends React.Component{
 
                                         <div className={classes.cardBodyResult}>
 
-                                            {info && (info.blockedByUser || info.blockedEntity) && <div className={classes.unavailable}> <Typography className={classes.unavailableText} variant="h1"> Unavailable</Typography> </div>}
+                                            {info && (info.blockedByUser || info.blockedEntity) && <div className={classes.unavailable}> <Typography className={classes.unavailableText} variant="h2"> Unavailable</Typography> </div>}
                                             
                                             {info && info.allCardsNumber > 0  &&  <Typography variant="h3" className={classes.noWrap}>
                                                 {info.cat == 'Polls' && info.dashOutput === 'number' && `${Math.floor( progress[info.dashOutput] * 100/ info.allCardsNumber)}%` /* Bad Design */ }
@@ -474,11 +474,11 @@ export class Common extends React.Component{
 
                                             { info.cat == 'Quizzes' && progress.final && <div className={classes.noWrap}>
                                                 <Icon className={classes.statusIconCheck} >check_circle</Icon>  
-                                                <Typography variant="h6" >Completed</Typography> 
+                                                <Typography variant="h5" >Completed</Typography> 
                                             </div>}
                                             { info.cat == 'Quizzes' && !progress.final && <div className={classes.noWrap}>
                                                     <Icon className={classes.statusIconWarning} >warning</Icon>
-                                                    <Typography variant="h6" >Not finished</Typography> 
+                                                    <Typography variant="h5" >Not finished</Typography> 
                                             </div>}
                                             { info.cat == 'Quizzes' && progress && progress.final && <div className={classes.noWrap}>
                                                 <Button className={classes.btnResultSmaller} variant="outlined" color="secondary"  side="small"  style={{textDecoration: 'none'}} href={slug.replace('/v1','')} >
@@ -835,7 +835,7 @@ export class Profile extends React.Component{
                 })
                 .then( _ => {
                     return Api.getWithdrawn(Auth.uid)
-                }).then( amountWithdrawn => {
+                }).then( async amountWithdrawn => {
 
                     that.totalIMP = Math.max(0, Object.values(that.cardsInProcessAndFinished).reduce((acc, prog) => {
                     
@@ -848,14 +848,22 @@ export class Profile extends React.Component{
                         addToTotal = Math.min(( prog['progress'].number ), prog['info'].allCardsNumber) * prog['info'].reward;
                     }
 
+                    
                     that.withdrawDetail[`${prog['info'].id}`] = { amount: addToTotal, addr: prog['info'].addr, isLiked: prog['isLiked'], sharedReward: prog['info'].sharedReward, reward: prog['info'].reward };
                     
                     return acc += addToTotal + (prog['isLiked'] ? prog['info'].sharedReward : 0);
 
                     }, -amountWithdrawn))
+
+                    let oldWithdrawDetailed = await Api.getWithdrawDetailed();
+      
+                    let diffWithdrawDetail = Profile.getDiff( oldWithdrawDetailed, that.withdrawDetail);
+                    
+                    console.log(diffWithdrawDetail);
                 })
 
-            }, _ => {})
+            }, _ => {});
+
 
 
             this.calculatingProgress = false;
@@ -924,20 +932,30 @@ export class Profile extends React.Component{
         })
     }
 
-    static getDiffAmount(oldObj, newObj){
+    static getDiff(oldObj, newObj){
         let diff = {};
         Object.entries(newObj).map(([key, value]) => {
-            diff[key] = Object.assign(newObj[key]);
+            diff[key] = Object.assign({}, newObj[key]);
             
-            if( oldObj[key] && !isNaN( oldObj[key]['amount']) ){ 
-                if( oldObj[key]['amount'] ){
-                    oldObj[key]['amount'] < 0;
-                    diff[key]['amount'] =  newObj[key]['amount']
-                }else{
-                    diff[key]['amount'] =  newObj[key]['amount'] - oldObj[key]['amount'];
+            if( oldObj[key] && newObj[key]){
+                
+                if( !isNaN( oldObj[key]['amount']) ){
+                    if( oldObj[key]['amount'] ){
+                        if( oldObj[key]['amount'] < 0){
+                            diff[key]['amount'] =  newObj[key]['amount']
+                        }else{
+                            diff[key]['amount'] =  newObj[key]['amount'] - oldObj[key]['amount'];
+                        }
+                    }
+
+                }
+
+                if( oldObj[key]['isLiked'] ){
+                    diff[key]['isLiked'] =  !oldObj[key]['isLiked'];
                 }
             }
         })
+
         return diff;
     }
 
@@ -965,7 +983,7 @@ export class Profile extends React.Component{
             let idToken = await user.getIdToken();
             let oldWithdrawDetailed = await Api.getWithdrawDetailed();
 
-            let diffWithdrawDetail = Profile.getDiffAmount( oldWithdrawDetailed, that.withdrawDetail);
+            let diffWithdrawDetail = Profile.getDiff( oldWithdrawDetailed, that.withdrawDetail);
 
             let fetchBody = {
                 token: idToken,
@@ -983,6 +1001,7 @@ export class Profile extends React.Component{
             that.paying = false;
             if(resp) {
                 that.notifyMassage = 'Your request for payout is received. Our team reviews and approves it up to 24 hour.';
+                that.alreadyPayoutsRequests = true;
                 return that.isNotifyModalOpened = true;
             }else{
                 that.errorMassage = 'There is a problem with withdrawals, our highly skilled monkeys are working on it. Sorry about that. Problem will be resolved as soon as possible. Really.';
@@ -1225,7 +1244,7 @@ export class History extends React.Component{
                     innerTable = {(row, idx) => {   
                         return(
                             <TableRow key={idx}>
-                                <EnhancedTableCell numeric padding="dense" className={cn(classes.center)}   component="th" scope="row" >
+                                <EnhancedTableCell numeric padding="dense" className={cn(classes.center)} component="th" scope="row" >
                                     <Tooltip title={row.wallet} placement="top">
                                         <Typography className={classes.short} variant="body2" gutterBottom>
                                             {row.wallet}

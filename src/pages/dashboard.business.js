@@ -757,7 +757,7 @@ export class Dashboard extends React.Component{
         let that = this;
         let user = await new Promise(r => Api.auth().onAuthStateChanged(r)).catch(function(error) {
             console.trace(error.stack);
-            console.log('User token is outdated. Relogin is required.')
+            console.log('User token is outdated. Re-login is required.')
         });
 
         if (user) {

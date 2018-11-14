@@ -55,7 +55,6 @@ export default class EnhancedTableHead extends React.Component {
 
     render() {
       const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount } = this.props;
-
       return (
         <TableHead classes={{ root: classes.root }} >
           {this.props.rows.map((columns, idx) => (
@@ -100,7 +99,7 @@ export default class EnhancedTableHead extends React.Component {
                     <Checkbox
                       style={{color: 'white'}}
                       indeterminate={numSelected > 0 && numSelected < rowCount}
-                      checked={numSelected === rowCount}
+                      checked={numSelected === rowCount && rowCount != 0}
                       onChange={onSelectAllClick}
                     />
                   }

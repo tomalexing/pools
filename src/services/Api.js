@@ -703,6 +703,19 @@ function setPayoutsRequests(fields){
 }
 
 
+function delPayoutsRequests(doc){
+    if(!doc) return Promise.resolve(false);
+    return new Promise(async resolve => {
+        try {
+            await db.collection('payoutsRequests').doc(doc).delete();
+            return resolve(true)
+        } catch (error) {
+            return resolve(false)
+        }
+    })
+}
+
+
 function checkPayoutsRequests(id){
     if(!id) return Promise.resolve(false);
     return new Promise(async resolve => {
@@ -752,6 +765,7 @@ const Api = {
     loadCBTicker,
     getPayoutsRequests,
     setPayoutsRequests,
-    checkPayoutsRequests
+    checkPayoutsRequests,
+    delPayoutsRequests
 }
 export default Api;
