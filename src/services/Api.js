@@ -233,7 +233,7 @@ function getWithdrawDetailed(id){
                 if('withdrawDetailed' in docDate){
                     resolve(docDate.withdrawDetailed)
                 }else{
-                    resolve(0)
+                    resolve(null)
                 }
             }
         });
@@ -606,6 +606,7 @@ function setInCategories(label, id, value, path = 'categories'){
 function getCoinName(){
     return "IMPL"
 }
+
 
 
 async function ourApi(path, fetchBody) {

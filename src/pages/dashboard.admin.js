@@ -837,11 +837,11 @@ export class Requests extends React.Component{
                                 return {
                                     'email': row[0].id,
                                     'name': Object.entries(row[0].data.body).sort(([d1, _], [d2, __])=>{
-                                                return d1 < d2
-                                            })[0][1].name,
-                                    'last': formatedTime(Object.keys(row[0].data.body).sort((d1, d2)=>{
                                                 return new Date(d2) - new Date(d1)
-                                            })[0]),
+                                            })[0][1].name,
+                                    'last': Object.keys(row[0].data.body).sort((d1, d2)=>{
+                                                return new Date(d2) - new Date(d1)
+                                            })[0],
                                     'number': Object.values(row[0].data.body).length
                                 }
                             })}
@@ -866,7 +866,7 @@ export class Requests extends React.Component{
                                         </EnhancedTableCell>
                                         <EnhancedTableCell numeric>
                                             <Typography className={classes.noWrap} variant="h1">
-                                                {row.last}
+                                                {formatedTime(row.last)}
                                             </Typography>
                                         </EnhancedTableCell>
                                         <EnhancedTableCell numeric > 
@@ -939,9 +939,9 @@ export class Requests extends React.Component{
                                     'name': Object.entries(row[0].data.body).sort(([d1, _], [d2, __])=>{
                                                 return new Date(d2) - new Date(d1)
                                             })[0][1].name,
-                                    'last': formatedTime(Object.keys(row[0].data.body).sort((d1, d2)=>{
+                                    'last': Object.keys(row[0].data.body).sort((d1, d2)=>{
                                                 return new Date(d2) - new Date(d1)
-                                            })[0]),
+                                            })[0],
                                     'number': Object.values(row[0].data.body).length        
                     
                                 }
@@ -967,7 +967,7 @@ export class Requests extends React.Component{
                                         </EnhancedTableCell>
                                         <EnhancedTableCell numeric>
                                             <Typography className={classes.noWrap} variant="h1">
-                                                {row.last}
+                                                {formatedTime(row.last)}
                                             </Typography>
                                         </EnhancedTableCell>
                                         <EnhancedTableCell numeric > 
@@ -1275,6 +1275,38 @@ export class Payouts extends React.Component{
 
     }
 
+    static compare(oldObj, newObj, diff1){
+        let diff = {};
+        let result = true
+        Object.entries(newObj).map(([key, value]) => {
+            diff[key] = Object.assign({}, newObj[key]);
+            
+            if( oldObj && oldObj[key] && newObj[key]){
+                
+                if( !isNaN( oldObj[key]['amount']) ){
+                    if( oldObj[key]['amount'] < 0){
+                        diff[key]['amount'] = newObj[key]['amount']
+                    }else{
+                        diff[key]['amount'] = newObj[key]['amount'] - oldObj[key]['amount'];
+                    }
+                }
+
+
+                if( oldObj[key]['isLiked'] ){
+                    diff[key]['isLiked'] =  !oldObj[key]['isLiked'];
+                }
+            }
+
+            if( diff[key]['amount'] != diff1[key]['amount'] &&
+                diff[key]['isLiked'] != diff1[key]['isLiked']){
+                    result = false
+                }
+
+        })
+
+        return result;
+    }
+
     @action.bound
     payout = async id => {
 
@@ -1288,7 +1320,7 @@ export class Payouts extends React.Component{
             });
             let idToken = await user.getIdToken();
 
-            let {diffWithdrawDetail, token, totalIMP, wallet, ip} = body.sort(([d1, _], [d2, __]) => {
+            let {diffWithdrawDetail, withdrawDetail, token, totalIMP, wallet, ip} = body.sort(([d1, _], [d2, __]) => {
                 return new Date(d2) - new Date(d1)
             })[0][1];
 
@@ -1303,14 +1335,22 @@ export class Payouts extends React.Component{
                 };
             
             console.log(fetchBody);
-            
+
+
+            let oldWithdrawDetailed = await Api.getWithdrawDetailed(id);
+
+            if( ! Payouts.compare( oldWithdrawDetailed, withdrawDetail, diffWithdrawDetail))
+                return Promise.reject({message:'Not comparable'});
+    
+
             let resp = await Api.ourApi(`transaction`, fetchBody);
 
             console.log(resp);
 
 
+
             if(resp.status){
-                return Api.withdraw(id, totalIMP, wallet, token, resp, diffWithdrawDetail);
+                return Api.withdraw(id, totalIMP, wallet, token, resp, withdrawDetail);
             }else{
                 return Promise.reject(resp)
             }
@@ -1426,19 +1466,19 @@ export class Payouts extends React.Component{
 
         try {
             
-            this.selected.reduce(async (p, id) => {
+            await this.selected.reduce(async (p, id) => {
                 await p;
                 this.busy = id;
                 if(this.details && this.details.id === id){
                     this.details = null;
                 }
                 return await this.delete(id);
-            }, Promise.resolve())
+            }, Promise.resolve());
 
-            await this.getData();
-            
+            await this.getData(); 
 
         } finally {
+    
             this.busy = null;
         }
 
@@ -1523,7 +1563,7 @@ export class Payouts extends React.Component{
                             orderBy = {'last'}
                             data = {that.data.map(row =>  {
                                 let body = Object.entries(row[0].data.body).sort(([d1, _], [d2, __]) => {
-                                    return d1 - d2
+                                    return new Date(d2) - new Date(d1)
                                 })[0][1];
 
                                 return {
@@ -1531,9 +1571,9 @@ export class Payouts extends React.Component{
                                     'coins': roundeWithDec( body['totalIMP'] ),
                                     'wallet': body['wallet'],
                                     'ip': body['ip'],
-                                    'last': formatedTime(Object.keys(row[0].data.body).sort((d1, d2) => {
+                                    'last': Object.keys(row[0].data.body).sort((d1, d2) => {
                                                 return new Date(d2) - new Date(d1)
-                                            })[0]),
+                                            })[0],
                                     'number': Object.values(row[0].data.body).length
                                 }
                             })}
@@ -1619,7 +1659,7 @@ export class Payouts extends React.Component{
                                         </EnhancedTableCell>
                                         <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
                                             {row.last != 'payout' && <Typography className={classes.noWrap} variant="h1">
-                                                {row.last}
+                                                {formatedTime(row.last)}
                                             </Typography>}
 
                                             {row.last === 'payout' &&  this.selected.length > 0 && this.data.length != 0 && <div> 

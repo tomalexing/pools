@@ -855,11 +855,11 @@ export class Profile extends React.Component{
 
                     }, -amountWithdrawn))
 
-                    let oldWithdrawDetailed = await Api.getWithdrawDetailed();
+                    // let oldWithdrawDetailed = await Api.getWithdrawDetailed();
       
-                    let diffWithdrawDetail = Profile.getDiff( oldWithdrawDetailed, that.withdrawDetail);
+                    // let diffWithdrawDetail = Profile.getDiff( oldWithdrawDetailed, that.withdrawDetail);
                     
-                    console.log(diffWithdrawDetail);
+                    // console.log(diffWithdrawDetail);
                 })
 
             }, _ => {});
@@ -937,17 +937,14 @@ export class Profile extends React.Component{
         Object.entries(newObj).map(([key, value]) => {
             diff[key] = Object.assign({}, newObj[key]);
             
-            if( oldObj[key] && newObj[key]){
+            if( oldObj && oldObj[key] && newObj[key]){
                 
                 if( !isNaN( oldObj[key]['amount']) ){
-                    if( oldObj[key]['amount'] ){
-                        if( oldObj[key]['amount'] < 0){
-                            diff[key]['amount'] =  newObj[key]['amount']
-                        }else{
-                            diff[key]['amount'] =  newObj[key]['amount'] - oldObj[key]['amount'];
-                        }
+                    if( oldObj[key]['amount'] < 0){
+                        diff[key]['amount'] = newObj[key]['amount']
+                    }else{
+                        diff[key]['amount'] = newObj[key]['amount'] - oldObj[key]['amount'];
                     }
-
                 }
 
                 if( oldObj[key]['isLiked'] ){
@@ -990,6 +987,7 @@ export class Profile extends React.Component{
                 totalIMP: that.totalIMP,
                 wallet: that.wallet,
                 diffWithdrawDetail,
+                withdrawDetail: that.withdrawDetail,
                 id: Auth.uid,
                 ip: this.IP
             };
@@ -1000,7 +998,7 @@ export class Profile extends React.Component{
 
             that.paying = false;
             if(resp) {
-                that.notifyMassage = 'Your request for payout is received. Our team reviews and approves it up to 24 hour.';
+                that.notifyMassage = 'Your request for payout is received. Our team reviews and approves it up to 2 business day.';
                 that.alreadyPayoutsRequests = true;
                 return that.isNotifyModalOpened = true;
             }else{
