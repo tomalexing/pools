@@ -1231,6 +1231,20 @@ const stylesPayouts = theme => ({
         width: '20px'
     },
 
+    short:{
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        display: 'inline-block',
+        width: '100%'
+    },
+
+    explorer: {
+        verticalAlign: 'middle',
+        lineHeight: '100%',
+        fontSize: 30,
+        color: '#fff'
+    },
+
 
 })
 
@@ -1247,8 +1261,11 @@ export class Payouts extends React.Component{
 
     @observable data = [];
     @observable details = null;
+    @observable histories = {};
+    @observable history = null;
     @observable busy = null;
 
+    @observable historyLoaded = false;
 
     @observable selected = [];
 
@@ -1440,6 +1457,8 @@ export class Payouts extends React.Component{
                     await this.getData();
                     if(this.details && this.details.id === id){
                         this.details = null;
+                        this.history = null;
+
                     }
         
                 }, async resp => {
@@ -1471,6 +1490,7 @@ export class Payouts extends React.Component{
                 this.busy = id;
                 if(this.details && this.details.id === id){
                     this.details = null;
+                    this.history = null;
                 }
                 return await this.delete(id);
             }, Promise.resolve());
@@ -1537,6 +1557,27 @@ export class Payouts extends React.Component{
         
     }
 
+    @action.bound
+    getHistory = id => async e => {
+        e && e.preventDefault();
+
+        if(this.history && this.history.id == id){
+            this.history = null;
+            return;
+        }
+        if(this.histories[id]){
+            this.history = this.histories[id];
+        }else{
+            this.history = await Api.getHistory(id);
+        }
+        console.log(this.history)
+        this.histories[id] = this.history;
+
+        this.historyLoaded = true;
+
+    }
+    
+
     @observable notifyMassage = '';
 
     @observable isNotifyModalOpened = false    
@@ -1544,6 +1585,8 @@ export class Payouts extends React.Component{
     closeNotifyModal = () => {
         this.isNotifyModalOpened = false;
     };
+
+    
 
     render(){
         let that = this;
@@ -1571,6 +1614,7 @@ export class Payouts extends React.Component{
                                     'coins': roundeWithDec( body['totalIMP'] ),
                                     'wallet': body['wallet'],
                                     'ip': body['ip'],
+                                    'email':  body['email'],
                                     'last': Object.keys(row[0].data.body).sort((d1, d2) => {
                                                 return new Date(d2) - new Date(d1)
                                             })[0],
@@ -1581,6 +1625,7 @@ export class Payouts extends React.Component{
                             rowsHeader = {[[
                                 { id: 'checkbox', type: "checkbox", padding: 'checkbox' },
                                 { id: 'uid', numeric: false, padding: 'dense', label: 'Id' },
+                                { id: 'email', numeric: false, padding: 'dense', label: 'Email' },
                                 { id: 'coins', center: true, padding: 'dense',label: 'Coins to payout, ' + Api.getCoinName() },
                                 { id: 'wallet', center: true, padding: 'dense',label: 'Wallet' },
                                 { id: 'ip', center: true, padding: 'dense',label: 'Ip' },
@@ -1591,6 +1636,7 @@ export class Payouts extends React.Component{
                             footerData = {[{
                                 'uid': '',
                                 'coins': '',
+                                'email': '',
                                 'wallet': 'cancel',
                                 'ip': 'delete',
                                 'last': 'payout',
@@ -1615,18 +1661,31 @@ export class Payouts extends React.Component{
                                         </EnhancedTableCell>  
                                         <EnhancedTableCell component="th" scope="row">
                                             <Typography variant="h1" className={classes.noWrap}>
-                                                {row.uid}
+                                                <Tooltip title="History" placement="top">
+                                                    <Button color="primary" variant="contained" onClick={that.getHistory(row.uid)}>
+                                                        <Typography className={classes.noWrap} variant="h1">
+                                                            {row.uid}
+                                                        </Typography>
+                                                    </Button>
+                                                </Tooltip>
                                                 <div className={classes.busy}>
                                                     {idBusy && <CircularProgress size={15} color="secondary" />}
                                                 </div>
                                             </Typography>
-                                        </EnhancedTableCell>   
+                                        </EnhancedTableCell>
+                                        <EnhancedTableCell component="th" scope="row">
+                                            <Typography variant="h1" className={classes.noWrap}>
+                                                {row.email}
+                                            </Typography>
+                                        </EnhancedTableCell>
                                         <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
-                                            {row.uid && <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="contained" onClick={that.showDetails(row.uid)}>
-                                                <Typography className={classes.noWrap} variant="h1">
-                                                    {row.coins}
-                                                </Typography>
-                                            </Button>}
+                                            {row.uid && <Tooltip title="More Info" placement="top"> 
+                                                <Button style={{width: '34px', 'minWidth': '34px'}} color="primary" variant="contained" onClick={that.showDetails(row.uid)}>
+                                                    <Typography className={classes.noWrap} variant="h1">
+                                                        {row.coins}
+                                                    </Typography>
+                                                </Button>
+                                             </Tooltip>}
                                         </EnhancedTableCell>
                                         <EnhancedTableCell padding={'dense'} className={cn(classes.center)}>
                                             {row.wallet != 'cancel' && <Typography className={classes.noWrap} variant="h1">
@@ -1685,7 +1744,7 @@ export class Payouts extends React.Component{
                         />
                     </div>
 
-                    {this.details && <div>
+                    { this.details && <div>
                         <div className={cn(classes.card, classes.additionalTable)}>
 
                         <EnhancedTable
@@ -1820,9 +1879,77 @@ export class Payouts extends React.Component{
                         </div>
                     </div>}
 
+                     { this.history && <div>
+
+                        <div className={cn(classes.card, classes.additionalTable)}>
+                            <EnhancedTable
+                                rowsPerPage = {5}
+                                loaded= {this.historyLoaded}
+                                orderBy={'date'}
+                                data = { this.history.map(history => {     
+                                        return {
+                                            'wallet' : history.wallet,
+                                            'amount' : roundeWithDec(history.amount),
+                                            'date' : formatedTime(history.date),
+                                            'explorers' : history.responce.sent &&  Object.values(history.responce.sent).map(s => {
+                                                return {
+                                                    tx: s.main,
+                                                    value: s.d1 || s.d2 || s.d3 || s.d4        
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                                rowsHeader = {[[
+                                    { id: 'wallet', numeric: false, center: true, padding: 'dense', label: 'Wallet' },
+                                    { id: 'amount', numeric: true, center: true, padding: 'dense', label: 'Amount, ' + Api.getCoinName()},
+                                    { id: 'date', numeric: true, center: true, padding: 'dense',  label: 'Date' },
+                                    { id: 'explorers', numeric: false, notAbleSort: true, center: true, padding: 'dense', label: 'Explorer' },
+                                ]]}
+                                innerTable = {(row, idx) => {   
+                                    return(
+                                        <TableRow key={idx}>
+                                            <EnhancedTableCell numeric padding="dense" className={cn(classes.center)} component="th" scope="row" >
+                                                <Tooltip title={row.wallet} placement="top">
+                                                    <Typography className={classes.short} variant="h1" gutterBottom>
+                                                        {row.wallet}
+                                                    </Typography>
+                                                </Tooltip>
+                                            </EnhancedTableCell>   
+                                            <EnhancedTableCell padding="dense" className={cn(classes.center)}  > 
+                                                <Typography  variant="h1" >
+                                                    {row.amount}
+                                                </Typography>
+                                            </EnhancedTableCell>
+                                            <EnhancedTableCell padding="dense" className={cn(classes.center)}   > 
+                                                <Typography  variant="h1" >
+                                                    {row.date}
+                                                </Typography>
+                                            </EnhancedTableCell>
+                                            <EnhancedTableCell padding="dense" className={cn(classes.center)}  > 
+                                                { row.explorers && row.explorers.map( explorer => {
+                                                    return (
+                                                        <Typography variant="h1" key={explorer.tx}>
+                                                            <a href={`https://explorer.impleum.com/tx/${explorer.tx}`}
+                                                                target="_blank" className={classes.explorer}><Icon>link</Icon>
+                                                            </a>
+                                                            <span>({explorer.value}  {Api.getCoinName()} )</span>
+                                                            </Typography>
+                                                    )
+                                                })}
+                                            </EnhancedTableCell>
+                                        </TableRow>
+                                    )
+                                }}
+                            />
+                        </div>
+                    </div>}
+
                 </div>
             
 
         </div>)
     }
 }
+
+

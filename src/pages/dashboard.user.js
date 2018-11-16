@@ -989,7 +989,8 @@ export class Profile extends React.Component{
                 diffWithdrawDetail,
                 withdrawDetail: that.withdrawDetail,
                 id: Auth.uid,
-                ip: this.IP
+                ip: this.IP,
+                email: Auth.email
             };
 
             that.paying = true;
