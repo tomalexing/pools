@@ -189,7 +189,7 @@ export default class EnhancedTable extends React.Component {
                     
                     { emptyRows > 0 && (
                         <TableRow style={{ height: 48 * emptyRows }}>
-                            <EnhancedTableCell colSpan={12} />
+                            <EnhancedTableCell colSpan={14} />
                         </TableRow>
                     )}
 
@@ -205,6 +205,7 @@ export default class EnhancedTable extends React.Component {
                                     selectIcon: this.classForPagination( this.props ),
                                     caption: this.classForPagination( this.props )
                                 }}
+                                className={this.classForPagination( this.props )}
                                 colSpan={3}
                                 count={data.length}
                                 rowsPerPage={rowsPerPage}

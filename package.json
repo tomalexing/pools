@@ -26,8 +26,8 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.1.2",
-    "customize-cra": "^0.2.1",
-    "firebase-admin": "^6.1.0",
+    "customize-cra": "^0.2.5",
+    "firebase-admin": "^6.2.0",
     "jsdom": "^13.0.0",
     "react-app-rewired": "^1.6.2",
     "react-scripts": "^2.1.1",

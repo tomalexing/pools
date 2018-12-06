@@ -1216,7 +1216,7 @@ export class History extends React.Component{
             <div className={classes.card}>
 
                  <EnhancedTable
-                    backgroundColor={'#fff'}
+                    backgroundColor={'#ffffff'}
                     rowsPerPage = {5}
                     loaded= {this.historyLoaded}
                     orderBy={'date'}

@@ -276,6 +276,7 @@ export class Analytics extends React.Component{
     @observable balanceIncome = 0;
     @observable processingIframe = {};
     @observable anchorEl = {};
+    @observable spendableAmount = {};
 
 
     @action.bound
@@ -472,7 +473,14 @@ export class Analytics extends React.Component{
                     orderBy = {'title'}
                     loaded= {this.analiticsLoaded}
                     rowsPerPage = {10}
-                    data = {Object.entries(this.analitics).map(([path, {overall, payoutsIMP, responses, title, reward, sharedReward, sharedCount, sharedPaidCount, blockedIMP , entry_path, entry_id, onlyIframe, blockedEntity, blockedByUser}], idx, analitics) => {
+                    data = {Object.entries(this.analitics).map( ([path, {
+                        overall, payoutsIMP, responses, title, reward, 
+                        sharedReward, sharedCount, sharedPaidCount, blockedIMP , 
+                        entry_path, entry_id, onlyIframe, blockedEntity, blockedByUser, addr, email
+                    }], idx, analitics) => {
+                        
+                        if(!that.spendableAmount[addr]) Api.ourApi('getbalance', {uid: addr}).then(sa => {that.spendableAmount[addr] = sa;})
+
                         return {
                             'title': title,
                             'entry_path': entry_path,
@@ -488,6 +496,9 @@ export class Analytics extends React.Component{
                             'sharesSpend': roundeWithDec(sharedReward * sharedPaidCount),
                             'blockedIMP': roundeWithDec(blockedIMP),
                             'spent': roundeWithDec(payoutsIMP + sharedReward * sharedPaidCount + blockedIMP),
+                            'email': email,
+                            'account': addr,
+                            'spendableAmount':   that.spendableAmount[addr] || 0,
                             'more': ''
                         }
                     })}
@@ -498,6 +509,7 @@ export class Analytics extends React.Component{
                         { id: 'c', notAbleSort: true, center: true, padding: 'checkbox', label: 'Number Of', colSpan: 2},
                         { id: 'd', notAbleSort: true, center: true, padding: 'checkbox', label: 'Spent For, ' + Api.getCoinName(), colSpan: 3 },
                         { id: 'f', notAbleSort: true, center: true, padding: 'checkbox', label: 'Σ, ' + Api.getCoinName(), colSpan: 1 },
+                        { id: 'ff', notAbleSort: true, center: true, padding: 'checkbox', label: 'Account', colSpan: 3},
                         { id: 'g', notAbleSort: true, center: true, padding: 'checkbox', label: '', colSpan: 1},
                     ],[
                         { id: 'title', numeric: false, padding: 'dense', label: 'Title' },
@@ -511,6 +523,9 @@ export class Analytics extends React.Component{
                         { id: 'sharesSpend',center: true,  padding: 'checkbox', label: ' Sharing' },
                         { id: 'blockedIMP', center: true, padding: 'checkbox', label: 'Blocked ' },
                         { id: 'spent', center: true, padding: 'checkbox', label: 'Spent'},
+                        { id: 'email', notAbleSort: true, numeric: false, center: true, padding: 'dense', label: 'Email' },
+                        { id: 'account', notAbleSort: true, numeric: false, center: true, padding: 'dense', label: 'Account Uid' },
+                        { id: 'spendableAmount', notAbleSort: true, numeric: false, center: true, padding: 'dense', label: 'Account\' Coins, ' + Api.getCoinName() },
                         { id: 'more', center: true, notAbleSort: true, padding: 'checkbox', label: 'More' },
                     ]]}
                     innerTable = {(row, idx) => {
@@ -580,6 +595,21 @@ export class Analytics extends React.Component{
                                 <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
                                     <Typography variant="h1" >
                                         {row.spent}                                     
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
+                                    <Typography variant="h1" >
+                                        {row.email}                                     
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
+                                    <Typography variant="h1" >
+                                        {row.account}                                     
+                                    </Typography>
+                                </EnhancedTableCell>
+                                <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
+                                    <Typography variant="h1" >
+                                        { row.spendableAmount }                                     
                                     </Typography>
                                 </EnhancedTableCell>
                                 <EnhancedTableCell padding={'dense'} className={cn(classes.center)}> 
@@ -1586,7 +1616,28 @@ export class Payouts extends React.Component{
         this.isNotifyModalOpened = false;
     };
 
-    
+    @observable ckechedRequests = {}    
+    @observable calculatedSum = {}    
+
+    @action.bound
+    ckechRequest =  async (body, id) => {
+
+            let {diffWithdrawDetail, withdrawDetail, totalIMP} = body;
+
+            let oldWithdrawDetailed = await Api.getWithdrawDetailed(id);
+            let requestSatisfaction = Payouts.compare( oldWithdrawDetailed, withdrawDetail, diffWithdrawDetail);
+
+            let calc = Object.values(diffWithdrawDetail).reduce((acc, next) => {
+                        return {
+                            'amount':  acc.amount + next.amount ,
+                            'sharedReward': +acc.sharedReward + (next.isLiked ? next.sharedReward : 0)
+                        }
+                    }, {amount: 0, sharedReward: 0});
+
+            let amountSatisfaction = Math.abs(totalIMP - (calc.amount + calc.sharedReward)) < 0.001;
+
+            this.ckechedRequests[id] = amountSatisfaction && requestSatisfaction;
+    };
 
     render(){
         let that = this;
@@ -1609,8 +1660,11 @@ export class Payouts extends React.Component{
                                     return new Date(d2) - new Date(d1)
                                 })[0][1];
 
+                                that.ckechRequest(body, row[0].id)
+
                                 return {
                                     'uid': row[0].id,
+                                    'check': that.ckechedRequests[row[0].id] || false,
                                     'coins': roundeWithDec( body['totalIMP'] ),
                                     'wallet': body['wallet'],
                                     'ip': body['ip'],
@@ -1624,6 +1678,7 @@ export class Payouts extends React.Component{
 
                             rowsHeader = {[[
                                 { id: 'checkbox', type: "checkbox", padding: 'checkbox' },
+                                { id: 'check', numeric: false, padding: 'checkbox', notAbleSort: true, center: true, label: 'Check' },
                                 { id: 'uid', numeric: false, padding: 'dense', label: 'Id' },
                                 { id: 'email', numeric: false, padding: 'dense', label: 'Email' },
                                 { id: 'coins', center: true, padding: 'dense',label: 'Coins to payout, ' + Api.getCoinName() },
@@ -1634,6 +1689,8 @@ export class Payouts extends React.Component{
                             ]]}
 
                             footerData = {[{
+                                'checkbox': '',
+                                'check': 'nocheck',
                                 'uid': '',
                                 'coins': '',
                                 'email': '',
@@ -1659,6 +1716,11 @@ export class Payouts extends React.Component{
                                                 onClick={this.selectRow(row.uid)}
                                             />}
                                         </EnhancedTableCell>  
+                                        <EnhancedTableCell padding={'dense'}  className={cn(classes.center)} component="th" scope="row">
+                                            <Typography variant="h1" className={classes.noWrap}>
+                                                {row.check !== 'nocheck' ? (row.check ? '✅' : '❌') : ''}
+                                            </Typography>
+                                        </EnhancedTableCell>
                                         <EnhancedTableCell component="th" scope="row">
                                             <Typography variant="h1" className={classes.noWrap}>
                                                 <Tooltip title="History" placement="top">
@@ -1794,7 +1856,7 @@ export class Payouts extends React.Component{
                                                             'sharedReward': +acc.sharedReward + (next.isLiked ? next.sharedReward : 0)
                                                         }
                                                     },{amount: 0, sharedReward: 0});
-                                                });
+                                                });                                    
                                     return [{
                                         'entityId': '',
                                         'amount': '',

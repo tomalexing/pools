@@ -39,6 +39,7 @@ import { saveAllToStoreMerge } from './services/localDb';
 import Login from './components/Login';
 import { when } from 'mobx';
 
+import './services/help.js'
 
 // injectTapEventPlugin();
 
