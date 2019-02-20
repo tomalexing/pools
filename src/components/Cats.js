@@ -103,7 +103,7 @@ const styles = theme => ({
 
     header: {
         height: '100%',
-        width: '300px',
+        maxWidth: '300px',
         overflow: 'hidden',
         display: 'flex',
         flex: '1 0 300px',
@@ -112,6 +112,7 @@ const styles = theme => ({
             width: '100%',
             height: 'auto',
             flex: '1 0 auto',
+            maxWidth: '100%',
         }
     },
 
@@ -148,7 +149,8 @@ const styles = theme => ({
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         flexDirection: 'column',
-        padding: '20px 30px'
+        padding: '20px 30px',
+        flex: 1
     },
 
     title: {

@@ -284,11 +284,7 @@ export class Profile extends React.Component{
         this.walletRef = React.createRef();
 
 
-        (async _ => {
-            await this.getUser()
-            this.getAnalytics();
-            this.getWallet();
-        }).bind(this)();
+        this.init();
 
 
     }
@@ -296,6 +292,13 @@ export class Profile extends React.Component{
     @observable analitics = {};
     @observable loaded = false;
     @observable wallet = '';
+
+
+    init = async () =>{
+        await this.getUser();
+        this.getWallet();
+        this.getAnalytics();
+    }
 
     @action.bound
     getUser = async _ => {
@@ -1222,12 +1225,12 @@ export class History extends React.Component{
 
         let listtransactions = await Api.ourApi('listtransactions', body);
 
-        if(listtransactions.status){
+        if(listtransactions && listtransactions.status){
             this.histories = listtransactions.transactions;
         }
 
         let getblockcount = await Api.ourApi('getblockcount', {});
-        if(getblockcount.status){
+        if(getblockcount && getblockcount.status){
             this.count = getblockcount.count;
         }
 

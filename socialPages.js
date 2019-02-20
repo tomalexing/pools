@@ -4,14 +4,14 @@ const fs = require("mz/fs");
 const { JSDOM } = jsdom;
 const cname = 'https://quizi.io/';
 async function pagesWithCards(){
-    
+console.log('Generate Social Pages')
 const pages = [
 
     {
         id: 'mNrynOde7h2pec3R9rKe',
         type: 'term',
         title: 'IQ test',
-        linksite: 'quizi.io',
+        linksite: 'https://quizi.io',
         desc: 'The average IQ is 100. Have you wondered what your IQ score is?',
         cardtype: 'Quiz',
         number: 20,
@@ -26,7 +26,7 @@ const pages = [
         id: 'OMx1k83U7LcZwlvZs9Aw',
         type: 'term',
         title: 'Impleum Platform',
-        linksite: 'impleum.com',
+        linksite: 'https://impleum.com',
         desc: 'Impleum is a powerful and scalable path to develop DApps.',
         cardtype: 'Quiz',
         number: 14,
@@ -41,7 +41,7 @@ const pages = [
         id: 'cHuEIjL3dsvNTVXNXa1Z',
         type: 'term',
         title: 'Cyber Resilience',
-        linksite: '10guards.com',
+        linksite: 'https://10guards.com',
         desc: 'The development of technologies opens up new business opportunities, and also, new threats to your assets.',
         cardtype: 'Quiz', // todo lowercase
         number: 10,
@@ -56,7 +56,7 @@ const pages = [
         id: 'TufVMx0dkDVAaOr5KSdF',
         type: 'term',
         title: 'Common poll',
-        linksite: 'quizi.io',
+        linksite: 'https://quizi.io',
         desc: 'Discover answers to the most provocative question.',
         cardtype: 'Poll',
         number: 10,
@@ -71,7 +71,7 @@ const pages = [
         id: 'ga2Y4kgp7kHOxu2IF4dl',
         type: 'term',
         title: 'Raters Movie',
-        linksite: 'ratersapp.com',
+        linksite: 'https://ratersapp.com',
         desc: 'Join Raters and discover great movies based on reviews from your friends.',
         cardtype: 'Poll',
         number: 10,
@@ -86,7 +86,7 @@ const pages = [
         id: 'jUxerqRUfMblYzRbGRY4',
         type: 'term',
         title: 'Raters Comics',
-        linksite: 'ratersapp.com',
+        linksite: 'https://ratersapp.com',
         desc: 'Join Raters and discover great movies based on reviews from your friends.',
         cardtype: 'Poll',
         number: 10,
@@ -101,13 +101,13 @@ const pages = [
         id: 'So4uXB8sAA9AEjxl6QMG',
         type: 'term',
         title: 'IQ test',
-        linksite: 'quizi.io',
+        linksite: 'https://quizi.io',
         desc: 'The average IQ is 100. Have you wondered what your IQ score is?',
         cardtype: 'Quiz',
         number: 20,
         btn: 'Take quiz',
         slug: 'quizzes/iq',
-        img: './assets/catalog/IQ.png',
+        img: '/socialPictures/IQ.png',
         link: `/quizzes/So4uXB8sAA9AEjxl6QMG`,
         reward: 0.05,
         sharedReward: 0.1, 
@@ -117,13 +117,13 @@ const pages = [
         id: 'FwdocCDITCpfbcr326NG',
         type: 'term',
         title: 'Impleum Platform',
-        linksite: 'impleum.com',
+        linksite: 'https://impleum.com',
         desc: 'Impleum is a powerful and scalable path to develop DApps.',
         cardtype: 'Quiz',
         number: 14,
         btn: 'Take quiz',
         slug: 'quizzes/blockchain',
-        img: './assets/catalog/impleum.png',
+        img: '/socialPictures/impleum.png',
         reward: 0.05,
         sharedReward: 0.1, 
         link: `/quizzes/FwdocCDITCpfbcr326NG`,
@@ -133,13 +133,13 @@ const pages = [
         id: '5yiBa8tZK2esO2lZdiXt',
         type: 'term',
         title: 'Common poll',
-        linksite: 'quizi.io',
+        linksite: 'https://quizi.io',
         desc: 'Discover popular answers to the most provocative questions.',
         cardtype: 'Poll',
         number: 10,
         btn: 'Take poll',
         slug: 'polls/common',
-        img: './assets/catalog/common.png',
+        img: '/socialPictures/common.png',
         link: `/polls/5yiBa8tZK2esO2lZdiXt`,
         reward: 0.05,
         sharedReward: 0.1, 
@@ -149,13 +149,13 @@ const pages = [
         id: 'vyYy23pkkjWGzvreuBuC',
         type: 'term',
         title: 'Raters Movie',
-        linksite: 'ratersapp.com',
+        linksite: 'https://ratersapp.com',
         desc: 'Join Raters and discover great movies based on reviews from your friends.',
         cardtype: 'Poll',
         number: 10,
         btn: 'Take poll',
         slug: 'polls/movies',
-        img: './assets/catalog/raters.png',
+        img: '/socialPictures/raters.png',
         link: `/polls/vyYy23pkkjWGzvreuBuC`,
         reward: 0.05,
         sharedReward: 0.01, 
@@ -165,16 +165,32 @@ const pages = [
         id: 'XkajV6XJ9VJScvuyOJfW',
         type: 'term',
         title: 'Raters Comics',
-        linksite: 'ratersapp.com',
+        linksite: 'https://ratersapp.com',
         desc: 'Join Raters and discover great movies based on reviews from your friends.',
         cardtype: 'Poll',
         number: 10,
         btn: 'Take poll',
         slug: 'polls/movies',
-        img: './assets/catalog/ratersComics.png',
+        img: '/socialPictures/ratersComics.png',
         link: `/polls/XkajV6XJ9VJScvuyOJfW`,
         reward: 0.05,
         sharedReward: 0.1, 
+      },
+
+      {
+        id: '6QbFRwPh3O0k6n9SE7gv',
+        type: 'term',
+        title: 'mind.ua',
+        linksite: 'https://mind.ua',
+        desc: 'mind.ua',
+        cardtype: 'Poll',
+        number: 10,
+        btn: 'Переглянути',
+        slug: 'polls/common',
+        img: '/socialPictures/mind.png',
+        link: `/polls/6QbFRwPh3O0k6n9SE7gv`,
+        reward: 0,
+        sharedReward: 0.5, 
       }
 ];
 
@@ -183,7 +199,7 @@ const pages = [
 const index = await fs.readFile('./build/index.html');
 const dom = new JSDOM(index.toString('utf-8'));
 
-    for ({title, desc, img, id} of pages){
+    for ({title, desc, img, id, linksite} of pages){
 
 
         let entriesToReplace = [
@@ -210,6 +226,10 @@ const dom = new JSDOM(index.toString('utf-8'));
             {
                 propertyName: '[name="twitter:image"]',
                 content: cname + img
+            },
+            {
+                propertyName: '[property="og:url"]',
+                content: linksite
             }
         ];
 

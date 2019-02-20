@@ -822,7 +822,7 @@ export class Profile extends React.Component{
                 ).then(_ => {
                     return Promise.all( Object.entries(slugs).map(([slug, _ ]) => {
                         return Api.getAdditionlCardInfo(slug).then(info => {
-                            if(!info || !info.reward) return
+                            if(!info || ! (typeof info.reward == 'number')) return
 
                             Object.assign(that.cardsInProcessAndFinished, {[slug]:Object.assign({},that.cardsInProcessAndFinished[slug],{info:info})})
                             

@@ -58,7 +58,8 @@ const styles = theme => ({
     btn: {
         borderRadius: 74,
         color: 'white',
-        margin: 'auto 10px'
+        margin: 'auto 10px',
+        whiteSpace: 'nowrap'
     }
 });
 

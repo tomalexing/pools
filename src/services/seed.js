@@ -1543,6 +1543,60 @@ async function setPolls5(){
 
 }
 
+
+const pollsMind = [{
+  "answers" : {
+      l: {
+        "quantity" : 0,
+        "srcImg" : './assets/mind/yes.png',
+        "value" : ""
+      },
+      r : {
+        "quantity" : 0,
+        "srcImg" : './assets/mind/no.png',
+        "value" : ""
+      }
+    },
+    "question" : "Чи здавалось вам коли-небудь, що ви займаєте чуже місце?",
+    "cardType": "poll",
+    "order" : 1,
+    "id": 'Nd49Lkpbgge8RxnAJHWa',
+}];
+
+async function setPolls6(){
+  console.log("Add %s polles", pollsMind.length)
+
+  let doc =  await db.collection(`polls`).doc('6QbFRwPh3O0k6n9SE7gv');
+
+  doc.set({
+    id: '6QbFRwPh3O0k6n9SE7gv',
+    allCardsNumber: 1,
+    dashOutput: 'number',
+    dashTitle: 'mind.ua',
+    reward: 0,
+    sharedReward: 0.5,
+    cat: 'Polls',
+    title: 'mind.ua',
+    linksite: 'mind.ua',
+    desc: '',
+    img: './assets/catalog/mind.png',
+    result: 'Ви вiдповiли на {{number}} питання.',
+    addr: configUsed.projectId == 'quiz-public-30d33' ? 'MRPzC1ylG0Q52XccW3YO6hIRI2K3' : 'DuM7gyrZZAgETr6Txa492NFUEiE2',
+    email: configUsed.projectId == 'quiz-public-30d33' ? 'eshpytko@mind.kiev.ua' : 'nickmy'
+
+  }, { merge: true });
+
+  for(let i = 0; i < pollsMind.length; i++){
+    console.log('polls ' + i)
+    db.collection(`polls`).doc(doc.id).collection(`v1`).doc(pollsMind[i].id).set({
+   // ...withOutQuantity( polls2[i] ) ,
+    ... pollsMind[i]  ,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true })
+  }
+
+}
+
 function setCats(){
     console.log("Add categories.");
 
@@ -1682,6 +1736,22 @@ function setCats(){
       sharedReward: 0.1, 
     })
 
+    db.collection('categories/polls/common').doc('rfNNXVdBjABaJMuN0Nkq').set({
+      id: '6QbFRwPh3O0k6n9SE7gv',
+      type: 'term',
+      title: 'Common poll',
+      linksite: 'mind.ua',
+      desc: '',
+      cardtype: 'Poll',
+      number: 1,
+      btn: 'Переглянути',
+      slug: 'polls/common',
+      img: './assets/catalog/common.png',
+      link: `/polls/6QbFRwPh3O0k6n9SE7gv`,
+      reward: 0,
+      sharedReward: 0.5, 
+    })
+
     db.collection('categories/polls/movies').doc('oTFTncqMYa315ydrQUCD').set({
       id: 'ga2Y4kgp7kHOxu2IF4dl',
       type: 'term',
@@ -1787,6 +1857,28 @@ function setCatMenu(){
     })
 }
 
+function addMindUa(){
+
+  setPolls6();
+
+  db.collection('categories/polls/common').doc('rfNNXVdBjABaJMuN0Nkq').set({
+      id: '6QbFRwPh3O0k6n9SE7gv',
+      type: 'term',
+      title: 'Common poll',
+      linksite: 'mind.ua',
+      desc: '',
+      cardtype: 'Poll',
+      number: 1,
+      btn: 'Переглянути',
+      slug: 'polls/common',
+      img: './assets/catalog/mind.png',
+      link: `/polls/6QbFRwPh3O0k6n9SE7gv`,
+      reward: 0,
+      sharedReward: 0.5, 
+    })
+
+}
+
 
 
 
@@ -1808,6 +1900,7 @@ function withOutQuantity(obj){
 // setPolls3();
 // setPolls4();
 // setPolls5();
+//  setPolls6()
 // setQuizzes(); 
 // setQuizzes1();
 // setQuizzes2();
@@ -1816,3 +1909,6 @@ function withOutQuantity(obj){
 //  setCats();
 
 //  setCatMenu();
+
+
+// addMindUa()

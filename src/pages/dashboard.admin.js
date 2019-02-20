@@ -1021,7 +1021,7 @@ export class Requests extends React.Component{
                             data = {that.tabs['showTab-2'].data.map(row =>  {
                                 return {
                                     'email': row[0].data.email,
-                                    'date' : row[0].data.date && formatedTime(row[0].data.date)
+                                    'date' : row[0].data.date
                                 }
                             })}
                             rowsHeader = {[[
@@ -1038,7 +1038,7 @@ export class Requests extends React.Component{
                                         </EnhancedTableCell>   
                                         <EnhancedTableCell numeric > 
                                             <Typography variant="h1" >
-                                                {row.date}
+                                                {formatedTime(row.date)}
                                             </Typography>
                                         </EnhancedTableCell>
                                     </TableRow>
